@@ -1,0 +1,724 @@
+Mode,Source Question,Extracted Concept,Generated Question,Target Bloom,Predicted Bloom,Target Difficulty,Predicted Difficulty,Confidence,Rejection Reason,Concept Match Score,Attempts,Generation Time,Overall Pass,Prompt Used,Prompt Tokens,Completion Tokens,Total Tokens,Semantic Similarity,Flan Calls,Deberta Calls,Candidates Generated,Candidates Validated,Candidates Rejected Before Validation
+Mode B (Production),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Define ACID properties in relational database management systems.,Remember,Remember,Easy,Easy,99.98,None,4/4,1,2.05,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Remember
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",159,13,172,0.9577,1,1,1,1,0
+Mode B (Production),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Summarize the importance of ACID properties in relational database management systems.,Understand,Understand,Easy,Easy,99.95,None,4/4,1,2.32,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Understand
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",159,17,176,0.9512,1,1,1,1,0
+Mode B (Production),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Demonstrate the use of ACID properties in a relational database.,Apply,Apply,Medium,Medium,99.99,None,4/4,3,11.97,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Apply
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational
+Previous attempt failed because: repetition detected in generated question. Avoid repeating phrases or words. Generate a clean question.. Avoid this.
+The generated question MUST contain 'acid properties in a relational'.
+Use 'acid properties in a relational' explicitly in the final question.",223,19,242,0.9086,3,3,3,3,0
+Mode B (Production),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Analyze the role of ACID properties in relational database management systems.,Analyze,Analyze,Medium,Medium,100.0,None,4/4,1,2.39,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Analyze
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",161,17,178,0.9405,1,1,1,1,0
+Mode B (Production),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Assess the suitability of ACID properties for relational database management systems.,Evaluate,Evaluate,Hard,Hard,99.99,None,3/4,1,2.17,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",160,16,176,0.8997,1,1,1,1,0
+Mode B (Production),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Design a relational database using ACID properties.,Create,Create,Hard,Hard,100.0,None,4/4,1,3.87,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Create
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",307,12,319,0.8636,1,1,1,1,0
+Mode B (Production),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Define database normalization.,Remember,Remember,Easy,Easy,99.99,None,1/1,1,1.58,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Remember
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",146,7,153,0.8635,1,1,1,1,0
+Mode B (Production),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Explain the role of database normalization in reducing data redundancy.,Understand,Understand,Easy,Easy,99.96,None,1/1,1,2.22,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Understand
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",146,16,162,0.9451,1,1,1,1,0
+Mode B (Production),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Demonstrate the normalization process for the DBMS database.,Apply,Apply,Medium,Medium,99.99,None,1/1,1,2.39,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Apply
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",146,17,163,0.7591,1,1,1,1,0
+Mode B (Production),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Analyze the role of database normalization in reducing data redundancy.,Analyze,Analyze,Medium,Medium,100.0,None,1/1,1,2.64,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Analyze
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",148,18,166,0.9455,1,1,1,1,0
+Mode B (Production),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Evaluate the effectiveness of database normalization in reducing data redundancy.,Evaluate,Evaluate,Hard,Hard,99.99,None,1/1,1,2.3,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",147,17,164,0.9039,1,1,1,1,0
+Mode B (Production),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Design a database normalization process for a university management system.,Create,Create,Hard,Hard,100.0,None,1/1,1,3.63,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Create
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",294,15,309,0.6886,1,1,1,1,0
+Mode B (Production),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Define a b-tree index.,Remember,Remember,Easy,Easy,99.99,None,2/2,1,2.32,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Remember
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",160,12,172,0.6849,1,1,1,1,0
+Mode B (Production),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Explain how a B-tree index improves the performance of SQL SELECT queries.,Understand,Understand,Easy,Easy,99.79,None,2/2,1,2.99,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Understand
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",160,21,181,0.9507,1,1,1,1,0
+Mode B (Production),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Demonstrate how a B-tree index improves the performance of SQL SELECT queries.,Apply,Apply,Medium,Medium,99.99,None,2/2,1,3.56,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Apply
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",160,25,185,0.9207,1,1,1,1,0
+Mode B (Production),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Examine the performance trade-offs of a b-tree index and analyze its behavior under varying workloads in DBMS deployments.,Analyze,Analyze,Medium,Medium,100.0,None,2/2,1,4.05,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Analyze
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",162,34,196,0.7497,1,1,1,1,0
+Mode B (Production),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Assess the suitability of a b-tree index for SQL SELECT queries.,Evaluate,Evaluate,Hard,Hard,99.99,None,2/2,1,2.93,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",161,21,182,0.8747,1,1,1,1,0
+Mode B (Production),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Design a SQL SELECT query using a B-tree index.,Create,Create,Hard,Hard,100.0,None,2/2,1,4.4,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Create
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",308,18,326,0.7967,1,1,1,1,0
+Mode B (Production),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Define a nosql database.,Remember,Remember,Easy,Easy,99.99,None,1/1,1,2.0,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Remember
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",163,10,173,0.7418,1,1,1,1,0
+Mode B (Production),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Summarize the advantages of using a NoSQL database over a traditional relational database.,Understand,Understand,Easy,Easy,99.97,None,1/1,1,2.83,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Understand
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",163,23,186,0.9083,1,1,1,1,0
+Mode B (Production),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Apply your knowledge of a NoSQL database to select an appropriate relational database for a given application.,Apply,Apply,Medium,Medium,99.99,None,1/1,1,3.2,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Apply
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",163,25,188,0.7286,1,1,1,1,0
+Mode B (Production),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Analyze the advantages and limitations of using a NoSQL database over a traditional relational database.,Analyze,Analyze,Medium,Medium,100.0,None,1/1,1,3.06,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Analyze
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",165,25,190,0.9208,1,1,1,1,0
+Mode B (Production),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Evaluate the suitability of a NoSQL database over a traditional relational database for large-scale enterprise applications.,Evaluate,Evaluate,Hard,Hard,99.99,None,1/1,1,3.46,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",164,28,192,0.8086,1,1,1,1,0
+Mode B (Production),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Design a database using a NoSQL database for a university management system.,Create,Create,Hard,Hard,100.0,None,1/1,1,4.02,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Create
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",311,20,331,0.679,1,1,1,1,0
+Mode B (Production),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Define a database transaction.,Remember,Remember,Easy,Easy,99.99,None,1/1,1,1.84,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Remember
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",140,8,148,0.8155,1,1,1,1,0
+Mode B (Production),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Explain the purpose of commit and rollback operations in a database transaction.,Understand,Understand,Easy,Easy,99.97,None,1/1,1,1.94,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Understand
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",140,16,156,0.9131,1,1,1,1,0
+Mode B (Production),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Demonstrate how commit and rollback operations work in a database transaction.,Apply,Apply,Medium,Medium,99.99,None,1/1,1,2.39,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Apply
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",140,19,159,0.8949,1,1,1,1,0
+Mode B (Production),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Analyze how commit and rollback operations work in a database transaction.,Analyze,Analyze,Medium,Medium,100.0,None,1/1,1,2.19,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Analyze
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",142,17,159,0.9002,1,1,1,1,0
+Mode B (Production),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Evaluate the effectiveness of commit and rollback operations in reducing transaction latency.,Evaluate,Evaluate,Hard,Hard,99.99,None,1/1,1,2.47,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",141,18,159,0.6435,1,1,1,1,0
+Mode B (Production),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Design a database transaction and explain how commit and rollback operations work.,Create,Create,Hard,Hard,100.0,None,1/1,1,3.41,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Create
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",288,16,304,0.9105,1,1,1,1,0
+Mode E (Multi-Candidate Ranking),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Define ACID properties in a relational database management system.,Remember,Remember,Easy,Easy,99.98,None,4/4,1,1.5,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Remember
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Start: Define, Identify, List, Name, State, Recall. Forbid: Explain, Discuss, Analyze, Evaluate, Design.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",192,15,207,0.9545,1,1,3,1,2
+Mode E (Multi-Candidate Ranking),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Explain the purpose of ACID properties in relational database management systems.,Understand,Understand,Easy,Easy,99.97,None,4/4,1,1.71,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Understand
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Start: Explain, Describe, Discuss, Summarize, Interpret. Forbid: Define, List, Apply, Analyze, Design.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",190,15,205,0.98,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Apply ACID properties to maintain records in a relational database.,Apply,Apply,Medium,Medium,99.99,None,4/4,1,1.97,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Apply
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Start: Apply, Implement, Use, Demonstrate, Solve, Calculate. Forbid: Define, Explain, Analyze, Evaluate, Design.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",196,15,211,0.7987,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Examine the performance trade-offs of different ACID properties used in relational databases and identify which properties are most important for a high-performance database.,Analyze,Analyze,Medium,Medium,100.0,None,4/4,1,3.11,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Analyze
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Start: Analyze, Compare, Differentiate, Examine, Contrast, Distinguish. Forbid: Define, Explain, Apply, Evaluate, Design, suitable, best, recommend, judge.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",208,34,242,0.8125,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Assess the suitability of ACID properties for relational database management systems.,Evaluate,Evaluate,Hard,Hard,99.99,None,3/4,1,1.87,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Start: Evaluate, Assess, Critique, Justify, Defend, Determine. Forbid: Design, Create, Develop, Formulate, Construct.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",195,16,211,0.8997,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Explain the concept of ACID properties in a relational database management system.,acid properties in a relational,Develop a relational database using the ACID properties.,Create,Create,Hard,Hard,100.0,None,4/4,1,4.95,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Create
+Domain: DBMS
+Topic: acid properties in a relational
+Question: Explain the concept of ACID properties in a relational database management system.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Start: Design, Create, Develop, Formulate, Construct. Forbid: Define, Explain, Apply, Analyze, Evaluate, Describe.
+Original concept: acid properties in a relational
+Do not replace this concept.
+The generated question must remain about: acid properties in a relational
+The generated question must explicitly mention: acid properties in a relational",268,13,281,0.8515,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Define database normalization and list the components of it.,Remember,Remember,Easy,Easy,99.99,None,1/1,1,2.07,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Remember
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Start: Define, Identify, List, Name, State, Recall. Forbid: Explain, Discuss, Analyze, Evaluate, Design.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",179,13,192,0.7707,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Summarize the stages involved in database normalization.,Understand,Understand,Easy,Easy,99.66,None,1/1,1,2.56,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Understand
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Start: Explain, Describe, Discuss, Summarize, Interpret. Forbid: Define, List, Apply, Analyze, Design.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",177,12,189,0.7895,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Demonstrate the normalization process for a DBMS database.,Apply,Apply,Medium,Medium,99.99,None,1/1,1,3.55,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Apply
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Start: Apply, Implement, Use, Demonstrate, Solve, Calculate. Forbid: Define, Explain, Analyze, Evaluate, Design.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",183,18,201,0.7769,1,2,3,2,0
+Mode E (Multi-Candidate Ranking),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Analyze the advantages and limitations of database normalization.,Analyze,Analyze,Medium,Medium,100.0,None,1/1,1,2.8,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Analyze
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Start: Analyze, Compare, Differentiate, Examine, Contrast, Distinguish. Forbid: Define, Explain, Apply, Evaluate, Design, suitable, best, recommend, judge.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",195,13,208,0.8344,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Assess the effectiveness of database normalization in reducing data redundancy.,Evaluate,Evaluate,Hard,Hard,99.99,None,1/1,1,2.52,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Start: Evaluate, Assess, Critique, Justify, Defend, Determine. Forbid: Design, Create, Develop, Formulate, Construct.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",182,16,198,0.8932,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Describe the process of database normalization and its role in reducing data redundancy.,database normalization,Develop a database normalization solution for a banking system that uses data normalization to reduce redundant transaction records.,Create,Create,Hard,Hard,100.0,None,1/1,1,3.07,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Create
+Domain: DBMS
+Topic: database normalization
+Question: Describe the process of database normalization and its role in reducing data redundancy.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Start: Design, Create, Develop, Formulate, Construct. Forbid: Define, Explain, Apply, Analyze, Evaluate, Describe.
+Original concept: database normalization
+Do not replace this concept.
+The generated question must remain about: database normalization
+The generated question must explicitly mention: database normalization",255,24,279,0.7525,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Define the b-tree index in SQL.,Remember,Remember,Easy,Easy,99.99,None,2/2,1,1.49,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Remember
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Start: Define, Identify, List, Name, State, Recall. Forbid: Explain, Discuss, Analyze, Evaluate, Design.
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",193,13,206,0.7468,1,1,3,1,1
+Mode E (Multi-Candidate Ranking),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Explain how a b-tree index improves the performance of SQL SELECT queries.,Understand,Understand,Easy,Easy,99.79,None,2/2,1,2.3,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Understand
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Start: Explain, Describe, Discuss, Summarize, Interpret. Forbid: Define, List, Apply, Analyze, Design.
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",191,22,213,0.9507,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Demonstrate the execution of a SQL SELECT query using a B-tree index.,Apply,Apply,Medium,Medium,99.99,None,2/2,1,2.52,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Apply
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Start: Apply, Implement, Use, Demonstrate, Solve, Calculate. Forbid: Define, Explain, Analyze, Evaluate, Design.
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",197,25,222,0.7939,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Differentiate the use of b-tree indexes in relational databases and determine their usefulness for processing SQL queries.,Analyze,Analyze,Medium,Medium,100.0,None,2/2,1,2.9,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Analyze
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Start: Analyze, Compare, Differentiate, Examine, Contrast, Distinguish. Forbid: Define, Explain, Apply, Evaluate, Design, suitable, best, recommend, judge.
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",209,29,238,0.8063,1,2,3,2,0
+Mode E (Multi-Candidate Ranking),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Critique the suitability of a b-tree index for storing large volumes of data.,Evaluate,Evaluate,Hard,Hard,99.99,None,2/2,1,2.19,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Start: Evaluate, Assess, Critique, Justify, Defend, Determine. Forbid: Design, Create, Develop, Formulate, Construct.
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",196,23,219,0.6867,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),How does a B-tree index improve the performance of SQL SELECT queries?,b-tree index,Develop a SQL SELECT query that uses a B-tree index to identify the rows in a specified table.,Create,Create,Hard,Hard,100.0,None,2/2,1,3.44,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Analyze
+Target Bloom: Create
+Domain: DBMS
+Topic: b-tree index
+Question: How does a B-tree index improve the performance of SQL SELECT queries?
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Start: Design, Create, Develop, Formulate, Construct. Forbid: Define, Explain, Apply, Analyze, Evaluate, Describe.
+Original concept: b-tree index
+Do not replace this concept.
+The generated question must remain about: b-tree index
+The generated question must explicitly mention: b-tree index",269,28,297,0.7068,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Define a nosql database.,Remember,N/A,Easy,N/A,0.0,Too Short,N/A,2,2.72,Fail,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Remember
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Start: Define, Identify, List, Name, State, Recall. Forbid: Explain, Discuss, Analyze, Evaluate, Design.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",196,10,206,0.7418,2,0,6,0,4
+Mode E (Multi-Candidate Ranking),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Explain the advantages of using a NoSQL database over a traditional relational database.,Understand,Understand,Easy,Easy,99.97,None,1/1,1,2.07,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Understand
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Start: Explain, Describe, Discuss, Summarize, Interpret. Forbid: Define, List, Apply, Analyze, Design.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",194,21,215,0.9103,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Demonstrate the use of a NoSQL database for managing records in a library management system.,Apply,Apply,Medium,Medium,99.99,None,1/1,1,3.19,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Apply
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Start: Apply, Implement, Use, Demonstrate, Solve, Calculate. Forbid: Define, Explain, Analyze, Evaluate, Design.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",200,26,226,0.7282,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Analyze the advantages and limitations of using a NoSQL database compared to a traditional relational database.,Analyze,Analyze,Medium,Medium,100.0,None,1/1,1,3.0,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Analyze
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Start: Analyze, Compare, Differentiate, Examine, Contrast, Distinguish. Forbid: Define, Explain, Apply, Evaluate, Design, suitable, best, recommend, judge.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",212,27,239,0.9406,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Assess the suitability of using a NoSQL database over a traditional relational database for a retail organization.,Evaluate,Evaluate,Hard,Hard,99.99,None,1/1,1,2.66,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Start: Evaluate, Assess, Critique, Justify, Defend, Determine. Forbid: Design, Create, Develop, Formulate, Construct.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",199,27,226,0.8213,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,a nosql database,Design a database schema for a university campus using a NoSQL database.,Create,Create,Hard,Hard,100.0,None,1/1,1,2.59,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Understand
+Target Bloom: Create
+Domain: DBMS
+Topic: a nosql database
+Question: Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Start: Design, Create, Develop, Formulate, Construct. Forbid: Define, Explain, Apply, Analyze, Evaluate, Describe.
+Original concept: a nosql database
+Do not replace this concept.
+The generated question must remain about: a nosql database
+The generated question must explicitly mention: a nosql database",272,20,292,0.6151,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Define a database transaction in DBMS.,Remember,Remember,Easy,Easy,99.99,None,1/1,1,1.9,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Remember
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Start: Define, Identify, List, Name, State, Recall. Forbid: Explain, Discuss, Analyze, Evaluate, Design.
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",173,12,185,0.7622,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Summarize the functions of commit and rollback operations in a database transaction.,Understand,Understand,Easy,Easy,99.93,None,1/1,1,1.81,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Understand
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Start: Explain, Describe, Discuss, Summarize, Interpret. Forbid: Define, List, Apply, Analyze, Design.
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",171,18,189,0.8278,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Apply the concept of a database transaction to explain the working of a commit operation.,Apply,Apply,Medium,Medium,99.99,None,1/1,1,2.96,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Apply
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Start: Apply, Implement, Use, Demonstrate, Solve, Calculate. Forbid: Define, Explain, Analyze, Evaluate, Design.
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",177,19,196,0.7785,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Differentiate commit and rollback operations in a database transaction.,Analyze,Analyze,Medium,Medium,100.0,None,1/1,1,1.84,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Analyze
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Start: Analyze, Compare, Differentiate, Examine, Contrast, Distinguish. Forbid: Define, Explain, Apply, Evaluate, Design, suitable, best, recommend, judge.
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",189,15,204,0.8534,1,1,3,1,1
+Mode E (Multi-Candidate Ranking),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Assess the effectiveness of commit and rollback operations for managing large-scale database data.,Evaluate,Evaluate,Hard,Hard,99.99,None,1/1,1,1.77,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Evaluate
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Start: Evaluate, Assess, Critique, Justify, Defend, Determine. Forbid: Design, Create, Develop, Formulate, Construct.
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",176,18,194,0.6834,1,1,3,1,0
+Mode E (Multi-Candidate Ranking),"What is a database transaction, and how do commit and rollback operations work?",database transaction,Develop a database transaction that implements commit and rollback operations.,Create,Create,Hard,Hard,100.0,None,1/1,1,3.54,Pass,"Instruction: Rewrite the given university examination question from the source Bloom's Taxonomy level to the target Bloom's Taxonomy level while preserving the original concept, topic, and academic meaning. Generate exactly one question, do not include any introductory remarks or explanations, and end with a question mark. Use university examination style.
+
+Source Bloom: Remember
+Target Bloom: Create
+Domain: DBMS
+Topic: database transaction
+Question: What is a database transaction, and how do commit and rollback operations work?
+Forbid the word 'Describe' as a starting verb (e.g. do not say 'Describe how you would design...').
+Start the question directly with active action verbs like 'Design', 'Create', 'Construct', 'Formulate', or 'Develop'.
+Start: Design, Create, Develop, Formulate, Construct. Forbid: Define, Explain, Apply, Analyze, Evaluate, Describe.
+Original concept: database transaction
+Do not replace this concept.
+The generated question must remain about: database transaction
+The generated question must explicitly mention: database transaction",249,15,264,0.814,1,1,3,1,0

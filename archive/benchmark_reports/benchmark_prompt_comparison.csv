@@ -1,0 +1,3 @@
+Mode,First Attempt Success Rate (%),Second Attempt Success Rate (%),Accepted After Retry (%),Failed After Retry (%),Overall Pass Rate (%),Bloom Accuracy (%),Difficulty Accuracy (%),Bloom Macro F1,Concept Preservation (%),Semantic Similarity,Average Confidence (%),Average Retries,Average Generation Time (s),Duplicate Rate (%),Failure Rate (%),Average FLAN Calls,Average DeBERTa Calls,Average Candidates Generated,Average Candidates Validated,Average Candidates Rejected Before Validation
+Mode B (Production),96.7,0.0,3.3,0.0,100.0,100.0,100.0,1.0,100.0,0.849,100.0,1.07,3.09,0.0,0.0,1.07,1.07,1.07,1.07,0.0
+Mode E (Multi-Candidate Ranking),80.0,0.0,0.0,3.3,96.7,96.7,96.7,0.982,100.0,0.8094,100.0,1.03,2.55,0.0,3.3,1.03,1.03,3.1,1.03,0.27

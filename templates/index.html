@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloomStudio - Academic Question Engine</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons via unpkg -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        headline: ['Hanken Grotesk', 'sans-serif'],
+                        mono: ['Geist', 'monospace'],
+                    },
+                    colors: {
+                        // Stripe/Linear-inspired clean gray/blue palette
+                        primary: {
+                            DEFAULT: '#0066ff',
+                            hover: '#0052cc',
+                            light: '#e6f0ff',
+                            dark: '#001849'
+                        },
+                        secondary: {
+                            DEFAULT: '#00875a',
+                            hover: '#006644',
+                            light: '#e3fcef',
+                        },
+                        warning: {
+                            DEFAULT: '#ffab00',
+                            light: '#fffae6',
+                        },
+                        danger: {
+                            DEFAULT: '#de350b',
+                            light: '#ffebe6',
+                        },
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
+                        }
+                    },
+                    borderRadius: {
+                        'lg': '8px',
+                        'xl': '12px',
+                        '2xl': '16px',
+                    },
+                    boxShadow: {
+                        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+                        'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    <script>
+        // Check local storage or system preference to prevent FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+        
+        <!-- Mobile Backdrop -->
+        <div id="mobileBackdrop" class="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-xs transition-opacity hidden lg:hidden"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 flex w-[260px] -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform duration-200 ease-in-out lg:translate-x-0 dark:border-slate-800 dark:bg-slate-900">
+            <!-- Brand -->
+            <div class="flex h-16 items-center gap-3 px-6 border-b border-slate-100 dark:border-slate-800">
+                <span class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary text-white" style="width: 32px; height: 32px">
+                    <span class="material-symbols-outlined text-[20px] font-bold">bolt</span>
+                </span>
+                <div class="leading-tight">
+                    <div class="font-headline text-[15px] font-bold tracking-tight text-slate-900 dark:text-white">BloomStudio</div>
+                    <div class="font-mono text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Academic Engine</div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="custom-scrollbar flex-1 overflow-y-auto px-4 py-4">
+                <div class="px-2 pb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Workspace</div>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#" class="nav-link group relative flex w-full items-center gap-3.5 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200" data-target="view-dashboard">
+                            <span class="active-indicator absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-md bg-primary opacity-0 transition-opacity"></span>
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">dashboard</span>
+                            <span class="flex-1 truncate">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link group relative flex w-full items-center gap-3.5 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200" data-target="view-manual">
+                            <span class="active-indicator absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-md bg-primary opacity-0 transition-opacity"></span>
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">edit_note</span>
+                            <span class="flex-1 truncate">Question Studio</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link group relative flex w-full items-center gap-3.5 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200" data-target="view-batch">
+                            <span class="active-indicator absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-md bg-primary opacity-0 transition-opacity"></span>
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">layers</span>
+                            <span class="flex-1 truncate">Bulk Processing</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link group relative flex w-full items-center gap-3.5 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200" data-target="view-analytics">
+                            <span class="active-indicator absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-md bg-primary opacity-0 transition-opacity"></span>
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">insights</span>
+                            <span class="flex-1 truncate">Analytics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link group relative flex w-full items-center gap-3.5 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200" data-target="view-modelinfo">
+                            <span class="active-indicator absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-md bg-primary opacity-0 transition-opacity"></span>
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">memory</span>
+                            <span class="flex-1 truncate">System Models</span>
+                        </a>
+                 </ul>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <div class="lg:pl-[260px]">
+            <!-- Top bar -->
+            <header class="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-slate-100 bg-white/80 px-4 backdrop-blur-md sm:px-6 dark:border-slate-800 dark:bg-slate-900/80">
+                <div class="flex items-center gap-4">
+                    <button id="openSidebarBtn" aria-label="Open navigation" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-50 lg:hidden dark:text-slate-400 dark:hover:bg-slate-800">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <div class="flex items-center gap-2 lg:hidden">
+                        <span class="font-headline text-[15px] font-bold text-slate-900 dark:text-white">BloomStudio</span>
+                    </div>
+                    <div class="hidden items-center gap-1.5 font-sans text-xs font-medium text-slate-400 lg:flex">
+                        <span>BloomStudio</span>
+                        <span class="text-slate-300 dark:text-slate-700">/</span>
+                        <span class="font-semibold text-slate-700 dark:text-slate-200" id="headerTitle">Dashboard</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="inline-flex items-center rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60" role="group" aria-label="Theme selection">
+                        <button id="themeToggleLight" class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Switch to Light Mode" aria-pressed="false">
+                            <span class="text-sm">☀️</span>
+                            <span>Light</span>
+                        </button>
+                        <button id="themeToggleDark" class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Switch to Dark Mode" aria-pressed="false">
+                            <span class="text-sm">🌙</span>
+                            <span>Dark</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="view-section animate-fade-in">
+                    <div class="mb-6">
+                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Dashboard</h2>
+                        <h1 class="mt-1 font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Workspace Overview</h1>
+                    </div>
+                    
+                    <!-- Metric Cards -->
+                    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
+                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-primary">
+                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Total Questions</div>
+                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashTotal">0</div>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-secondary">
+                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Easy Questions</div>
+                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashEasy">0</div>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-warning">
+                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Medium Questions</div>
+                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashMod">0</div>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-danger">
+                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Hard Questions</div>
+                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashDiff">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart + CTA -->
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
+                        <div class="rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-2 dark:border-slate-800 dark:bg-slate-900">
+                            <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-800">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Bloom Level Distribution</h3>
+                            </div>
+                            <div class="p-6" style="height: 300px;">
+                                <canvas id="dashBloomChart"></canvas>
+                                <div id="dashNoDataMsg" class="hidden text-center text-sm text-slate-400 mt-10">No data available</div>
+                            </div>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 bg-white shadow-sm relative overflow-hidden dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+                            <div class="p-6">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                    <span class="material-symbols-outlined text-[20px]">bolt</span>
+                                </div>
+                                <h3 class="mt-4 font-headline text-base font-bold text-slate-900 dark:text-slate-50">Get started</h3>
+                                <p class="mt-1.5 text-xs leading-relaxed text-slate-400 dark:text-slate-500">Classify academic questions using AI engine mode or upload files in bulk to process entire batches.</p>
+                            </div>
+                            <div class="p-6 pt-0 space-y-2">
+                                <button class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-hover px-4 py-2 text-xs font-semibold text-white transition-all shadow-sm" onclick="switchTab('view-manual')">
+                                    <span class="material-symbols-outlined text-[16px]">edit_note</span> Classify a Question
+                                </button>
+                                <button class="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition-all dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800" onclick="switchTab('view-batch')">
+                                    <span class="material-symbols-outlined text-[16px]">layers</span> Start Batch Upload
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Batch Activity -->
+                    <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                        <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-800">
+                            <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Recent Batch Activity</h3>
+                        </div>
+                        <div class="overflow-x-auto pb-4 relative custom-scrollbar">
+                            <table class="w-full text-left text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-100 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:border-slate-800 dark:text-slate-500">
+                                        <th class="px-6 py-3 font-semibold">Filename</th>
+                                        <th class="px-6 py-3 font-semibold">Uploaded</th>
+                                        <th class="px-6 py-3 font-semibold text-right">Total</th>
+                                        <th class="px-6 py-3 font-semibold text-right">Completed</th>
+                                        <th class="px-6 py-3 font-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batchHistoryTbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                    <tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">No recent batch activity</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: MANUAL CLASSIFICATION (STUDIO) -->
+                <div id="view-manual" class="view-section hidden animate-fade-in">
+                    <div class="mb-6">
+                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Question Studio</h2>
+                        <h1 class="mt-1 font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Classify & Transform</h1>
+                    </div>
+
+                    <div class="w-full mx-auto space-y-6">
+                        <!-- Section 1: Original Question + Source Classification (two-column layout) -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                            <!-- Original Question Card -->
+                            <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col gap-4">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Original Question</h3>
+                                <form id="manualForm" class="space-y-4">
+                                    <textarea id="manualQuestion" class="h-28 w-full resize-y rounded-lg border border-slate-200 bg-slate-50/50 p-3 text-xs leading-relaxed text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:focus:bg-slate-900/50" placeholder="Paste or type your question here..."></textarea>
+                                    <div class="flex flex-col sm:flex-row items-center gap-2">
+                                        <button type="submit" id="btnClassify" class="flex w-full sm:flex-1 items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-hover px-4 py-2 text-xs font-semibold text-white transition-all shadow-sm">
+                                            <span class="material-symbols-outlined text-[16px]" id="classifyIcon">magic_button</span>
+                                            <span id="classifySpinner" class="hidden h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                                            Classify Question
+                                        </button>
+                                        <button type="button" id="btnClear" class="flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition-all dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800">
+                                            Clear
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <!-- Professional Status Panel -->
+                                <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800/60 pt-3">
+                                    <div class="flex gap-4">
+                                        <span>ACTIVE ENGINE: <span class="text-slate-600 dark:text-slate-400">Mode E</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-450">
+                                        <span id="statusDot" class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <span id="processingStatus">Ready</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Source Classification Section -->
+                            <div id="singleResultSection" class="hidden animate-fade-in-up rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col gap-4">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Source Classification</h3>
+                                    <div class="flex items-center gap-2">
+                                        <span id="resBloom" class="px-2.5 py-0.5 rounded-full text-xs font-semibold border">-</span>
+                                        <span id="resDiff" class="px-2.5 py-0.5 rounded-full text-xs font-semibold border">-</span>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-lg bg-slate-50/50 p-4 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850/40">
+                                    <p class="text-xs font-medium leading-relaxed text-slate-800 dark:text-slate-200" id="resQuestion">-</p>
+                                </div>
+                                
+                                <!-- Confidence score row -->
+                                <div class="hidden flex justify-between items-center text-xs border-t border-slate-100 dark:border-slate-800/60 pt-3">
+                                    <span class="text-slate-500 font-medium">Classifier Confidence</span>
+                                    <div class="flex items-center gap-2">
+                                        <span id="resConfText" class="font-bold text-slate-700 dark:text-slate-300">-</span>
+                                        <div class="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                            <div id="resConfBar" class="h-full rounded-full bg-primary transition-all duration-500" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- AI Explanation Card -->
+                                <div class="bg-primary/5 p-4 dark:bg-primary/10 rounded-xl border border-primary/10 dark:border-primary/20 flex flex-col gap-2">
+                                    <div class="flex items-center gap-1.5 text-xs font-bold text-primary">
+                                        <span class="material-symbols-outlined text-[16px]">info</span> AI Explanation
+                                    </div>
+                                    <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-300" id="resExplanation">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Question Transformation -->
+                        <div id="generationControlsWrapper" class="hidden space-y-4">
+                            <h3 class="font-headline text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Question Transformation</h3>
+                            <div id="generationControlsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch">
+                                <!-- Filled dynamically by main.js with alternate category cards -->
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Generated Variants -->
+                        <div id="stackedVariantsWrapper" class="hidden space-y-4">
+                            <h3 class="font-headline text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Generated Variants</h3>
+                            <div id="stackedAlternativesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch"></div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="emptyVariantsMsg" class="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-950 dark:text-slate-550 border border-slate-100 dark:border-slate-850">
+                                <span class="material-symbols-outlined text-[20px]">magic_button</span>
+                            </div>
+                            <h3 class="font-headline text-sm font-bold text-slate-900 dark:text-slate-100">No questions generated yet</h3>
+                            <p class="mt-1 max-w-xs text-xs text-slate-400 dark:text-slate-550 leading-relaxed">Submit a question above to identify its difficulty, then choose a transformation level to generate variants.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: BATCH PROCESSING -->
+                <div id="view-batch" class="view-section hidden animate-fade-in">
+                    <div class="mb-6">
+                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Bulk Processing</h2>
+                        <h1 class="mt-1 font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Upload Question Bank</h1>
+                    </div>
+
+                    <div class="rounded-xl border border-slate-200 bg-white shadow-sm p-8 text-center max-w-3xl mx-auto dark:border-slate-800 dark:bg-slate-900 mb-6">
+                        <form id="uploadForm">
+                            <div id="dropZone" class="cursor-pointer rounded-xl border-2 border-dashed border-slate-250 bg-slate-50/20 p-8 transition-all duration-200 hover:border-primary hover:bg-slate-50/50 dark:border-slate-800 dark:bg-slate-950/20 dark:hover:border-slate-700">
+                                <span class="material-symbols-outlined text-[32px] text-primary mb-2 mx-auto block">upload_file</span>
+                                <p class="text-[13px] font-semibold text-slate-800 dark:text-slate-250">Select CSV, TXT, PDF or DOCX File</p>
+                                <p class="text-[11px] text-slate-400 mt-1 mb-4 dark:text-slate-500">Drag and drop file here or click to browse</p>
+                                <input class="hidden" type="file" id="fileInput" accept=".csv,.txt,.pdf,.docx">
+                                <button type="button" class="inline-flex h-8 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 transition-all dark:border-slate-850 dark:bg-slate-950 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                                <div id="fileNameDisplay" class="mt-3 text-xs font-medium text-emerald-600 dark:text-emerald-450"></div>
+                            </div>
+                            <button type="submit" id="uploadBtn" disabled class="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-hover px-4 py-2.5 text-xs font-semibold text-white transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span id="uploadSpinner" class="hidden h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                                Process Document
+                            </button>
+                        </form>
+                        <div id="uploadStatus" class="hidden mt-3 text-xs text-center"></div>
+
+                        <!-- Preview Section -->
+                        <div id="previewSection" class="hidden mt-6 text-left">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-2">
+                                <h3 class="font-headline text-xs font-bold text-slate-800 dark:text-slate-100">Preview Questions (<span id="previewCount">0</span>)</h3>
+                                <button id="btnDeleteSelectedPreview" class="text-xs text-rose-600 font-semibold hover:text-rose-700">Delete Selected</button>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg dark:border-slate-800 mb-4 custom-scrollbar">
+                                <table class="w-full text-left text-xs" id="previewTable">
+                                    <thead class="sticky top-0 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
+                                        <tr>
+                                            <th class="px-4 py-2.5"><input type="checkbox" id="selectAllPreview" class="rounded border-slate-300 text-primary focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950"></th>
+                                            <th class="px-4 py-2.5 font-bold text-slate-500 uppercase tracking-wider text-[10px]">Extracted Text</th>
+                                            <th class="px-4 py-2.5 text-right font-bold text-slate-500 uppercase tracking-wider text-[10px]">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="previewTbody" class="divide-y divide-slate-100 dark:divide-slate-850 text-slate-600 dark:text-slate-350">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-right">
+                                <button id="btnStartProcessingPreview" class="inline-flex h-9 items-center justify-center rounded-lg bg-secondary hover:bg-secondary-hover px-4 text-xs font-semibold text-white transition-all shadow-sm">
+                                    Start Processing <span id="startProcessingCount" class="ml-1">0</span> Questions
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Live Progress -->
+                        <div id="liveProgressPanel" class="hidden mt-6 text-left p-4 rounded-xl border border-slate-200 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-headline text-xs font-bold text-slate-800 dark:text-slate-100" id="progressText">Processing: 0 / 0</h3>
+                                <button id="btnStopBatch" class="text-[10px] font-semibold text-rose-600 px-2.5 py-1 bg-rose-50 rounded-lg dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-900/20">Stop</button>
+                            </div>
+                            <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800 mb-2">
+                                <div id="progressBar" class="h-full rounded-full bg-primary transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-mono text-slate-400 dark:text-slate-500">
+                                <span id="progressSpeed">Speed: 0.0 qs/sec</span>
+                                <span id="progressETA">ETA: - sec</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Live Stats -->
+                        <div id="liveStatsRow" class="hidden mt-4 grid grid-cols-5 gap-2 text-left">
+                            <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Total</div><div id="liveStatTotal" class="font-bold text-primary text-sm mt-0.5">0</div></div>
+                            <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Easy</div><div id="liveStatEasy" class="font-bold text-secondary text-sm mt-0.5">0</div></div>
+                            <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Medium</div><div id="liveStatMod" class="font-bold text-warning text-sm mt-0.5">0</div></div>
+                            <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Hard</div><div id="liveStatDiff" class="font-bold text-danger text-sm mt-0.5">0</div></div>
+                            <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Conf</div><div id="liveStatConf" class="font-bold text-indigo-500 text-sm mt-0.5 font-mono">0%</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Batch Results -->
+                    <div id="batchResultsSection" class="hidden">
+                        <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 mb-6">
+                            <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-800 flex flex-wrap justify-between items-center gap-4">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Processed Questions</h3>
+                                <div class="flex gap-2 items-center flex-wrap">
+                                    <div class="relative">
+                                        <input type="text" id="searchTable" placeholder="Search questions..." class="w-48 rounded-lg border border-slate-200 pl-8 pr-3 py-1.5 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white">
+                                        <span class="material-symbols-outlined text-[16px] text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2">search</span>
+                                    </div>
+                                    <select id="filterStatus" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white cursor-pointer">
+                                        <option value="">All Status</option>
+                                        <option value="Verified">Verified</option>
+                                        <option value="Needs Review">Needs Review</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                    <button id="btnExportSelected" class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition dark:border-slate-850 dark:text-slate-200 dark:hover:bg-slate-800">
+                                        <span class="material-symbols-outlined text-[14px]">checklist</span> Selected
+                                    </button>
+                                    <div class="relative group">
+                                        <button class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition dark:border-slate-850 dark:text-slate-200 dark:hover:bg-slate-800">
+                                            <span class="material-symbols-outlined text-[14px]">download</span> Export All
+                                        </button>
+                                        <div class="absolute right-0 top-full mt-1 hidden w-32 flex-col rounded-lg border border-slate-200 bg-white py-1 shadow-lg group-hover:flex dark:border-slate-800 dark:bg-slate-950 z-10">
+                                            <button id="btnExportAllCSV" class="px-4 py-2 text-left text-xs hover:bg-gray-50 dark:hover:bg-slate-800">Export CSV</button>
+                                            <button id="btnExportAllJSON" class="px-4 py-2 text-left text-xs hover:bg-gray-50 dark:hover:bg-slate-700">Export JSON</button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="session_id" id="exportSessionId">
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto pb-4 relative custom-scrollbar">
+                                <table class="w-full text-left text-sm" id="resultsTable">
+                                    <thead id="resultsThead">
+                                    </thead>
+                                    <tbody id="resultsTbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-750 dark:text-slate-350">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="border-t border-slate-100 px-6 py-4 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <div class="flex items-center gap-4 text-xs text-slate-400">
+                                    <span id="tablePaginationInfo">Showing 0 of 0</span>
+                                    <div class="flex items-center gap-1.5 border-l border-slate-150 pl-4 dark:border-slate-850">
+                                        <span>Show:</span>
+                                        <select id="itemsPerPageSelect" class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white cursor-pointer">
+                                            <option value="10">10 per page</option>
+                                            <option value="20">20 per page</option>
+                                            <option value="50">50 per page</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <ul class="flex gap-1 items-center" id="tablePagination"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Navigator -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Question Navigator</h3>
+                                <div class="flex items-center rounded-lg border border-slate-200 bg-slate-50/50 p-0.5 dark:border-slate-800 dark:bg-slate-950/50">
+                                    <button id="btnPrevQuestion" class="p-1 rounded-md text-slate-400 hover:bg-white hover:text-slate-700 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-slate-900 dark:hover:text-slate-200 transition-all flex items-center">
+                                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                                    </button>
+                                    <span id="carouselCounter" class="px-2 text-xs font-mono font-bold text-slate-500 dark:text-slate-400">1 / 1</span>
+                                    <button id="btnNextQuestion" class="p-1 rounded-md text-slate-400 hover:bg-white hover:text-slate-700 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-slate-900 dark:hover:text-slate-200 transition-all flex items-center">
+                                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50/30 rounded-lg border border-slate-100 p-4 dark:bg-slate-950/20 dark:border-slate-850/60">
+                                <p id="carouselQuestion" class="text-xs font-semibold mb-4 whitespace-pre-wrap break-words text-slate-800 dark:text-slate-250 leading-relaxed">-</p>
+                                <div class="grid grid-cols-3 gap-2 text-center text-[10px] uppercase font-mono tracking-wider border-t border-b border-slate-100 py-2.5 my-2.5 dark:border-slate-800">
+                                    <div class="hidden"><div class="text-slate-400 mb-1">Bloom</div><span id="carouselBloom" class="font-semibold text-slate-700 dark:text-slate-350">-</span></div>
+                                    <div class="col-span-3"><div class="text-slate-400 mb-1">Current Difficulty</div><span id="carouselDiff" class="font-bold text-slate-800 dark:text-slate-200">-</span></div>
+                                    <div class="hidden"><div class="text-slate-400 mb-1">Classifier Confidence</div><span id="carouselConf" class="font-bold text-slate-850 dark:text-slate-250">-</span></div>
+                                </div>
+                                <div class="text-xs mt-3"><strong class="text-slate-500">Explanation:</strong> <span id="carouselExp" class="text-slate-600 dark:text-slate-300 leading-relaxed">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>>
+
+                <!-- VIEW: ANALYTICS -->
+                <div id="view-analytics" class="view-section hidden animate-fade-in">
+                    <div class="mb-6">
+                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Analytics</h2>
+                        <h1 class="mt-1 font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Distribution & Metrics</h1>
+                    </div>
+                    
+                    <div id="analyticsContent" class="hidden space-y-6">
+                        <!-- Contextual Card (Hidden by default) -->
+                        <div id="analyticsDeepLinkCard" class="hidden rounded-xl border-l-4 border-l-primary border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-headline text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-primary">target</span> Focused Analytics
+                                </h3>
+                                <button id="btnClearAnalyticsFilter" class="text-xs font-semibold text-slate-500 hover:text-slate-700 underline dark:text-slate-400">Clear Focus</button>
+                            </div>
+                            <div class="mb-4 text-xs font-semibold text-slate-800 dark:text-slate-250"><span class="text-[10px] uppercase font-mono tracking-wider text-slate-450 mr-2 flex items-center gap-1 inline-flex"><span class="material-symbols-outlined text-[14px]">tag</span> <span id="alID">-</span></span> <span id="alQuestion">-</span></div>
+                            <div class="grid grid-cols-2 md:grid-cols-2 gap-4 text-center">
+                                <div class="hidden rounded bg-slate-50 p-2 dark:bg-slate-950"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Status</div><div id="alStatus" class="text-xs font-bold">-</div></div>
+                                <div class="hidden rounded bg-slate-50 p-2 dark:bg-slate-950"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Bloom</div><div id="alBloom" class="text-xs font-bold">-</div></div>
+                                <div class="rounded bg-slate-50 p-2 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Difficulty</div><div id="alDiff" class="text-xs font-bold text-slate-805 dark:text-slate-205">-</div></div>
+                                <div class="hidden rounded bg-slate-50 p-2 dark:bg-slate-950"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Confidence</div><div id="alConf" class="text-xs font-bold">-</div></div>
+                                <div class="rounded bg-slate-50 p-2 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Variants</div><div id="alVarCount" class="text-xs font-bold text-slate-805 dark:text-slate-205">-</div></div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 pb-2 dark:border-slate-800">Difficulty Distribution</h3>
+                                <div style="height: 300px;"><canvas id="diffChart"></canvas></div>
+                            </div>
+                            <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 pb-2 dark:border-slate-800">Classifier Confidence Overview</h3>
+                                <div style="height: 300px;"><canvas id="confChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="rounded-xl border border-blue-100 bg-blue-50/20 p-4 shadow-sm dark:border-blue-900/30 dark:bg-blue-950/10">
+                                <div class="text-[10px] font-mono font-bold text-blue-500 uppercase tracking-widest">Most Common Bloom</div>
+                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white" id="mostCommonBloomLabel">-</div>
+                                <div class="text-xs mt-1 text-slate-500 dark:text-slate-400" id="mostCommonBloomPct">-</div>
+                            </div>
+                            <div class="rounded-xl border border-emerald-100 bg-emerald-50/20 p-4 shadow-sm dark:border-emerald-900/30 dark:bg-emerald-950/10">
+                                <div class="text-[10px] font-mono font-bold text-secondary uppercase tracking-widest">Average Confidence</div>
+                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white font-mono" id="avgConfLabel">-</div>
+                            </div>
+                            <div class="rounded-xl border border-indigo-100 bg-indigo-50/20 p-4 shadow-sm dark:border-indigo-900/30 dark:bg-indigo-950/10">
+                                <div class="text-[10px] font-mono font-bold text-indigo-500 uppercase tracking-widest">Highest Confidence</div>
+                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white font-mono" id="maxConfLabel">-</div>
+                            </div>
+                            <div class="rounded-xl border border-rose-100 bg-rose-50/20 p-4 shadow-sm dark:border-rose-900/30 dark:bg-rose-950/10">
+                                <div class="text-[10px] font-mono font-bold text-danger uppercase tracking-widest">Lowest Confidence</div>
+                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white font-mono" id="minConfLabel">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="analyticsEmpty" class="rounded-xl border border-slate-200 bg-white py-12 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                        <span class="material-symbols-outlined text-[40px] text-slate-300 mb-2 mx-auto block">bar_chart</span>
+                        <h3 class="font-headline text-sm font-bold text-slate-900 dark:text-white">No Data Available</h3>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Upload a batch of questions to generate analytics.</p>
+                        <button class="mt-4 rounded-lg bg-primary hover:bg-primary-hover px-4 py-2 text-xs font-semibold text-white transition-all shadow-sm" onclick="switchTab('view-batch')">Go to Batch Upload</button>
+                    </div>
+                </div>
+
+                <!-- VIEW: MODEL INFO -->
+                <div id="view-modelinfo" class="view-section hidden animate-fade-in">
+                    <div class="mb-6">
+                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">System Models</h2>
+                        <h1 class="mt-1 font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Engine Details</h1>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Card 1: System Status -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-headline text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-400">dns</span>
+                                    System Status
+                                </h3>
+                                <div class="space-y-3.5 text-xs">
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Overall Status</span>
+                                        <span id="sys-status" class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-350">
+                                            Initializing
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Uptime</span>
+                                        <span id="sys-uptime" class="font-bold text-slate-800 dark:text-slate-200 font-mono">00d 00h 00m 00s</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Memory Usage</span>
+                                        <span id="sys-memory" class="font-bold text-slate-800 dark:text-slate-200 font-mono">0.0 MB</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Python Version</span>
+                                        <span id="sys-python-ver" class="font-bold text-slate-800 dark:text-slate-200 font-mono">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Microsoft DeBERTa-v3-base -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-headline text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-400">psychology</span>
+                                    Microsoft DeBERTa-v3-base
+                                </h3>
+                                <div class="space-y-3.5 text-xs">
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Loaded</span>
+                                        <span id="deberta-loaded" class="font-bold text-slate-800 dark:text-slate-200">No</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Device</span>
+                                        <span id="deberta-device" class="font-bold text-slate-800 dark:text-slate-200 font-mono">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Warmup Complete</span>
+                                        <span id="deberta-warmup" class="font-bold text-slate-800 dark:text-slate-200 font-mono">No</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Status</span>
+                                        <span id="deberta-status" class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-350">Offline</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Google FLAN-T5 Base -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-headline text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-400">translate</span>
+                                    Google FLAN-T5 Base
+                                </h3>
+                                <div class="space-y-3.5 text-xs">
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Loaded</span>
+                                        <span id="flan-loaded" class="font-bold text-slate-800 dark:text-slate-200">No</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Device</span>
+                                        <span id="flan-device" class="font-bold text-slate-800 dark:text-slate-200 font-mono">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Generation Ready</span>
+                                        <span id="flan-ready" class="font-bold text-slate-800 dark:text-slate-200">No</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Status</span>
+                                        <span id="flan-status" class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-350">Offline</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Sentence Transformers all-MiniLM-L6-v2 -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-headline text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-400">reorder</span>
+                                    Sentence Transformers
+                                </h3>
+                                <div class="space-y-3.5 text-xs">
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Model</span>
+                                        <span class="font-bold text-slate-800 dark:text-slate-200">all-MiniLM-L6-v2</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Loaded</span>
+                                        <span id="st-loaded" class="font-bold text-slate-800 dark:text-slate-200">No</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Device</span>
+                                        <span id="st-device" class="font-bold text-slate-800 dark:text-slate-200 font-mono">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Embedding Cache Active</span>
+                                        <span id="st-cache-status" class="font-bold text-slate-800 dark:text-slate-200">No</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">spaCy Model</span>
+                                        <span class="font-bold text-slate-800 dark:text-slate-200">en_core_web_sm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: Validation Engine -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:col-span-2 lg:col-span-1">
+                            <h3 class="font-headline text-sm font-semibold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px] text-slate-400">verified_user</span>
+                                Validation Engine
+                            </h3>
+                            <h4 class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">7 Stages</h4>
+                            
+                            <div class="space-y-2.5 text-xs border-b border-slate-100 dark:border-slate-800 pb-3">
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span>Bloom Classification</span>
+                                    <span class="font-mono font-semibold">35</span>
+                                </div>
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span>Concept Preservation</span>
+                                    <span class="font-mono font-semibold">25</span>
+                                </div>
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span>Technical Entity Preservation</span>
+                                    <span class="font-mono font-semibold">15</span>
+                                </div>
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span>Semantic Validation</span>
+                                    <span class="font-mono font-semibold">10</span>
+                                </div>
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span>Number Preservation</span>
+                                    <span class="font-mono font-semibold">5</span>
+                                </div>
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span>Duplicate Detection</span>
+                                    <span class="font-mono font-semibold">5</span>
+                                </div>
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span>Grammar & Repetition</span>
+                                    <span class="font-mono font-semibold">5</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pt-3 text-xs font-bold">
+                                <span class="text-slate-800 dark:text-slate-200">Total Score</span>
+                                <span class="font-mono text-primary">100</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 6: Embedding Cache -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-headline text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-400">database</span>
+                                    Embedding Cache
+                                </h3>
+                                <div class="space-y-3.5 text-xs">
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Hits</span>
+                                        <span id="cache-hits" class="font-bold text-slate-800 dark:text-slate-200 font-mono">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Misses</span>
+                                        <span id="cache-misses" class="font-bold text-slate-800 dark:text-slate-200 font-mono">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2 dark:border-slate-800">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Hit Rate</span>
+                                        <span id="cache-hit-rate" class="font-bold text-slate-800 dark:text-slate-200 font-mono">0.0%</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] font-bold">Total Requests</span>
+                                        <span id="cache-total-requests" class="font-bold text-slate-800 dark:text-slate-200 font-mono">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </main>
+        </div>
+    </div>
+    <!-- Offcanvas Drawer Alternative (Tailwind Sliding Panel) -->
+    <div id="questionDetailDrawer" class="fixed inset-y-0 right-0 z-[60] w-full max-w-5xl translate-x-full flex flex-col border-l border-slate-200 bg-slate-50 shadow-2xl transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-950">
+        <!-- Header & Quick Actions -->
+        <div class="flex items-center justify-between border-b border-slate-100 bg-white px-6 py-4 dark:border-slate-805 dark:bg-slate-900 shadow-sm z-10">
+            <div class="flex items-center gap-4">
+                <h3 class="font-headline text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px] text-primary">description</span> Question Workspace
+                </h3>
+                <span id="drawerStatusBadge" class="hidden rounded-full px-2.5 py-0.5 text-xs font-semibold">Verified</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="btnDrawerCopy" class="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 transition-all">
+                    <span class="material-symbols-outlined text-[15px]">content_copy</span> Copy
+                </button>
+                <button id="btnDrawerStudio" class="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 transition-all">
+                    <span class="material-symbols-outlined text-[15px]">open_in_new</span> Studio
+                </button>
+                <button id="btnDrawerAnalytics" class="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 transition-all">
+                    <span class="material-symbols-outlined text-[15px]">bar_chart</span> Analytics
+                </button>
+                <button id="btnDrawerExport" class="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 transition-all">
+                    <span class="material-symbols-outlined text-[15px]">download</span> Export
+                </button>
+                <button id="btnDrawerReclassify" class="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary text-xs font-semibold text-white hover:bg-primary-hover active:bg-primary transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[15px]">autorenew</span> Reclassify
+                </button>
+                <div class="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-2"></div>
+                <button id="closeDrawerBtn" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Content Area: 2 Columns -->
+        <div class="flex-1 overflow-y-auto p-6 flex flex-col lg:flex-row gap-6 bg-slate-50/50 dark:bg-slate-950/20 custom-scrollbar">
+            
+            <!-- Left Column: Main Question & Variants -->
+            <div class="flex-1 flex flex-col gap-6">
+                <!-- Question Details -->
+                <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden shrink-0">
+                    <div class="flex justify-between items-start border-b border-slate-100 px-6 py-4 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/50">
+                        <div>
+                            <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 mb-1">Original Question</div>
+                            <div class="flex items-center gap-4 text-xs text-slate-400 dark:text-slate-500">
+                                <span class="flex items-center gap-1 font-mono"><span class="material-symbols-outlined text-[14px]">tag</span> <span id="drawerQuestionId">-</span></span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> <span id="drawerTimestamp">-</span></span>
+                            </div>
+                        </div>
+                        <!-- Review Status Dropdown -->
+                        <div class="relative group">
+                            <select id="drawerStatusSelect" class="h-8 px-3 pr-8 inline-flex items-center rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:outline-none dark:border-slate-850 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 transition-all appearance-none cursor-pointer">
+                                <option value="Verified">Verified</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Needs Review">Needs Review</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                            <span class="material-symbols-outlined text-[16px] text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p id="drawerQuestion" class="text-[13px] font-semibold text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap break-words">-</p>
+                    </div>
+                </div>
+
+                <!-- Classification History -->
+                <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden shrink-0">
+                    <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-800">
+                        <h4 class="font-headline text-xs font-bold text-slate-800 dark:text-slate-100">Classification History</h4>
+                    </div>
+                    <div class="p-6 flex flex-col gap-4">
+                        <!-- Current Classification -->
+                        <div class="flex flex-col gap-3 rounded-lg border border-slate-100 bg-slate-50/20 p-4 dark:border-slate-800 dark:bg-slate-950/20">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Current:</span>
+                                    <span id="drawerDiff" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20">-</span>
+                                    <span id="drawerBloom" class="hidden inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/10 dark:text-indigo-400 dark:border-indigo-500/20">-</span>
+                                </div>
+                                <span class="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold tracking-wider text-blue-600 border border-blue-105 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900/30">ACTIVE</span>
+                            </div>
+                            <div class="hidden">
+                                <div class="flex justify-between text-xs font-medium text-slate-500 mb-1">
+                                    <span>Confidence</span>
+                                    <span id="drawerConfText">-</span>
+                                </div>
+                                <div class="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
+                                    <div id="drawerConfBar" class="h-full rounded-full bg-primary" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap break-words border-t border-slate-100 dark:border-slate-800 pt-3">
+                                <strong class="text-slate-700 dark:text-slate-350">Explanation:</strong> <span id="drawerExplanation" class="font-normal">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Previous Classification (Hidden by default) -->
+                        <div id="drawerPrevClassContainer" class="hidden flex flex-col gap-3 rounded-lg border border-dashed border-slate-200 bg-white p-4 dark:border-slate-850 dark:bg-slate-900 opacity-60">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-[10px] font-mono font-bold text-slate-450 uppercase tracking-widest">Previous:</span>
+                                    <span id="drawerPrevDiff" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-50 text-slate-650 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">-</span>
+                                    <span id="drawerPrevBloom" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-50 text-slate-655 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">-</span>
+                                </div>
+                                <span class="text-xs text-slate-400 font-semibold">Confidence: <span id="drawerPrevConfText">-</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Variant Workspace -->
+                <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden flex flex-col shrink-0">
+                    <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-900/50">
+                        <h4 class="font-headline text-xs font-bold text-slate-805 dark:text-slate-100 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-secondary">layers</span> Variant Workspace
+                        </h4>
+                        <div id="drawerGenerationControlsContainer" class="flex gap-2">
+                            <!-- Dynamic controls will be rendered here by JS -->
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 flex-1 bg-slate-50/20 dark:bg-slate-950/20">
+                        <div id="drawerVariantsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Variants will be injected here -->
+                        </div>
+                        <div id="drawerNoVariantsMsg" class="text-center py-8">
+                            <span class="material-symbols-outlined text-[32px] text-slate-300 dark:text-slate-600 mb-2 mx-auto block">inbox</span>
+                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500">No variants generated yet.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Right Column: Notes & Tags -->
+            <div class="w-full lg:w-72 flex flex-col gap-6 shrink-0">
+                
+                <!-- Tags Section -->
+                <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden shrink-0">
+                    <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+                        <h4 class="font-headline text-xs font-bold text-slate-805 dark:text-slate-100 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-indigo-500">sell</span> Tags
+                        </h4>
+                    </div>
+                    <div class="p-4">
+                        <div id="drawerTagsContainer" class="flex flex-wrap gap-1.5 mb-3">
+                            <!-- Tags injected here -->
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="drawerTagInput" placeholder="Add tag..." class="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-700 outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-200">
+                            <button id="btnDrawerAddTag" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 active:bg-slate-100 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 transition shrink-0">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                            </button>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-1.5">
+                            <span class="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest w-full mb-1">Suggestions</span>
+                            <button class="btn-suggest-tag rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400 dark:hover:bg-slate-800 transition-all" data-tag="Network">Network</button>
+                            <button class="btn-suggest-tag rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400 dark:hover:bg-slate-800 transition-all" data-tag="Database">Database</button>
+                            <button class="btn-suggest-tag rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400 dark:hover:bg-slate-800 transition-all" data-tag="Security">Security</button>
+                            <button class="btn-suggest-tag rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400 dark:hover:bg-slate-800 transition-all" data-tag="Cloud">Cloud</button>
+                            <button class="btn-suggest-tag rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400 dark:hover:bg-slate-800 transition-all" data-tag="AI">AI</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden flex flex-col flex-1 shrink-0">
+                    <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+                        <h4 class="font-headline text-xs font-bold text-slate-805 dark:text-slate-100 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-amber-500">edit_note</span> Notes
+                        </h4>
+                    </div>
+                    <div class="p-4 flex flex-col flex-1">
+                        <textarea id="drawerNotes" class="w-full flex-1 resize-none rounded-lg border border-slate-200 bg-slate-50/20 p-3 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-205 dark:focus:bg-slate-950 min-h-[150px]" placeholder="Add reviewer notes..."></textarea>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Drawer Overlay -->
+    <div id="drawerOverlay" class="fixed inset-0 z-[55] hidden bg-slate-950/40 backdrop-blur-[2px] transition-all duration-300"></div>>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-[70] flex flex-col gap-2"></div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

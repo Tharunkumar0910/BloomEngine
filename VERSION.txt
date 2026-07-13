@@ -1,0 +1,7 @@
+Project: BloomAI Arena
+Version: 2.1
+Status: Frozen Release
+Accuracy: 90.33%
+Macro F1: 89.69%
+Production Readiness: 88/100
+Date: 2026-06-15

@@ -1,0 +1,702 @@
+[
+  {
+    "question": "Define normalization in database management systems and state its primary goal.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "Normalization"
+  },
+  {
+    "question": "List the ACID properties of a database transaction and briefly describe each.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "ACID Properties"
+  },
+  {
+    "question": "State the purpose of a primary key in a relational database schema.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "Primary Key"
+  },
+  {
+    "question": "Identify the four standard isolation levels defined by the SQL standard for transactions.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "Transaction Isolation"
+  },
+  {
+    "question": "Name the three types of anomalies that arise from an un-normalised relational table.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "Data Anomalies"
+  },
+  {
+    "question": "Define the OSI model and state the function of each of its seven layers.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Computer Networks",
+    "topic": "OSI Model"
+  },
+  {
+    "question": "Identify the fields contained in an IPv4 packet header.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Computer Networks",
+    "topic": "IP Addressing"
+  },
+  {
+    "question": "State the difference between TCP and UDP in terms of connection establishment.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Computer Networks",
+    "topic": "Transport Layer Protocols"
+  },
+  {
+    "question": "List the conditions that must hold simultaneously for deadlock to occur in an operating system.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Operating Systems",
+    "topic": "Deadlock"
+  },
+  {
+    "question": "Define a page fault and state under what condition it is triggered.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Operating Systems",
+    "topic": "Virtual Memory"
+  },
+  {
+    "question": "Identify the scheduling criterion optimised by the Shortest Job First algorithm.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Operating Systems",
+    "topic": "CPU Scheduling"
+  },
+  {
+    "question": "State the four phases of the Unified Software Development Life Cycle in Agile development.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Software Engineering",
+    "topic": "Agile Methodology"
+  },
+  {
+    "question": "Define cohesion and coupling in the context of software module design.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Software Engineering",
+    "topic": "Software Design Principles"
+  },
+  {
+    "question": "List the five SOLID principles used in object-oriented software design.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Software Engineering",
+    "topic": "SOLID Principles"
+  },
+  {
+    "question": "Define a binary search tree and state its ordering property.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Data Structures",
+    "topic": "Binary Search Tree"
+  },
+  {
+    "question": "Identify the time complexity of searching in a balanced AVL tree.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Data Structures",
+    "topic": "AVL Tree"
+  },
+  {
+    "question": "State the difference between a stack and a queue in terms of element access order.",
+    "expected_bloom": "Remember",
+    "expected_difficulty": "Easy",
+    "domain": "Data Structures",
+    "topic": "Stack and Queue"
+  },
+  {
+    "question": "Explain how a B-tree index improves the performance of SQL SELECT queries in a database.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "Indexing"
+  },
+  {
+    "question": "Describe the two-phase commit protocol and explain why it guarantees atomicity across distributed databases.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "Distributed Transactions"
+  },
+  {
+    "question": "Explain the difference between a clustered index and a non-clustered index in a relational database.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Database Management Systems",
+    "topic": "Indexing"
+  },
+  {
+    "question": "Describe how the three-way handshake establishes a TCP connection between a client and a server.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Computer Networks",
+    "topic": "TCP Connection"
+  },
+  {
+    "question": "Explain how DHCP automatically assigns IP addresses to devices on a network.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Computer Networks",
+    "topic": "DHCP"
+  },
+  {
+    "question": "Describe the role of ARP in resolving IP addresses to MAC addresses on a local area network.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Computer Networks",
+    "topic": "ARP"
+  },
+  {
+    "question": "Explain how the banker's algorithm prevents deadlock in a multi-process operating system.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Operating Systems",
+    "topic": "Deadlock Avoidance"
+  },
+  {
+    "question": "Describe the difference between preemptive and non-preemptive scheduling in operating systems.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Operating Systems",
+    "topic": "CPU Scheduling"
+  },
+  {
+    "question": "Explain how version control systems such as Git support collaborative software development.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Software Engineering",
+    "topic": "Version Control"
+  },
+  {
+    "question": "Describe the role of a design pattern and explain how the Singleton pattern enforces a single instance.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Software Engineering",
+    "topic": "Design Patterns"
+  },
+  {
+    "question": "Explain how depth-first search traverses a graph and identify its time complexity.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Data Structures",
+    "topic": "Graph Traversal"
+  },
+  {
+    "question": "Describe the collision resolution strategy used by open addressing in a hash table.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Data Structures",
+    "topic": "Hash Tables"
+  },
+  {
+    "question": "Explain how a min-heap maintains its structural and ordering properties after insertion.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Data Structures",
+    "topic": "Heaps"
+  },
+  {
+    "question": "Explain how gradient descent minimises the loss function during neural network training.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Machine Learning",
+    "topic": "Gradient Descent"
+  },
+  {
+    "question": "Describe the difference between supervised and unsupervised learning and give one application of each.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Machine Learning",
+    "topic": "Learning Paradigms"
+  },
+  {
+    "question": "Explain how a convolutional neural network extracts spatial features from an input image.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Artificial Intelligence",
+    "topic": "Convolutional Neural Networks"
+  },
+  {
+    "question": "Describe the concept of the A* search algorithm and explain why it is considered optimal.",
+    "expected_bloom": "Understand",
+    "expected_difficulty": "Easy",
+    "domain": "Artificial Intelligence",
+    "topic": "Search Algorithms"
+  },
+  {
+    "question": "Given a relation in first normal form with transitive dependencies, apply the rules of third normal form to decompose it.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Database Management Systems",
+    "topic": "Normalization"
+  },
+  {
+    "question": "Apply the concept of indexing to design an efficient query plan for a table with 10 million rows.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Database Management Systems",
+    "topic": "Query Optimisation"
+  },
+  {
+    "question": "Given a network topology, apply Dijkstra's algorithm to find the shortest path between two routers.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Computer Networks",
+    "topic": "Routing Algorithms"
+  },
+  {
+    "question": "Apply CIDR notation to calculate the number of usable hosts in a subnet with a /26 prefix.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Computer Networks",
+    "topic": "Subnetting"
+  },
+  {
+    "question": "Demonstrate how to implement the producer-consumer problem using semaphores in an operating system context.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Operating Systems",
+    "topic": "Process Synchronisation"
+  },
+  {
+    "question": "Apply the Round Robin scheduling algorithm to compute average waiting time for a given set of processes.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Operating Systems",
+    "topic": "CPU Scheduling"
+  },
+  {
+    "question": "Use UML class diagrams to model a library management system with members, books, and loans.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Software Engineering",
+    "topic": "UML Modelling"
+  },
+  {
+    "question": "Apply Dijkstra's shortest-path algorithm to a weighted directed graph and trace its execution step by step.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Data Structures",
+    "topic": "Graph Algorithms"
+  },
+  {
+    "question": "Implement a merge sort algorithm and trace its execution on the array [5, 2, 8, 1, 9, 3].",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Data Structures",
+    "topic": "Sorting Algorithms"
+  },
+  {
+    "question": "Apply the k-nearest neighbours algorithm to classify a new data point in a two-dimensional feature space.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Machine Learning",
+    "topic": "Classification Algorithms"
+  },
+  {
+    "question": "Use the naive Bayes classifier to compute the probability that a given email is spam based on word frequencies.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Machine Learning",
+    "topic": "Probabilistic Classifiers"
+  },
+  {
+    "question": "Apply the minimax algorithm with alpha-beta pruning to determine the optimal move in a given game tree.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Artificial Intelligence",
+    "topic": "Game Tree Search"
+  },
+  {
+    "question": "Apply RSA encryption to encode a short plaintext message using given public key parameters.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Cyber Security",
+    "topic": "Asymmetric Cryptography"
+  },
+  {
+    "question": "Demonstrate how a SQL injection attack exploits an unsanitised login form and how parameterised queries prevent it.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Cyber Security",
+    "topic": "SQL Injection"
+  },
+  {
+    "question": "Given a set of processes and a resource allocation table, apply the resource allocation graph algorithm to detect deadlock.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Operating Systems",
+    "topic": "Deadlock Detection"
+  },
+  {
+    "question": "Apply the principles of structured query language to write a stored procedure that calculates cumulative sales by quarter.",
+    "expected_bloom": "Apply",
+    "expected_difficulty": "Medium",
+    "domain": "Database Management Systems",
+    "topic": "Stored Procedures"
+  },
+  {
+    "question": "Analyse the trade-offs between using a relational database and a document-oriented NoSQL database for a high-volume social media platform.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Database Management Systems",
+    "topic": "Database Selection"
+  },
+  {
+    "question": "Break down the components of the query execution engine and explain how each stage contributes to query optimisation.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Database Management Systems",
+    "topic": "Query Processing"
+  },
+  {
+    "question": "Compare and contrast OSPF and BGP routing protocols in terms of scope, convergence speed, and use case.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Computer Networks",
+    "topic": "Routing Protocols"
+  },
+  {
+    "question": "Examine the causes of TCP congestion and analyse how the slow start and congestion avoidance phases respond.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Computer Networks",
+    "topic": "Congestion Control"
+  },
+  {
+    "question": "Determine the root cause of priority inversion in a real-time operating system and analyse its impact on system correctness.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Operating Systems",
+    "topic": "Real-Time Scheduling"
+  },
+  {
+    "question": "Compare the memory management strategies of paging and segmentation and analyse the fragmentation each produces.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Operating Systems",
+    "topic": "Memory Management"
+  },
+  {
+    "question": "Analyse the impact of high coupling between software modules on maintainability and testability of a large codebase.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Software Engineering",
+    "topic": "Software Quality"
+  },
+  {
+    "question": "Examine the architectural flaws in a provided monolithic application and analyse the effort required to migrate it to microservices.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Software Engineering",
+    "topic": "Software Architecture"
+  },
+  {
+    "question": "Compare the average-case and worst-case time complexities of quicksort and heapsort and analyse when each is preferred.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Data Structures",
+    "topic": "Sorting Algorithms"
+  },
+  {
+    "question": "Analyse why a hash table with a poor hash function degrades to O(n) search performance and propose a remedy.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Data Structures",
+    "topic": "Hash Tables"
+  },
+  {
+    "question": "Compare bias and variance as sources of model error and analyse the effect of increasing model complexity on each.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Machine Learning",
+    "topic": "Bias-Variance Tradeoff"
+  },
+  {
+    "question": "Examine the differences between batch gradient descent, stochastic gradient descent, and mini-batch gradient descent for large datasets.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Machine Learning",
+    "topic": "Optimisation Methods"
+  },
+  {
+    "question": "Analyse the architectural differences between a rule-based expert system and a neural network classifier for medical diagnosis.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Artificial Intelligence",
+    "topic": "Expert Systems"
+  },
+  {
+    "question": "Examine how a man-in-the-middle attack exploits weaknesses in certificate validation during a TLS handshake.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Cyber Security",
+    "topic": "TLS and PKI"
+  },
+  {
+    "question": "Analyse the security implications of storing session tokens in browser cookies versus local storage in a web application.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Cyber Security",
+    "topic": "Session Management"
+  },
+  {
+    "question": "Compare the performance characteristics of linked lists and dynamic arrays for insertions, deletions, and random access.",
+    "expected_bloom": "Analyze",
+    "expected_difficulty": "Medium",
+    "domain": "Data Structures",
+    "topic": "Linear Data Structures"
+  },
+  {
+    "question": "Evaluate the suitability of eventual consistency versus strong consistency for a globally distributed e-commerce inventory system.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Database Management Systems",
+    "topic": "Consistency Models"
+  },
+  {
+    "question": "Assess whether de-normalisation is an appropriate optimisation strategy for a read-heavy reporting database and justify your decision.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Database Management Systems",
+    "topic": "Database Optimisation"
+  },
+  {
+    "question": "Critique the use of a flat network topology for a university campus with five thousand devices and recommend an alternative.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Computer Networks",
+    "topic": "Network Design"
+  },
+  {
+    "question": "Evaluate the trade-offs of using a software-defined network versus a traditional hardware-based network in a data centre.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Computer Networks",
+    "topic": "SDN"
+  },
+  {
+    "question": "Justify whether a ticketing system or a token-based mechanism is more suitable for mutual exclusion in a distributed operating system.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Operating Systems",
+    "topic": "Distributed Synchronisation"
+  },
+  {
+    "question": "Assess the correctness and efficiency of the LRU page replacement algorithm relative to the optimal algorithm.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Operating Systems",
+    "topic": "Page Replacement"
+  },
+  {
+    "question": "Evaluate the decision to adopt test-driven development in a safety-critical embedded software project and defend your recommendation.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Software Engineering",
+    "topic": "Testing Strategies"
+  },
+  {
+    "question": "Critique a provided software requirements specification document and identify ambiguities that could lead to implementation defects.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Software Engineering",
+    "topic": "Requirements Engineering"
+  },
+  {
+    "question": "Assess whether a red-black tree or a skip list is a more appropriate data structure for an ordered key-value store.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Data Structures",
+    "topic": "Advanced Tree Structures"
+  },
+  {
+    "question": "Evaluate the trade-offs between using an adjacency matrix and an adjacency list for representing sparse graphs.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Data Structures",
+    "topic": "Graph Representation"
+  },
+  {
+    "question": "Justify the choice of a random forest model over a single decision tree for a fraud detection system.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Machine Learning",
+    "topic": "Ensemble Methods"
+  },
+  {
+    "question": "Evaluate whether a recurrent neural network or a transformer architecture is more appropriate for long-document summarisation.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Machine Learning",
+    "topic": "Sequence Models"
+  },
+  {
+    "question": "Assess the ethical implications of deploying a facial recognition system in public spaces and recommend governance policies.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Artificial Intelligence",
+    "topic": "AI Ethics"
+  },
+  {
+    "question": "Evaluate the effectiveness of multi-factor authentication compared to single-factor authentication for securing enterprise systems.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Cyber Security",
+    "topic": "Authentication"
+  },
+  {
+    "question": "Critique the zero-trust security model and assess its feasibility for a small business with limited IT resources.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Cyber Security",
+    "topic": "Security Architecture"
+  },
+  {
+    "question": "Assess whether agile or waterfall methodology is more appropriate for developing a safety-critical avionics control system.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Software Engineering",
+    "topic": "Software Development Methodology"
+  },
+  {
+    "question": "Evaluate the impact of using a convolutional neural network versus a vision transformer for real-time object detection on edge devices.",
+    "expected_bloom": "Evaluate",
+    "expected_difficulty": "Hard",
+    "domain": "Artificial Intelligence",
+    "topic": "Computer Vision"
+  },
+  {
+    "question": "Design a relational schema for a hospital management system that records patients, doctors, appointments, and prescriptions in third normal form.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Database Management Systems",
+    "topic": "Schema Design"
+  },
+  {
+    "question": "Propose a sharding strategy for a social network database with two billion user accounts to achieve horizontal scalability.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Database Management Systems",
+    "topic": "Database Sharding"
+  },
+  {
+    "question": "Design a reliable file transfer protocol over UDP that guarantees ordered delivery and retransmission of lost packets.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Computer Networks",
+    "topic": "Protocol Design"
+  },
+  {
+    "question": "Construct a network architecture for a bank that separates internet-facing services from internal systems using DMZ and firewall zones.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Computer Networks",
+    "topic": "Network Security Architecture"
+  },
+  {
+    "question": "Design a custom memory allocator for an embedded operating system with no virtual memory support and fixed-size partitions.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Operating Systems",
+    "topic": "Memory Management"
+  },
+  {
+    "question": "Formulate a CPU scheduling algorithm that minimises average turnaround time for a mixed workload of I/O-bound and CPU-bound processes.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Operating Systems",
+    "topic": "CPU Scheduling"
+  },
+  {
+    "question": "Design a microservices architecture for an online retail platform including service boundaries, communication patterns, and data ownership.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Software Engineering",
+    "topic": "Microservices Architecture"
+  },
+  {
+    "question": "Develop a comprehensive CI/CD pipeline for a Python web application including build, test, security scan, and deployment stages.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Software Engineering",
+    "topic": "DevOps and CI/CD"
+  },
+  {
+    "question": "Construct a self-balancing trie data structure to support autocomplete search over a dictionary of one million words.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Data Structures",
+    "topic": "Trie"
+  },
+  {
+    "question": "Design an LRU cache using a combination of a doubly linked list and a hash map and describe its get and put operations.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Data Structures",
+    "topic": "Cache Data Structures"
+  },
+  {
+    "question": "Propose a novel feature engineering pipeline for a customer churn prediction model trained on transactional banking data.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Machine Learning",
+    "topic": "Feature Engineering"
+  },
+  {
+    "question": "Design a reinforcement learning environment and reward function to train an agent to optimise warehouse robot routing.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Machine Learning",
+    "topic": "Reinforcement Learning"
+  },
+  {
+    "question": "Develop a knowledge representation scheme using semantic networks to model medical diagnostic reasoning for a clinical decision support system.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Artificial Intelligence",
+    "topic": "Knowledge Representation"
+  },
+  {
+    "question": "Design a multi-agent system for coordinating autonomous vehicles at a busy intersection without centralised control.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Artificial Intelligence",
+    "topic": "Multi-Agent Systems"
+  },
+  {
+    "question": "Design an intrusion detection system that combines signature-based and anomaly-based detection for a corporate network.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Cyber Security",
+    "topic": "Intrusion Detection"
+  },
+  {
+    "question": "Propose a key management architecture for encrypting sensitive data at rest in a multi-tenant cloud environment.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Cyber Security",
+    "topic": "Cryptographic Key Management"
+  },
+  {
+    "question": "Design a scalable event-driven architecture for a real-time ride-hailing platform supporting millions of concurrent users.",
+    "expected_bloom": "Create",
+    "expected_difficulty": "Hard",
+    "domain": "Software Engineering",
+    "topic": "Event-Driven Architecture"
+  }
+]

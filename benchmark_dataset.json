@@ -1,0 +1,1202 @@
+[
+    {
+        "question": "Justify the decision to use Random Forest over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Describe the underlying mechanism of RSA Encryption.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Apply the concept of Overfitting to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Graphs.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "In your own words, clarify the concept of Graphs.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Illustrate the basic workflow of Page Faults.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "List the core components that make up Buffer Overflow.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Design a custom Compiler Design architecture that heavily leverages Lexical Analysis.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Define B-Trees and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Subnetting provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Analyze the impact of Process Scheduling on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of Design Patterns.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "List the core components that make up Agile.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Analyze the impact of Deadlock on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of Heaps.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Summarize the relationship between S3 and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Recommend an alternative to Zero Trust if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Critique the provided design that utilizes Mutex, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Overfitting.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of ACID properties.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Identify the key characteristics of SVM.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Define Kafka and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "State the primary function of Lexical Analysis in the context of Compiler Design.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Mutex.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Show how Buffer Overflow would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Normalization provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "What is the formal definition of DNS?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Illustrate the basic workflow of MapReduce.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Illustrate the basic workflow of Linked Lists.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Design a custom Computer Networks architecture that heavily leverages BGP Routing.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Describe the underlying mechanism of Load Balancing.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Analyze the impact of Transactions on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Analyze the impact of ACID properties on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of HDFS.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Linked Lists regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of Transactions.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "List the core components that make up Zero Trust.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Load Balancing.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Describe the underlying mechanism of Packet Switching.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Apply the concept of HDFS to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Compare and contrast DNS with its standard alternatives in Computer Networks.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Apply the concept of AVL Trees to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Use the principles of Abstract Syntax Trees to solve the provided Compiler Design problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Assess whether TCP/IP is the most appropriate solution for this high-throughput Computer Networks system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of Docker.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Use the principles of Serverless to solve the provided Cloud Computing problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Docker regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Explain how SQL Joins operates within DBMS.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Given a specific scenario in Operating Systems, demonstrate how to implement Page Faults.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "State the primary function of Deadlock in the context of Operating Systems.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Break down the components of B-Trees and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Assess whether S3 is the most appropriate solution for this high-throughput Cloud Computing system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Code Optimization provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Load Balancing regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Describe the underlying mechanism of Virtual Memory.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Hash Tables provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Calculate the expected outcome if Linked Lists is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Explain how Serverless operates within Cloud Computing.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "State the primary function of MapReduce in the context of Big Data.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Explain how Gradient Descent operates within Machine Learning.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Compare and contrast AVL Trees with its standard alternatives in Data Structures.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "What is the formal definition of IaaS?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of SQL Joins provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Summarize the relationship between CI/CD and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Analyze the impact of Zero Trust on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Compare and contrast XSS with its standard alternatives in Cyber Security.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Neural Networks.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Describe the underlying mechanism of BGP Routing.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of Process Scheduling.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Use the principles of Spark RDD to solve the provided Big Data problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Assess whether Code Optimization is the most appropriate solution for this high-throughput Compiler Design system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing RSA Encryption regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Design a custom Cyber Security architecture that heavily leverages Zero Trust.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Compare and contrast Data Lakes with its standard alternatives in Big Data.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Justify the decision to use IaaS over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Normalization.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Identify the key characteristics of Design Patterns.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Show how Code Optimization would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Spark RDD.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of Firewalls.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "State the primary function of Load Balancing in the context of Cloud Computing.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Explain how B-Trees operates within DBMS.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Critique the provided design that utilizes Abstract Syntax Trees, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Microservices provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Analyze the impact of Design Patterns on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Assess whether Packet Switching is the most appropriate solution for this high-throughput Computer Networks system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Identify the key characteristics of Gradient Descent.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of SVM.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Break down the components of Abstract Syntax Trees and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving S3.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Define TCP/IP and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Use the principles of Agile to solve the provided Software Engineering problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Calculate the expected outcome if MapReduce is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "List the core components that make up Spark RDD.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Justify the decision to use DNS over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Describe the underlying mechanism of Data Lakes.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Data Lakes.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Show how Random Forest would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "In your own words, clarify the concept of Neural Networks.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "List the core components that make up ACID properties.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Break down the components of Load Balancing and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Assess whether Symbol Tables is the most appropriate solution for this high-throughput Compiler Design system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Design a custom Operating Systems architecture that heavily leverages Mutex.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Recommend an alternative to SVM if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Identify the key characteristics of Parsing.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Show how Virtual Memory would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Break down the components of Gradient Descent and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Agile.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "List the core components that make up Microservices.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Summarize the relationship between IaaS and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "State the primary function of Mutex in the context of Operating Systems.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Identify the key characteristics of XSS.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Hash Tables.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "State the primary function of Virtual Memory in the context of Operating Systems.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Given a specific scenario in Computer Networks, demonstrate how to implement DNS.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Calculate the expected outcome if UML is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of AVL Trees.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "What is the formal definition of CI/CD?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Define HDFS and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "List the core components that make up Random Forest.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Identify the key characteristics of Firewalls.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Explain how Deadlock operates within Operating Systems.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of TCP/IP.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Firewalls regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Justify the decision to use Overfitting over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Show how Docker would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "In your own words, clarify the concept of Code Optimization.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Symbol Tables provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of MapReduce.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "List the core components that make up Transactions.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Design a custom Cloud Computing architecture that heavily leverages IaaS.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "In your own words, clarify the concept of UML.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Illustrate the basic workflow of Hash Tables.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Calculate the expected outcome if Process Scheduling is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Recommend an alternative to SQL Joins if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "What is the formal definition of Docker?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Summarize the relationship between AVL Trees and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Illustrate the basic workflow of SVM.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Explain how Overfitting operates within Machine Learning.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Show how Normalization would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Explain how Kafka operates within Big Data.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Page Faults.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Design a custom Computer Networks architecture that heavily leverages DNS.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Neural Networks.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Identify the key characteristics of Abstract Syntax Trees.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Critique the provided design that utilizes Agile, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Analyze the impact of IaaS on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Compare and contrast Virtual Memory with its standard alternatives in Operating Systems.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "In your own words, clarify the concept of Subnetting.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Illustrate the basic workflow of Process Scheduling.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Define Overfitting and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Spark RDD.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Summarize the relationship between Abstract Syntax Trees and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Assess whether B-Trees is the most appropriate solution for this high-throughput DBMS system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of Serverless.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Design a custom Compiler Design architecture that heavily leverages Parsing.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Show how CI/CD would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "What is the formal definition of BGP Routing?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Show how Heaps would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Page Faults.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Illustrate the basic workflow of Symbol Tables.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of XSS.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Gradient Descent regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of CI/CD.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Describe the underlying mechanism of Lexical Analysis.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Show how Deadlock would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Spark RDD regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Explain how DNS operates within Computer Networks.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Critique the provided design that utilizes Page Faults, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Given a specific scenario in DBMS, demonstrate how to implement ACID properties.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of UML.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Recommend an alternative to Parsing if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Break down the components of Docker and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Given a specific scenario in DBMS, demonstrate how to implement Transactions.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Calculate the expected outcome if SQL Joins is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "What is the formal definition of Symbol Tables?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Identify the key characteristics of Packet Switching.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "What is the formal definition of S3?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Justify the decision to use Graphs over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Compare and contrast Lexical Analysis with its standard alternatives in Compiler Design.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of Subnetting.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Justify the decision to use Deadlock over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Given a specific scenario in Big Data, demonstrate how to implement Kafka.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Given a specific scenario in Compiler Design, demonstrate how to implement Lexical Analysis.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "What is the formal definition of Page Faults?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of Deadlock.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Define Code Optimization and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Random Forest.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Show how TCP/IP would be utilized to optimize this specific architecture.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Firewalls provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Compare and contrast UML with its standard alternatives in Software Engineering.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Apply the concept of Subnetting to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Calculate the expected outcome if BGP Routing is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Apply the concept of Mutex to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of Buffer Overflow.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Design a custom Compiler Design architecture that heavily leverages Code Optimization.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Illustrate the basic workflow of Parsing.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Analyze the impact of RSA Encryption on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of MapReduce provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Calculate the expected outcome if Parsing is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of Graphs.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of Random Forest.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Recommend an alternative to Kafka if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Assess whether Design Patterns is the most appropriate solution for this high-throughput Software Engineering system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Apply the concept of XSS to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Break down the components of Packet Switching and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Analyze the impact of CI/CD on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Calculate the expected outcome if Hash Tables is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Calculate the expected outcome if Microservices is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Summarize the relationship between Transactions and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Use the principles of Gradient Descent to solve the provided Machine Learning problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Microservices regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "List the core components that make up RSA Encryption.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "State the primary function of Serverless in the context of Cloud Computing.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Examine the architectural flaws in the implementation of Linked Lists provided below.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Overfitting.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Apply the concept of Zero Trust to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of Gradient Descent.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of Microservices.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Break down the components of BGP Routing and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Recommend an alternative to Virtual Memory if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "In your own words, clarify the concept of Zero Trust.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Recommend an alternative to Process Scheduling if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "List the core components that make up SQL Joins.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Use the principles of Load Balancing to solve the provided Cloud Computing problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Determine the root cause of the performance bottleneck involving Serverless.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Given a specific scenario in DBMS, demonstrate how to implement B-Trees.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of S3.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Design a custom Compiler Design architecture that heavily leverages Abstract Syntax Trees.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Describe the underlying mechanism of Agile.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Identify the key characteristics of Graphs.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "In your own words, clarify the concept of XSS.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Explain how Mutex operates within Operating Systems.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Given a specific scenario in Cloud Computing, demonstrate how to implement S3.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Use the principles of Packet Switching to solve the provided Computer Networks problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "In your own words, clarify the concept of Random Forest.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Compare and contrast HDFS with its standard alternatives in Big Data.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Define Normalization and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Analyze the impact of Buffer Overflow on the overall scalability of the system.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Linked Lists.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Use the principles of Neural Networks to solve the provided Machine Learning problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Justify the decision to use Transactions over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "State the primary function of Linked Lists in the context of Data Structures.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Critique the provided design that utilizes UML, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "What is the formal definition of Neural Networks?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Break down the components of SVM and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Define Subnetting and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Apply the concept of Firewalls to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Break down the components of TCP/IP and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Design a custom Operating Systems architecture that heavily leverages Virtual Memory.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Critique the provided design that utilizes ACID properties, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Describe the underlying mechanism of Buffer Overflow.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Hash Tables regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Justify the decision to use Serverless over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Break down the components of Parsing and explain how they interact.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Summarize the relationship between Firewalls and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Use the principles of Design Patterns to solve the provided Software Engineering problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Describe the underlying mechanism of Design Patterns.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Critique the provided design that utilizes Data Lakes, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Justify the decision to use XSS over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Given a specific scenario in Big Data, demonstrate how to implement Data Lakes.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Critique the provided design that utilizes CI/CD, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Use the principles of RSA Encryption to solve the provided Cyber Security problem.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Assess whether Lexical Analysis is the most appropriate solution for this high-throughput Compiler Design system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of RSA Encryption.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Critique the provided design that utilizes Buffer Overflow, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Recommend an alternative to Neural Networks if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Illustrate the basic workflow of TCP/IP.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Assess whether MapReduce is the most appropriate solution for this high-throughput Big Data system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "What is the formal definition of Heaps?",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Recommend an alternative to Heaps if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "State the primary function of AVL Trees in the context of Data Structures.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Evaluate the trade-offs of implementing Normalization regarding memory and time complexity.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Critique the provided design that utilizes Subnetting, highlighting its security vulnerabilities.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Formulate a new protocol that extends the standard capabilities of B-Trees.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of Kafka.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Compare and contrast Kafka with its standard alternatives in Big Data.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Compare and contrast Heaps with its standard alternatives in Data Structures.",
+        "expected_bloom": "Analyze"
+    },
+    {
+        "question": "Summarize the relationship between Normalization and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Summarize the relationship between Heaps and overall system performance.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Illustrate the basic workflow of Docker.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "Calculate the expected outcome if IaaS is applied to the given system.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Develop a comprehensive deployment strategy integrating Agile.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Define UML and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Explain how Spark RDD operates within Big Data.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "In your own words, clarify the concept of ACID properties.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "In your own words, clarify the concept of Microservices.",
+        "expected_bloom": "Understand"
+    },
+    {
+        "question": "State the primary function of Process Scheduling in the context of Operating Systems.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Justify the decision to use BGP Routing over traditional methods in this enterprise scenario.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of Packet Switching.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Assess whether AVL Trees is the most appropriate solution for this high-throughput Data Structures system.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Apply the concept of SVM to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Apply the concept of Symbol Tables to trace the execution path of the provided code.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Define Hash Tables and give a basic example.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Construct a fault-tolerant system model based on the principles of SQL Joins.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Recommend an alternative to HDFS if the system requires 99.999% availability, and defend your choice.",
+        "expected_bloom": "Evaluate"
+    },
+    {
+        "question": "Identify the key characteristics of Data Lakes.",
+        "expected_bloom": "Remember"
+    },
+    {
+        "question": "Propose a novel algorithm that improves the efficiency of Symbol Tables.",
+        "expected_bloom": "Create"
+    },
+    {
+        "question": "Given a specific scenario in Data Structures, demonstrate how to implement Graphs.",
+        "expected_bloom": "Apply"
+    },
+    {
+        "question": "Summarize the relationship between HDFS and overall system performance.",
+        "expected_bloom": "Understand"
+    }
+]

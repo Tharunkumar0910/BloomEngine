@@ -1,0 +1,61 @@
+Source Question,Mode,Accepted First Attempt,Attempt Count,Failure Reason,Generation Time
+Explain the concept of ACID properties in a relational database management system.,Mode B (Production),Yes,1,None,2.0541
+Explain the concept of ACID properties in a relational database management system.,Mode B (Production),Yes,1,None,2.3211
+Explain the concept of ACID properties in a relational database management system.,Mode B (Production),No,3,Repetition,4.0527
+Explain the concept of ACID properties in a relational database management system.,Mode B (Production),Yes,1,None,2.3863
+Explain the concept of ACID properties in a relational database management system.,Mode B (Production),Yes,1,None,2.1737
+Explain the concept of ACID properties in a relational database management system.,Mode B (Production),Yes,1,None,3.8653
+Describe the process of database normalization and its role in reducing data redundancy.,Mode B (Production),Yes,1,None,1.577
+Describe the process of database normalization and its role in reducing data redundancy.,Mode B (Production),Yes,1,None,2.2231
+Describe the process of database normalization and its role in reducing data redundancy.,Mode B (Production),Yes,1,None,2.3947
+Describe the process of database normalization and its role in reducing data redundancy.,Mode B (Production),Yes,1,None,2.6402
+Describe the process of database normalization and its role in reducing data redundancy.,Mode B (Production),Yes,1,None,2.2964
+Describe the process of database normalization and its role in reducing data redundancy.,Mode B (Production),Yes,1,None,3.6305
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode B (Production),Yes,1,None,2.3183
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode B (Production),Yes,1,None,2.9922
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode B (Production),Yes,1,None,3.5587
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode B (Production),Yes,1,None,4.053
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode B (Production),Yes,1,None,2.9295
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode B (Production),Yes,1,None,4.3961
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode B (Production),Yes,1,None,1.999
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode B (Production),Yes,1,None,2.8254
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode B (Production),Yes,1,None,3.2039
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode B (Production),Yes,1,None,3.0624
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode B (Production),Yes,1,None,3.4565
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode B (Production),Yes,1,None,4.018
+"What is a database transaction, and how do commit and rollback operations work?",Mode B (Production),Yes,1,None,1.8354
+"What is a database transaction, and how do commit and rollback operations work?",Mode B (Production),Yes,1,None,1.9368
+"What is a database transaction, and how do commit and rollback operations work?",Mode B (Production),Yes,1,None,2.3892
+"What is a database transaction, and how do commit and rollback operations work?",Mode B (Production),Yes,1,None,2.1932
+"What is a database transaction, and how do commit and rollback operations work?",Mode B (Production),Yes,1,None,2.474
+"What is a database transaction, and how do commit and rollback operations work?",Mode B (Production),Yes,1,None,3.4124
+Explain the concept of ACID properties in a relational database management system.,Mode E (Multi-Candidate Ranking),Yes,1,None,1.4989
+Explain the concept of ACID properties in a relational database management system.,Mode E (Multi-Candidate Ranking),Yes,1,None,1.7074
+Explain the concept of ACID properties in a relational database management system.,Mode E (Multi-Candidate Ranking),Yes,1,None,1.974
+Explain the concept of ACID properties in a relational database management system.,Mode E (Multi-Candidate Ranking),Yes,1,None,3.1054
+Explain the concept of ACID properties in a relational database management system.,Mode E (Multi-Candidate Ranking),Yes,1,None,1.8742
+Explain the concept of ACID properties in a relational database management system.,Mode E (Multi-Candidate Ranking),Yes,1,None,4.949
+Describe the process of database normalization and its role in reducing data redundancy.,Mode E (Multi-Candidate Ranking),No,1,Too Short,2.0671
+Describe the process of database normalization and its role in reducing data redundancy.,Mode E (Multi-Candidate Ranking),Yes,1,None,2.5645
+Describe the process of database normalization and its role in reducing data redundancy.,Mode E (Multi-Candidate Ranking),No,1,Repeated Bloom Verb: demonstrate,3.5488
+Describe the process of database normalization and its role in reducing data redundancy.,Mode E (Multi-Candidate Ranking),Yes,1,None,2.8036
+Describe the process of database normalization and its role in reducing data redundancy.,Mode E (Multi-Candidate Ranking),Yes,1,None,2.5249
+Describe the process of database normalization and its role in reducing data redundancy.,Mode E (Multi-Candidate Ranking),Yes,1,None,3.0662
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode E (Multi-Candidate Ranking),No,1,Too Short,1.4872
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode E (Multi-Candidate Ranking),Yes,1,None,2.2991
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode E (Multi-Candidate Ranking),Yes,1,None,2.5236
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode E (Multi-Candidate Ranking),No,1,Concept Drift,2.9049
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode E (Multi-Candidate Ranking),Yes,1,None,2.1913
+How does a B-tree index improve the performance of SQL SELECT queries?,Mode E (Multi-Candidate Ranking),Yes,1,None,3.4412
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode E (Multi-Candidate Ranking),No,2,Too Short,1.3598
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode E (Multi-Candidate Ranking),Yes,1,None,2.0677
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode E (Multi-Candidate Ranking),Yes,1,None,3.1867
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode E (Multi-Candidate Ranking),Yes,1,None,3.0036
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode E (Multi-Candidate Ranking),No,1,Forbidden Word: design,2.6608
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.,Mode E (Multi-Candidate Ranking),Yes,1,None,2.593
+"What is a database transaction, and how do commit and rollback operations work?",Mode E (Multi-Candidate Ranking),Yes,1,None,1.8973
+"What is a database transaction, and how do commit and rollback operations work?",Mode E (Multi-Candidate Ranking),Yes,1,None,1.8121
+"What is a database transaction, and how do commit and rollback operations work?",Mode E (Multi-Candidate Ranking),Yes,1,None,2.9564
+"What is a database transaction, and how do commit and rollback operations work?",Mode E (Multi-Candidate Ranking),Yes,1,None,1.8375
+"What is a database transaction, and how do commit and rollback operations work?",Mode E (Multi-Candidate Ranking),Yes,1,None,1.7715
+"What is a database transaction, and how do commit and rollback operations work?",Mode E (Multi-Candidate Ranking),Yes,1,None,3.5356

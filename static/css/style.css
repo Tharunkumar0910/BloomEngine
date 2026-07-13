@@ -1,0 +1,293 @@
+/* ---------- Base ---------- */
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  background-color: #f9fafb;
+  color: #334155;
+  margin: 0;
+}
+
+
+::selection {
+  background-color: rgba(59, 130, 246, 0.22);
+}
+
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---------- Scrollbars ---------- */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 999px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- Shadows (per design system) ---------- */
+.shadow-card {
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+}
+.dark .shadow-card {
+  box-shadow: none;
+}
+
+/* ---------- Subtle background texture ---------- */
+.bg-dot-grid {
+  background-image: radial-gradient(
+    rgba(15, 23, 42, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+.dark .bg-dot-grid {
+  background-image: radial-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+}
+
+/* ---------- Animations ---------- */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(148, 163, 184, 0.16);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+.pulse-dot {
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.35s ease-out both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes grow-bar {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Sidebar Active State Prominence */
+.nav-link.active {
+    background-color: rgba(148, 163, 184, 0.15);
+    font-weight: 600;
+    color: #0f172a;
+}
+.nav-link.active .active-indicator {
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+}
+.dark .nav-link.active {
+    background-color: rgba(30, 41, 59, 0.8);
+    color: #f1f5f9;
+}
+
+/* ---------- SaaS Redesign Styles ---------- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+.drawer-transition {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.row-hover {
+  transition: background-color 0.15s ease;
+}
+.row-hover:hover {
+  background-color: rgba(241, 245, 249, 0.6);
+}
+.dark .row-hover:hover {
+  background-color: rgba(30, 41, 59, 0.4);
+}
+
+.glass-effect {
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.8);
+}
+.dark .glass-effect {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+/* Batch History Table Alignment & Styling */
+#batchHistoryTbody td {
+  padding: 12px 24px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  vertical-align: middle;
+  color: #475569;
+}
+.dark #batchHistoryTbody td {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+  color: #94a3b8;
+}
+#batchHistoryTbody tr:hover {
+  background-color: rgba(241, 245, 249, 0.4);
+}
+.dark #batchHistoryTbody tr:hover {
+  background-color: rgba(30, 41, 59, 0.2);
+}
+#batchHistoryTbody td:nth-child(3),
+#batchHistoryTbody td:nth-child(4) {
+  text-align: right;
+}
+#batchHistoryTbody td:first-child {
+  font-weight: 500;
+  color: #0f172a;
+}
+.dark #batchHistoryTbody td:first-child {
+  color: #f1f5f9;
+}
+
+/* ---------- Theme Segmented Control ---------- */
+.light #themeToggleLight[aria-pressed="true"] {
+  background-color: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+.light #themeToggleDark[aria-pressed="true"] {
+  background-color: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.dark #themeToggleLight[aria-pressed="true"],
+.dark #themeToggleDark[aria-pressed="true"] {
+  background-color: #334155;
+  color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+}
+
+#themeToggleLight, #themeToggleDark {
+  color: #64748b;
+  background-color: transparent;
+  border: none;
+}
+.dark #themeToggleLight, .dark #themeToggleDark {
+  color: #94a3b8;
+}
+
+#themeToggleLight[aria-pressed="false"]:hover,
+#themeToggleDark[aria-pressed="false"]:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+  color: #334155;
+}
+.dark #themeToggleLight[aria-pressed="false"]:hover,
+.dark #themeToggleDark[aria-pressed="false"]:hover {
+  background-color: rgba(148, 163, 184, 0.08);
+  color: #f1f5f9;
+}
+
+#themeToggleLight:focus-visible,
+#themeToggleDark:focus-visible {
+  outline: 2px solid #0066ff;
+  outline-offset: 1px;
+}
+
+
+

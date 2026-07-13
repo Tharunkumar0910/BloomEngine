@@ -1,0 +1,33 @@
+{
+  "processingTimeMs": 1432,
+  "renderingTimeMs": 12,
+  "processedResults": [
+    {
+      "id": "1",
+      "question": "Explain the concept of backpropagation in deep neural networks.\nHow does it calculate the gradient of the loss function with respect to weights?",
+      "status": "Verified",
+      "difficulty": "Medium",
+      "bloomLevel": "Apply",
+      "confidence": "99.99%",
+      "explanation": "This question requires applying Backpropagation In Deep Neural Networks to solve a practical problem. A Apply level classification is appropriate because of the cognitive load required to address the topic. The difficulty is Medium to match the depth of reasoning expected in the solution."
+    },
+    {
+      "id": "2",
+      "question": "What is the difference between supervised and unsupervised learning?\nProvide typical examples of algorithms for each.",
+      "status": "Verified",
+      "difficulty": "Easy",
+      "bloomLevel": "Remember",
+      "confidence": "99.91%",
+      "explanation": "This question asks the learner to recall fundamental knowledge about Difference Between Supervised And Unsupervised. A Remember level classification is appropriate because of the cognitive load required to address the topic. The difficulty is Easy to match the depth of reasoning expected in the solution."
+    },
+    {
+      "id": "3",
+      "question": "What is a convolutional neural network (CNN)?\nExplain its core layers, specifically convolution, activation, pooling, and fully-connected layers.",
+      "status": "Verified",
+      "difficulty": "Easy",
+      "bloomLevel": "Understand",
+      "confidence": "99.97%",
+      "explanation": "This question requires explaining the principles of Convolutional Neural Network Cnn Explain. A Understand level classification is appropriate because of the cognitive load required to address the topic. The difficulty is Easy to match the depth of reasoning expected in the solution."
+    }
+  ]
+}

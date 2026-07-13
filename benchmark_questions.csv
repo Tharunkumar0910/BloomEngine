@@ -1,0 +1,6 @@
+Question
+Explain the concept of ACID properties in a relational database management system.
+Describe the process of database normalization and its role in reducing data redundancy.
+How does a B-tree index improve the performance of SQL SELECT queries?
+Discuss the trade-offs between using a NoSQL database versus a traditional relational database.
+"What is a database transaction, and how do commit and rollback operations work?"

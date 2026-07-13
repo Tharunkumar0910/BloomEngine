@@ -1,0 +1,3 @@
+Mode,Prompt Version,Prompt Length,Prompt Tokens,Completion Tokens,Total Tokens,Average Response Length
+Mode B (Production),Production Baseline,823.4,180.9,18.0,198.9,73.0
+Mode E (Multi-Candidate Ranking),Multi-Candidate Ranking,895.6,202.8,19.1,221.8,80.2

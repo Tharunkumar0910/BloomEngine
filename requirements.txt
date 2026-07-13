@@ -1,0 +1,28 @@
+# Web Framework & Server
+flask
+jinja2
+python-multipart
+werkzeug
+
+# Deep Learning & ML Frameworks
+torch
+transformers
+sentencepiece
+protobuf
+
+# Natural Language Processing
+spacy
+sentence-transformers
+rapidfuzz
+
+# Document Processing & Data Wrangling
+pandas
+openpyxl
+PyPDF2
+python-docx
+python-pptx
+fpdf2
+
+# Utilities & Benchmarking
+numpy
+tqdm
