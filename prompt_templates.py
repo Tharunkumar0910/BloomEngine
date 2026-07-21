@@ -9,8 +9,10 @@ def build_prompt(
     target_bloom: str,
     domain: str,
     topic: str,
+    topic_context: str = None,
 ) -> str:
-    """Build the standard inference prompt matching the training prompt exactly."""
+    """Build the standard inference prompt matching the training prompt exactly, optionally with academic context."""
+    topic_str = f"\n{topic}\n\n{topic_context}" if topic_context else f" {topic}"
     return (
         "Rewrite the given university examination question from the source Bloom's Taxonomy level "
         "to the target Bloom's Taxonomy level while preserving the original concept, topic, "
@@ -18,7 +20,7 @@ def build_prompt(
         f"Source Bloom: {source_bloom}\n"
         f"Target Bloom: {target_bloom}\n"
         f"Domain: {domain}\n"
-        f"Topic: {topic}\n"
+        f"Topic:{topic_str}\n"
         f"Question: {question}"
     )
 

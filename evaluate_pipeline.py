@@ -146,6 +146,88 @@ def compute_rouge_l(reference: str, candidate: str) -> float:
         return 0.0
     return 2 * p * r / (p + r)
 
+
+def classify_semantic_drift(val_out, orig_profile, cand_profile) -> str:
+    """
+    Classifies a failed candidate attempt's semantic drift or validation failure
+    into one of 11 distinct classes:
+    - Concept Removal
+    - Concept Addition
+    - Terminology Change
+    - Entity Change
+    - Numeric Change
+    - Algorithm Change
+    - Protocol Change
+    - Domain Vocabulary Change
+    - Topic Vocabulary Change
+    - Intent Change
+    - Equivalent Technical Concepts
+    """
+    if getattr(val_out, "rejection_reason", "") == "Duplicate Technical Concept":
+        return "Equivalent Technical Concepts"
+        
+    if val_out.rejection_reason == "Classification Mismatch" or val_out.bloom_score < 30:
+        return "Intent Change"
+        
+    num_metrics = val_out.detailed_metrics.get("number", {})
+    if num_metrics:
+        missing_nums = num_metrics.get("missing_numbers", [])
+        extra_nums = num_metrics.get("extra_numbers", [])
+        if missing_nums or extra_nums:
+            return "Numeric Change"
+            
+    orig_text = orig_profile.raw_question.lower() if orig_profile else ""
+    cand_text = cand_profile.raw_question.lower() if cand_profile else ""
+    
+    protocols = {"http", "https", "tcp", "udp", "ip", "ipv4", "ipv6", "dns", "smtp", "ftp", "ssl", "tls", "ssh", "grpc", "soap", "rest"}
+    orig_protocols = {p for p in protocols if re.search(r'\b' + p + r'\b', orig_text)}
+    cand_protocols = {p for p in protocols if re.search(r'\b' + p + r'\b', cand_text)}
+    if orig_protocols != cand_protocols:
+        return "Protocol Change"
+        
+    algorithms = {"dijkstra", "bfs", "dfs", "quicksort", "mergesort", "bubblesort", "heapsort", "binary search", "a*", "kruskal", "prim", "bellman-ford"}
+    orig_algos = {a for a in algorithms if a in orig_text}
+    cand_algos = {a for a in algorithms if a in cand_text}
+    if orig_algos != cand_algos:
+        return "Algorithm Change"
+        
+    concept_metrics = val_out.detailed_metrics.get("concept", {})
+    if concept_metrics:
+        matched = concept_metrics.get("matched_concepts", [])
+        original = concept_metrics.get("original_concepts", [])
+        if len(matched) < len(original):
+            return "Concept Removal"
+            
+    if concept_metrics:
+        candidate_concepts = concept_metrics.get("candidate_concepts", [])
+        matched = concept_metrics.get("matched_concepts", [])
+        extra = [c for c in candidate_concepts if c not in matched]
+        if extra:
+            return "Concept Addition"
+            
+    entity_metrics = val_out.detailed_metrics.get("entity", {})
+    if entity_metrics:
+        missing_ent = entity_metrics.get("missing_entities", [])
+        extra_ent = entity_metrics.get("extra_entities", [])
+        if missing_ent or extra_ent:
+            return "Entity Change"
+            
+    topic_metrics = val_out.detailed_metrics.get("topic", {})
+    if topic_metrics:
+        if topic_metrics.get("topic_mismatch", False) or val_out.topic_score < 12:
+            return "Terminology Change"
+            
+    if val_out.topic_score < 15:
+        return "Topic Vocabulary Change"
+        
+    domain_metrics = val_out.detailed_metrics.get("domain", {})
+    if domain_metrics:
+        if domain_metrics.get("domain_mismatch", False) or val_out.domain_score < 18:
+            return "Domain Vocabulary Change"
+            
+    return "Terminology Change"
+
+
 # ---------------------------------------------------------------------------
 # Benchmark execution
 # ---------------------------------------------------------------------------
@@ -256,11 +338,19 @@ def run_benchmark(dataset_path: str, limit: int = None):
         # Collect failed and passed attempts for retry metrics
         if val_result.attempts_list:
             for att in val_result.attempts_list:
+                vo = att.get("val_out")
+                cp = att.get("cand_prof")
+                drift_category = "None"
+                if att.get("validation_status") == "Fail" and vo and cp:
+                    from question_understanding import QuestionUnderstandingEngine
+                    orig_prof = QuestionUnderstandingEngine.build_profile(original_q, src_bloom)
+                    drift_category = classify_semantic_drift(vo, orig_prof, cp)
                 all_attempts_flat.append({
                     "question_id": idx + 1,
                     "attempt": att.get("attempt", 1),
                     "validation_status": att.get("validation_status", ""),
                     "rejection_reason": att.get("rejection_reason", ""),
+                    "drift_category": drift_category,
                     "confidence": att.get("confidence", 0.0),
                     "bloom_score": att.get("bloom_score", 0.0),
                     "concept_score": float(str(att.get("concept_score", 0.0)).split("/")[0]) if "/" in str(att.get("concept_score", "")) else float(att.get("concept_score", 0.0)),
@@ -269,7 +359,15 @@ def run_benchmark(dataset_path: str, limit: int = None):
                     "number_score": att.get("number_score", 0.0),
                     "grammar_score": att.get("grammar_score", 0.0),
                     "duplicate_score": att.get("duplicate_score", 0.0),
+                    "domain_score": att.get("domain_score", 0.0),
+                    "topic_score": att.get("topic_score", 0.0),
                     "total_score": att.get("total_score", 0.0),
+                    "advisor_activated": att.get("advisor_activated", False),
+                    "advisor_guidance_produced": att.get("advisor_guidance_produced", False),
+                    "advisor_skipped": att.get("advisor_skipped", False),
+                    "missing_preferred": att.get("missing_preferred", []),
+                    "missing_supporting": att.get("missing_supporting", []),
+                    "generic_terms_detected": att.get("generic_terms_detected", []),
                 })
         else:
             # Fallback if attempts_list not populated
@@ -278,6 +376,7 @@ def run_benchmark(dataset_path: str, limit: int = None):
                 "attempt": 1,
                 "validation_status": "Pass" if is_pass else "Fail",
                 "rejection_reason": val_result.rejection_reason if not is_pass else "",
+                "drift_category": "None" if is_pass else "Terminology Change",
                 "confidence": val_result.confidence,
                 "bloom_score": 0.0,
                 "concept_score": 0.0,
@@ -286,7 +385,15 @@ def run_benchmark(dataset_path: str, limit: int = None):
                 "number_score": 0.0,
                 "grammar_score": 0.0,
                 "duplicate_score": 0.0,
+                "domain_score": 0.0,
+                "topic_score": 0.0,
                 "total_score": 0.0,
+                "advisor_activated": False,
+                "advisor_guidance_produced": False,
+                "advisor_skipped": False,
+                "missing_preferred": [],
+                "missing_supporting": [],
+                "generic_terms_detected": [],
             })
             
     # Convert to DataFrames
@@ -342,6 +449,8 @@ def run_benchmark(dataset_path: str, limit: int = None):
     avg_number_score   = safe_avg("number_score")
     avg_grammar_score  = safe_avg("grammar_score")
     avg_dup_score      = safe_avg("duplicate_score")
+    avg_domain_score   = safe_avg("domain_score")
+    avg_topic_score    = safe_avg("topic_score")
     avg_total_score    = safe_avg("total_score")
 
     # Attempt success breakdown
@@ -384,6 +493,8 @@ def run_benchmark(dataset_path: str, limit: int = None):
             "number":    avg_number_score,
             "grammar":   avg_grammar_score,
             "duplicate": avg_dup_score,
+            "domain":    avg_domain_score,
+            "topic":     avg_topic_score,
             "total":     avg_total_score,
         },
         "attempt_success_counts": attempt_success,
@@ -402,11 +513,56 @@ def run_benchmark(dataset_path: str, limit: int = None):
     retry_reasons_raw = df_attempts[~df_attempts["rejection_reason"].isin(["", "None", "none"])]["rejection_reason"].value_counts().to_dict()
     retry_reasons = {str(k): int(v) for k, v in retry_reasons_raw.items()}
     
+    total_weak_flagged = 0
+    total_preferred_missing = 0
+    advisor_activated_count = 0
+    advisor_guidance_produced_count = 0
+    advisor_skipped_count = 0
+    
+    if not df_attempts.empty:
+        if "generic_terms_detected" in df_attempts.columns:
+            total_weak_flagged = int(df_attempts["generic_terms_detected"].apply(lambda x: len(x) if isinstance(x, list) else 0).sum())
+        if "missing_preferred" in df_attempts.columns:
+            total_preferred_missing = int(df_attempts["missing_preferred"].apply(lambda x: len(x) if isinstance(x, list) else 0).sum())
+        if "advisor_activated" in df_attempts.columns:
+            advisor_activated_count = int(df_attempts["advisor_activated"].sum())
+        if "advisor_guidance_produced" in df_attempts.columns:
+            advisor_guidance_produced_count = int(df_attempts["advisor_guidance_produced"].sum())
+        if "advisor_skipped" in df_attempts.columns:
+            advisor_skipped_count = int(df_attempts["advisor_skipped"].sum())
+
+    # Count remaining weak terms in final accepted questions
+    remaining_weak_count = 0
+    remaining_weak_by_term = {}
+    from knowledge.terminology import get_topic_terminology
+    from question_understanding import QuestionUnderstandingEngine
+    
+    for res in results:
+        gen_q = res.get("generated_question", "")
+        target_bloom = res.get("target_bloom", "")
+        q_prof = QuestionUnderstandingEngine.build_profile(gen_q, target_bloom)
+        topic = q_prof.topic if q_prof and hasattr(q_prof, "topic") else ""
+        if topic:
+            term_registry = get_topic_terminology(topic)
+            if term_registry:
+                weak_terms = term_registry.get("weak", [])
+                for w in weak_terms:
+                    if w.lower() in gen_q.lower():
+                        remaining_weak_count += 1
+                        remaining_weak_by_term[w] = remaining_weak_by_term.get(w, 0) + 1
+            
     retry_stats = {
         "average_retries": float(round(avg_retries, 2)),
         "max_retries": max_retries,
         "retry_distribution": retry_distribution,
         "retry_reasons_list": retry_reasons,
+        "weak_terminology_detections": total_weak_flagged,
+        "preferred_terminology_advice_instances": total_preferred_missing,
+        "advisor_activated_count": advisor_activated_count,
+        "advisor_guidance_produced_count": advisor_guidance_produced_count,
+        "advisor_skipped_count": advisor_skipped_count,
+        "remaining_weak_terms_count": remaining_weak_count,
+        "remaining_weak_terms_by_term": remaining_weak_by_term,
     }
     
     # ---------------------------------------------------------------------------
@@ -419,7 +575,46 @@ def run_benchmark(dataset_path: str, limit: int = None):
     with open("retry_statistics.json", "w", encoding="utf-8") as f:
         json.dump(retry_stats, f, indent=4)
         
-    print("Saved generation_statistics.json, validation_statistics.json, retry_statistics.json.")
+    # Calculate Semantic Drift breakdown (out of failed attempts)
+    failed_attempts = df_attempts[df_attempts["validation_status"].astype(str).str.lower().str.contains("fail")] if not df_attempts.empty else pd.DataFrame()
+    drift_counts = {
+        "Concept Removal": 0,
+        "Concept Addition": 0,
+        "Terminology Change": 0,
+        "Entity Change": 0,
+        "Numeric Change": 0,
+        "Algorithm Change": 0,
+        "Protocol Change": 0,
+        "Domain Vocabulary Change": 0,
+        "Topic Vocabulary Change": 0,
+        "Intent Change": 0,
+        "Equivalent Technical Concepts": 0,
+    }
+    
+    total_failed_with_drift = 0
+    if not failed_attempts.empty and "drift_category" in failed_attempts.columns:
+        for cat in drift_counts.keys():
+            count = (failed_attempts["drift_category"] == cat).sum()
+            drift_counts[cat] = int(count)
+        total_failed_with_drift = sum(drift_counts.values())
+        
+    drift_percentages = {}
+    for cat, count in drift_counts.items():
+        pct = (count / total_failed_with_drift * 100.0) if total_failed_with_drift > 0 else 0.0
+        drift_percentages[cat] = {
+            "count": count,
+            "percentage": float(round(pct, 2))
+        }
+        
+    with open("semantic_drift_breakdown.json", "w", encoding="utf-8") as f:
+        json.dump(drift_percentages, f, indent=4)
+        
+    print("Saved generation_statistics.json, validation_statistics.json, retry_statistics.json, semantic_drift_breakdown.json.")
+    print("----------------------------------------------------------")
+    print(f"  Remaining weak terms in outputs:  {remaining_weak_count}")
+    if remaining_weak_by_term:
+        print(f"  Remaining weak terms breakdown:   {remaining_weak_by_term}")
+    print("----------------------------------------------------------")
     
     # ---------------------------------------------------------------------------
     # Write CSV files
@@ -494,6 +689,19 @@ def run_benchmark(dataset_path: str, limit: int = None):
 ---
 """
 
+    # Build Semantic Drift Breakdown Table
+    drift_table = "\n## Top Semantic Drift Causes\n"
+    if total_failed_with_drift > 0:
+        drift_table += "| Rank | Category | Count | Percentage |\n"
+        drift_table += "| :---: | :--- | :---: | :---: |\n"
+        # sort by count descending
+        sorted_drift = sorted(drift_percentages.items(), key=lambda item: item[1]["count"], reverse=True)
+        for rank, (cat, val) in enumerate(sorted_drift, 1):
+            drift_table += f"| {rank} | {cat} | {val['count']} | {val['percentage']:.2f}% |\n"
+    else:
+        drift_table += "No semantic drift or validation failures occurred during this benchmark run.\n"
+    drift_table += "\n---\n"
+
     report_md = f"""# BloomAI Arena v2.1 Pipeline Alignment Report
 
 ## Executive Summary
@@ -518,7 +726,7 @@ The inference pipeline has been aligned to match the training prompt distributio
 - **ROUGE-L**: {avg_rl:.4f}
 
 ---
-
+{drift_table}
 ## Performance by Bloom Level
 """
     
@@ -580,6 +788,18 @@ The inference pipeline has been aligned to match the training prompt distributio
     for reason, count in retry_reasons.items():
         report_md += f"| {reason} | {count} |\n"
 
+    # Remaining Weak Terms Summary
+    report_md += f"""
+---
+
+## Remaining Weak Terms Summary
+- **Remaining Weak Terms in Final Outputs**: {remaining_weak_count}
+"""
+    if remaining_weak_by_term:
+        report_md += "- **Remaining Weak Terms Breakdown**:\n"
+        for term, cnt in sorted(remaining_weak_by_term.items(), key=lambda x: x[1], reverse=True):
+            report_md += f"  - `{term}`: {cnt}\n"
+
     # Stage score averages
     report_md += """
 ---
@@ -590,18 +810,20 @@ The inference pipeline has been aligned to match the training prompt distributio
 """
     stage_maxes = {
         "Bloom":     35.0,
-        "Concept":   25.0,
-        "Entity":    15.0,
-        "Semantic":  10.0,
+        "Domain":    20.0,
+        "Topic":     15.0,
+        "Concept":   10.0,
+        "Entity":    10.0,
         "Number":     5.0,
-        "Grammar":    5.0,
-        "Duplicate":  5.0,
+        "Grammar":    3.0,
+        "Duplicate":  2.0,
     }
     stage_avgs = {
         "Bloom":     avg_bloom_score,
+        "Domain":    avg_domain_score,
+        "Topic":     avg_topic_score,
         "Concept":   avg_concept_score,
         "Entity":    avg_entity_score,
-        "Semantic":  avg_semantic_score,
         "Number":    avg_number_score,
         "Grammar":   avg_grammar_score,
         "Duplicate": avg_dup_score,

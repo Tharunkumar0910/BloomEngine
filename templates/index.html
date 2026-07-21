@@ -78,7 +78,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
-    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/style.css?v=2.3" rel="stylesheet">
     <script>
         // Check local storage or system preference to prevent FOUC
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -136,13 +136,6 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link group relative flex w-full items-center gap-3.5 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200" data-target="view-analytics">
-                            <span class="active-indicator absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-md bg-primary opacity-0 transition-opacity"></span>
-                            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">insights</span>
-                            <span class="flex-1 truncate">Analytics</span>
-                        </a>
-                    </li>
-                    <li>
                         <a href="#" class="nav-link group relative flex w-full items-center gap-3.5 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200" data-target="view-modelinfo">
                             <span class="active-indicator absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-md bg-primary opacity-0 transition-opacity"></span>
                             <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">memory</span>
@@ -171,16 +164,9 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="inline-flex items-center rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60" role="group" aria-label="Theme selection">
-                        <button id="themeToggleLight" class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Switch to Light Mode" aria-pressed="false">
-                            <span class="text-sm">☀️</span>
-                            <span>Light</span>
-                        </button>
-                        <button id="themeToggleDark" class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Switch to Dark Mode" aria-pressed="false">
-                            <span class="text-sm">🌙</span>
-                            <span>Dark</span>
-                        </button>
-                    </div>
+                    <button id="themeToggle" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 cursor-pointer" aria-label="Toggle Theme">
+                        <span id="themeToggleIcon" class="material-symbols-outlined text-[20px]">dark_mode</span>
+                    </button>
                 </div>
             </header>
 
@@ -188,84 +174,145 @@
                 
                 <!-- VIEW: DASHBOARD -->
                 <div id="view-dashboard" class="view-section animate-fade-in">
+                    <!-- Page Header -->
                     <div class="mb-6">
-                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Dashboard</h2>
-                        <h1 class="mt-1 font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Workspace Overview</h1>
+                        <h1 class="font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Dashboard</h1>
+                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Overview of your question classification system</p>
                     </div>
-                    
-                    <!-- Metric Cards -->
-                    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
-                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-primary">
-                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Total Questions</div>
-                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashTotal">0</div>
+
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+                        <!-- Total Questions -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between min-h-[105px] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Total Questions</div>
+                                <div class="mt-2 text-3xl font-bold text-slate-900 dark:text-white leading-none" id="dashTotal">0</div>
+                                <div class="mt-1.5 text-xs text-slate-500 dark:text-slate-400">All time processed</div>
+                            </div>
                         </div>
-                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-secondary">
-                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Easy Questions</div>
-                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashEasy">0</div>
+                        <!-- Easy Questions -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between min-h-[105px] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Easy Questions</div>
+                                <div class="mt-2 text-3xl font-bold text-slate-900 dark:text-white leading-none" id="dashEasy">0</div>
+                                <div class="mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="dashEasyPct">—% of total</div>
+                            </div>
                         </div>
-                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-warning">
-                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Medium Questions</div>
-                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashMod">0</div>
+                        <!-- Medium Questions -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between min-h-[105px] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Medium Questions</div>
+                                <div class="mt-2 text-3xl font-bold text-slate-900 dark:text-white leading-none" id="dashMod">0</div>
+                                <div class="mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="dashModPct">—% of total</div>
+                            </div>
                         </div>
-                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 border-t-[3px] border-t-danger">
-                            <div class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">Hard Questions</div>
-                            <div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="dashDiff">0</div>
+                        <!-- Hard Questions -->
+                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between min-h-[105px] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Hard Questions</div>
+                                <div class="mt-2 text-3xl font-bold text-slate-900 dark:text-white leading-none" id="dashDiff">0</div>
+                                <div class="mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="dashDiffPct">—% of total</div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Chart + CTA -->
-                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
-                        <div class="rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-2 dark:border-slate-800 dark:bg-slate-900">
-                            <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-800">
-                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Bloom Level Distribution</h3>
+                    <!-- Row 2: Bloom Chart + Quick Actions -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+                        <div class="lg:col-span-2 rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="border-b border-slate-100 dark:border-slate-800 px-6 py-4 flex justify-between items-center flex-wrap gap-2">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100" id="dashChartTitle">Bloom Level Distribution</h3>
+                                <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-0.5">
+                                    <button id="toggleBloomChart" type="button" class="rounded-md px-3 py-1 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm transition-all cursor-pointer">Bloom Level</button>
+                                    <button id="toggleDifficultyChart" type="button" class="rounded-md px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all cursor-pointer">Difficulty</button>
+                                </div>
                             </div>
-                            <div class="p-6" style="height: 300px;">
+                            <div class="p-6" style="height:300px;position:relative;">
                                 <canvas id="dashBloomChart"></canvas>
                                 <div id="dashNoDataMsg" class="hidden text-center text-sm text-slate-400 mt-10">No data available</div>
                             </div>
                         </div>
-                        <div class="rounded-xl border border-slate-200 bg-white shadow-sm relative overflow-hidden dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
-                            <div class="p-6">
-                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                    <span class="material-symbols-outlined text-[20px]">bolt</span>
-                                </div>
-                                <h3 class="mt-4 font-headline text-base font-bold text-slate-900 dark:text-slate-50">Get started</h3>
-                                <p class="mt-1.5 text-xs leading-relaxed text-slate-400 dark:text-slate-500">Classify academic questions using AI engine mode or upload files in bulk to process entire batches.</p>
-                            </div>
-                            <div class="p-6 pt-0 space-y-2">
-                                <button class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-hover px-4 py-2 text-xs font-semibold text-white transition-all shadow-sm" onclick="switchTab('view-manual')">
-                                    <span class="material-symbols-outlined text-[16px]">edit_note</span> Classify a Question
+                        <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 p-6 flex flex-col">
+                            <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100 mb-4">Quick Actions</h3>
+                            <div class="flex-1 flex flex-col justify-center space-y-3">
+                                <button onclick="switchTab('view-manual')" class="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-blue-50 dark:hover:bg-slate-800/60 px-4 py-4 hover:scale-[1.01] hover:shadow-sm transition-all group cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-500/15"><span class="material-symbols-outlined text-[20px] text-blue-600 dark:text-blue-400">psychology</span></div>
+                                        <div class="text-left"><div class="text-sm font-semibold text-slate-800 dark:text-slate-100">Classify Question</div><div class="text-xs text-slate-500 dark:text-slate-400">Analyze a single question using AI</div></div>
+                                    </div>
+                                    <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-blue-500 transition-colors">chevron_right</span>
                                 </button>
-                                <button class="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition-all dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800" onclick="switchTab('view-batch')">
-                                    <span class="material-symbols-outlined text-[16px]">layers</span> Start Batch Upload
+                                <button onclick="switchTab('view-batch')" class="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-green-50 dark:hover:bg-slate-800/60 px-4 py-4 hover:scale-[1.01] hover:shadow-sm transition-all group cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-100 dark:bg-green-500/15"><span class="material-symbols-outlined text-[20px] text-green-600 dark:text-green-400">cloud_upload</span></div>
+                                        <div class="text-left"><div class="text-sm font-semibold text-slate-800 dark:text-slate-100">Upload Batch</div><div class="text-xs text-slate-500 dark:text-slate-400">Upload files for batch processing</div></div>
+                                    </div>
+                                    <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-green-500 transition-colors">chevron_right</span>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Batch Activity -->
-                    <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                        <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-800">
-                            <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Recent Batch Activity</h3>
+                    <!-- Row 3: Recent Activity + Distribution -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                        <!-- Recent Activity (col-span-2) -->
+                        <div class="lg:col-span-2 rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col">
+                            <div class="border-b border-slate-100 dark:border-slate-800 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Recent Activity</h3>
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[18px]">
+                                    <input type="text" id="searchActivity" class="w-full sm:w-[260px] rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-primary transition-all duration-200 placeholder:text-slate-400" placeholder="Search...">
+                                    <select id="filterActivityType" class="w-full sm:w-[150px] rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-primary transition-all duration-200 cursor-pointer">
+                                        <option value="">All Types</option>
+                                        <option value="manual">Manual</option>
+                                        <option value="batch">Batch</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto custom-scrollbar flex-1">
+                                <table class="w-full text-left table-auto min-w-[750px]">
+                                    <colgroup>
+                                        <col style="width:90px; min-width:90px">
+                                        <col style="min-width:200px">
+                                        <col style="width:140px; min-width:140px">
+                                        <col style="width:130px; min-width:130px">
+                                        <col style="width:120px; min-width:120px">
+                                    </colgroup>
+                                    <thead>
+                                        <tr class="border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500">
+                                            <th class="px-5 py-3.5 font-semibold">Type</th>
+                                            <th class="px-5 py-3.5 font-semibold">Question / Filename</th>
+                                            <th class="px-5 py-3.5 font-semibold text-center">Bloom Level</th>
+                                            <th class="px-5 py-3.5 font-semibold text-center">Difficulty</th>
+                                            <th class="px-5 py-3.5 font-semibold text-right cursor-pointer" id="thActivityTime">Time <span id="activitySortIcon">▼</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="unifiedActivityTbody" class="text-xs">
+                                        <tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">Loading activity...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="border-t border-slate-100 dark:border-slate-800 px-6 py-4 flex justify-between items-center">
+                                <span class="text-xs text-slate-500 dark:text-slate-400" id="activityPaginationInfo">Showing 0 of 0</span>
+                                <ul class="flex gap-1 items-center" id="activityPagination"></ul>
+                            </div>
                         </div>
-                        <div class="overflow-x-auto pb-4 relative custom-scrollbar">
-                            <table class="w-full text-left text-sm">
-                                <thead>
-                                    <tr class="border-b border-slate-100 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:border-slate-800 dark:text-slate-500">
-                                        <th class="px-6 py-3 font-semibold">Filename</th>
-                                        <th class="px-6 py-3 font-semibold">Uploaded</th>
-                                        <th class="px-6 py-3 font-semibold text-right">Total</th>
-                                        <th class="px-6 py-3 font-semibold text-right">Completed</th>
-                                        <th class="px-6 py-3 font-semibold">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="batchHistoryTbody" class="divide-y divide-slate-100 dark:divide-slate-800">
-                                    <tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">No recent batch activity</td></tr>
-                                </tbody>
-                            </table>
+
+                        <!-- Distribution Pie with Toggle -->
+                        <div class="lg:col-span-1 rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col">
+                            <div class="border-b border-slate-100 dark:border-slate-800 px-6 py-4">
+                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100">Distribution <span class="font-normal text-slate-400">(Toggle View)</span></h3>
+                            </div>
+                            <div class="p-6 flex flex-col flex-1 h-full">
+                                <div class="inline-flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-0.5 mb-4">
+                                    <button id="dashDistToggleDiff" type="button" class="flex-1 rounded-md py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm transition-all cursor-pointer">Difficulty</button>
+                                    <button id="dashDistToggleBloom" type="button" class="flex-1 rounded-md py-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 transition-all cursor-pointer">Bloom Levels</button>
+                                </div>
+                                <div style="height:260px;position:relative;" class="flex-1 flex items-center justify-center"><canvas id="dashDistPieChart"></canvas></div>
+                                <div id="dashDistLegend" class="mt-4 space-y-1.5 text-[11px]"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- VIEW: MANUAL CLASSIFICATION (STUDIO) -->
                 <div id="view-manual" class="view-section hidden animate-fade-in">
@@ -326,7 +373,7 @@
                                     <div class="flex items-center gap-2">
                                         <span id="resConfText" class="font-bold text-slate-700 dark:text-slate-300">-</span>
                                         <div class="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                                            <div id="resConfBar" class="h-full rounded-full bg-primary transition-all duration-500" style="width: 0%"></div>
+                                            <!-- Confidence progress bar removed -->
                                         </div>
                                     </div>
                                 </div>
@@ -366,7 +413,8 @@
                     </div>
                 </div>
 
-                <!-- VIEW: BATCH PROCESSING -->
+
+                <!-- VIEW: BATCH PROCESSING -->
                 <div id="view-batch" class="view-section hidden animate-fade-in">
                     <div class="mb-6">
                         <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Bulk Processing</h2>
@@ -420,7 +468,7 @@
                         <div id="liveProgressPanel" class="hidden mt-6 text-left p-4 rounded-xl border border-slate-200 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-950/20">
                             <div class="flex items-center justify-between mb-2">
                                 <h3 class="font-headline text-xs font-bold text-slate-800 dark:text-slate-100" id="progressText">Processing: 0 / 0</h3>
-                                <button id="btnStopBatch" class="text-[10px] font-semibold text-rose-600 px-2.5 py-1 bg-rose-50 rounded-lg dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-900/20">Stop</button>
+                                <button id="btnStopBatch" class="hidden text-[10px] font-semibold text-rose-600 px-2.5 py-1 bg-rose-50 rounded-lg dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-900/20">Stop</button>
                             </div>
                             <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800 mb-2">
                                 <div id="progressBar" class="h-full rounded-full bg-primary transition-all duration-300" style="width: 0%"></div>
@@ -432,12 +480,11 @@
                         </div>
                         
                         <!-- Live Stats -->
-                        <div id="liveStatsRow" class="hidden mt-4 grid grid-cols-5 gap-2 text-left">
+                        <div id="liveStatsRow" class="hidden mt-4 grid grid-cols-4 gap-2 text-left">
                             <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Total</div><div id="liveStatTotal" class="font-bold text-primary text-sm mt-0.5">0</div></div>
                             <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Easy</div><div id="liveStatEasy" class="font-bold text-secondary text-sm mt-0.5">0</div></div>
                             <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Medium</div><div id="liveStatMod" class="font-bold text-warning text-sm mt-0.5">0</div></div>
                             <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Hard</div><div id="liveStatDiff" class="font-bold text-danger text-sm mt-0.5">0</div></div>
-                            <div class="p-2 border border-slate-200 rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800 text-center"><div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Conf</div><div id="liveStatConf" class="font-bold text-indigo-500 text-sm mt-0.5 font-mono">0%</div></div>
                         </div>
                     </div>
 
@@ -451,7 +498,7 @@
                                         <input type="text" id="searchTable" placeholder="Search questions..." class="w-48 rounded-lg border border-slate-200 pl-8 pr-3 py-1.5 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white">
                                         <span class="material-symbols-outlined text-[16px] text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2">search</span>
                                     </div>
-                                    <select id="filterStatus" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white cursor-pointer">
+                                    <select id="filterStatus" class="custom-select rounded-lg border border-slate-200 pl-3 pr-7 py-1.5 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white cursor-pointer">
                                         <option value="">All Status</option>
                                         <option value="Verified">Verified</option>
                                         <option value="Needs Review">Needs Review</option>
@@ -486,7 +533,7 @@
                                     <span id="tablePaginationInfo">Showing 0 of 0</span>
                                     <div class="flex items-center gap-1.5 border-l border-slate-150 pl-4 dark:border-slate-850">
                                         <span>Show:</span>
-                                        <select id="itemsPerPageSelect" class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white cursor-pointer">
+                                        <select id="itemsPerPageSelect" class="custom-select rounded-lg border border-slate-200 bg-white pl-2 pr-7 py-1 text-xs outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20 dark:border-slate-850 dark:bg-slate-950 dark:text-white cursor-pointer">
                                             <option value="10">10 per page</option>
                                             <option value="20">20 per page</option>
                                             <option value="50">50 per page</option>
@@ -512,7 +559,7 @@
                                 </div>
                             </div>
                             <div class="bg-slate-50/30 rounded-lg border border-slate-100 p-4 dark:bg-slate-950/20 dark:border-slate-850/60">
-                                <p id="carouselQuestion" class="text-xs font-semibold mb-4 whitespace-pre-wrap break-words text-slate-800 dark:text-slate-250 leading-relaxed">-</p>
+                                <p id="carouselQuestion" class="text-xs font-semibold mb-4 whitespace-pre-line break-words text-slate-800 dark:text-slate-250 leading-relaxed">-</p>
                                 <div class="grid grid-cols-3 gap-2 text-center text-[10px] uppercase font-mono tracking-wider border-t border-b border-slate-100 py-2.5 my-2.5 dark:border-slate-800">
                                     <div class="hidden"><div class="text-slate-400 mb-1">Bloom</div><span id="carouselBloom" class="font-semibold text-slate-700 dark:text-slate-350">-</span></div>
                                     <div class="col-span-3"><div class="text-slate-400 mb-1">Current Difficulty</div><span id="carouselDiff" class="font-bold text-slate-800 dark:text-slate-200">-</span></div>
@@ -522,72 +569,9 @@
                             </div>
                         </div>
                     </div>
-                </div>>
-
-                <!-- VIEW: ANALYTICS -->
-                <div id="view-analytics" class="view-section hidden animate-fade-in">
-                    <div class="mb-6">
-                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Analytics</h2>
-                        <h1 class="mt-1 font-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Distribution & Metrics</h1>
-                    </div>
-                    
-                    <div id="analyticsContent" class="hidden space-y-6">
-                        <!-- Contextual Card (Hidden by default) -->
-                        <div id="analyticsDeepLinkCard" class="hidden rounded-xl border-l-4 border-l-primary border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 mb-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-headline text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-[18px] text-primary">target</span> Focused Analytics
-                                </h3>
-                                <button id="btnClearAnalyticsFilter" class="text-xs font-semibold text-slate-500 hover:text-slate-700 underline dark:text-slate-400">Clear Focus</button>
-                            </div>
-                            <div class="mb-4 text-xs font-semibold text-slate-800 dark:text-slate-250"><span class="text-[10px] uppercase font-mono tracking-wider text-slate-450 mr-2 flex items-center gap-1 inline-flex"><span class="material-symbols-outlined text-[14px]">tag</span> <span id="alID">-</span></span> <span id="alQuestion">-</span></div>
-                            <div class="grid grid-cols-2 md:grid-cols-2 gap-4 text-center">
-                                <div class="hidden rounded bg-slate-50 p-2 dark:bg-slate-950"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Status</div><div id="alStatus" class="text-xs font-bold">-</div></div>
-                                <div class="hidden rounded bg-slate-50 p-2 dark:bg-slate-950"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Bloom</div><div id="alBloom" class="text-xs font-bold">-</div></div>
-                                <div class="rounded bg-slate-50 p-2 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Difficulty</div><div id="alDiff" class="text-xs font-bold text-slate-805 dark:text-slate-205">-</div></div>
-                                <div class="hidden rounded bg-slate-50 p-2 dark:bg-slate-950"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Confidence</div><div id="alConf" class="text-xs font-bold">-</div></div>
-                                <div class="rounded bg-slate-50 p-2 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850"><div class="text-[9px] uppercase tracking-wider text-slate-450 mb-1">Variants</div><div id="alVarCount" class="text-xs font-bold text-slate-805 dark:text-slate-205">-</div></div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 pb-2 dark:border-slate-800">Difficulty Distribution</h3>
-                                <div style="height: 300px;"><canvas id="diffChart"></canvas></div>
-                            </div>
-                            <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                                <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 pb-2 dark:border-slate-800">Classifier Confidence Overview</h3>
-                                <div style="height: 300px;"><canvas id="confChart"></canvas></div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="rounded-xl border border-blue-100 bg-blue-50/20 p-4 shadow-sm dark:border-blue-900/30 dark:bg-blue-950/10">
-                                <div class="text-[10px] font-mono font-bold text-blue-500 uppercase tracking-widest">Most Common Bloom</div>
-                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white" id="mostCommonBloomLabel">-</div>
-                                <div class="text-xs mt-1 text-slate-500 dark:text-slate-400" id="mostCommonBloomPct">-</div>
-                            </div>
-                            <div class="rounded-xl border border-emerald-100 bg-emerald-50/20 p-4 shadow-sm dark:border-emerald-900/30 dark:bg-emerald-950/10">
-                                <div class="text-[10px] font-mono font-bold text-secondary uppercase tracking-widest">Average Confidence</div>
-                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white font-mono" id="avgConfLabel">-</div>
-                            </div>
-                            <div class="rounded-xl border border-indigo-100 bg-indigo-50/20 p-4 shadow-sm dark:border-indigo-900/30 dark:bg-indigo-950/10">
-                                <div class="text-[10px] font-mono font-bold text-indigo-500 uppercase tracking-widest">Highest Confidence</div>
-                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white font-mono" id="maxConfLabel">-</div>
-                            </div>
-                            <div class="rounded-xl border border-rose-100 bg-rose-50/20 p-4 shadow-sm dark:border-rose-900/30 dark:bg-rose-950/10">
-                                <div class="text-[10px] font-mono font-bold text-danger uppercase tracking-widest">Lowest Confidence</div>
-                                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white font-mono" id="minConfLabel">-</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="analyticsEmpty" class="rounded-xl border border-slate-200 bg-white py-12 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                        <span class="material-symbols-outlined text-[40px] text-slate-300 mb-2 mx-auto block">bar_chart</span>
-                        <h3 class="font-headline text-sm font-bold text-slate-900 dark:text-white">No Data Available</h3>
-                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Upload a batch of questions to generate analytics.</p>
-                        <button class="mt-4 rounded-lg bg-primary hover:bg-primary-hover px-4 py-2 text-xs font-semibold text-white transition-all shadow-sm" onclick="switchTab('view-batch')">Go to Batch Upload</button>
-                    </div>
                 </div>
+
+
 
                 <!-- VIEW: MODEL INFO -->
                 <div id="view-modelinfo" class="view-section hidden animate-fade-in">
@@ -793,7 +777,8 @@
             </main>
         </div>
     </div>
-    <!-- Offcanvas Drawer Alternative (Tailwind Sliding Panel) -->
+
+    <!-- Offcanvas Drawer Alternative (Tailwind Sliding Panel) -->
     <div id="questionDetailDrawer" class="fixed inset-y-0 right-0 z-[60] w-full max-w-5xl translate-x-full flex flex-col border-l border-slate-200 bg-slate-50 shadow-2xl transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-950">
         <!-- Header & Quick Actions -->
         <div class="flex items-center justify-between border-b border-slate-100 bg-white px-6 py-4 dark:border-slate-805 dark:bg-slate-900 shadow-sm z-10">
@@ -843,17 +828,16 @@
                         </div>
                         <!-- Review Status Dropdown -->
                         <div class="relative group">
-                            <select id="drawerStatusSelect" class="h-8 px-3 pr-8 inline-flex items-center rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:outline-none dark:border-slate-850 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 transition-all appearance-none cursor-pointer">
+                            <select id="drawerStatusSelect" class="custom-select h-8 pl-3 pr-8 inline-flex items-center rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:outline-none dark:border-slate-850 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 transition-all cursor-pointer">
                                 <option value="Verified">Verified</option>
                                 <option value="Approved">Approved</option>
                                 <option value="Needs Review">Needs Review</option>
                                 <option value="Rejected">Rejected</option>
                             </select>
-                            <span class="material-symbols-outlined text-[16px] text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <p id="drawerQuestion" class="text-[13px] font-semibold text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap break-words">-</p>
+                        <p id="drawerQuestion" class="text-[13px] font-semibold text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line break-words">-</p>
                     </div>
                 </div>
 
@@ -879,11 +863,11 @@
                                     <span id="drawerConfText">-</span>
                                 </div>
                                 <div class="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
-                                    <div id="drawerConfBar" class="h-full rounded-full bg-primary" style="width: 0%"></div>
+                                    <!-- Drawer confidence progress bar removed -->
                                 </div>
                             </div>
-                            <div class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap break-words border-t border-slate-100 dark:border-slate-800 pt-3">
-                                <strong class="text-slate-700 dark:text-slate-350">Explanation:</strong> <span id="drawerExplanation" class="font-normal">-</span>
+                            <div class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed break-words border-t border-slate-100 dark:border-slate-800 pt-3">
+                                <strong class="text-slate-700 dark:text-slate-350">Explanation:</strong> <span id="drawerExplanation" class="font-normal whitespace-pre-line">-</span>
                             </div>
                         </div>
 
@@ -972,13 +956,65 @@
         </div>
     </div>
     
+    <!-- Manual Classification Details Modal -->
+    <div id="manualDetailsModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]" onclick="closeManualDetailsModal()"></div>
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-2xl rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 overflow-hidden flex flex-col max-h-[90vh] animate-fade-in">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-slate-800">
+                <h3 class="font-headline text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px] text-primary">analytics</span> Classification Details
+                </h3>
+                <button onclick="closeManualDetailsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="p-6 overflow-y-auto space-y-4 text-sm custom-scrollbar">
+                <!-- Question -->
+                <div>
+                    <h4 class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Question</h4>
+                    <p id="modalQuestionText" class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-100 dark:border-slate-850 whitespace-pre-wrap leading-relaxed"></p>
+                </div>
+                <!-- Badges -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-100 dark:border-slate-850 text-center">
+                        <div class="text-[9px] uppercase font-mono tracking-wider text-slate-400 mb-1">Bloom Level</div>
+                        <div id="modalBloomLevel" class="text-sm font-bold text-slate-800 dark:text-slate-100">-</div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-100 dark:border-slate-850 text-center">
+                        <div class="text-[9px] uppercase font-mono tracking-wider text-slate-400 mb-1">Difficulty</div>
+                        <div id="modalDifficulty" class="text-sm font-bold text-slate-800 dark:text-slate-100">-</div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-100 dark:border-slate-850 text-center">
+                        <div class="text-[9px] uppercase font-mono tracking-wider text-slate-400 mb-1">Confidence</div>
+                        <div id="modalConfidence" class="text-sm font-bold text-slate-800 dark:text-slate-100">-</div>
+                    </div>
+                </div>
+                <!-- Explanation -->
+                <div>
+                    <h4 class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Explanation</h4>
+                    <p id="modalExplanation" class="text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-100 dark:border-slate-850 whitespace-pre-wrap"></p>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="border-t border-slate-100 px-6 py-4 dark:border-slate-800 flex justify-end">
+                <button onclick="closeManualDetailsModal()" class="rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Drawer Overlay -->
-    <div id="drawerOverlay" class="fixed inset-0 z-[55] hidden bg-slate-950/40 backdrop-blur-[2px] transition-all duration-300"></div>>
+    <div id="drawerOverlay" class="fixed inset-0 z-[55] hidden bg-slate-950/40 backdrop-blur-[2px] transition-all duration-300"></div>
     
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-[70] flex flex-col gap-2"></div>
 
-    <script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js?v=2.7"></script>
     <script>
         // Initialize Lucide icons
         lucide.createIcons();

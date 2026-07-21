@@ -44,14 +44,21 @@ def validate_semantics(original_q, candidate_q, st_model, get_cached_embedding_f
         cand_semantic_str = ", ".join(sorted(list(cand_concepts)))
     else:
         # Fallback: whole-sentence similarity
-        if hasattr(original_q, "get_embedding"):
+        from question_profile import QuestionProfile
+        if isinstance(original_q, QuestionProfile):
+            emb_orig = get_cached_embedding_fn(original_q.normalized_question, st_model)
+            orig_text = original_q.normalized_question
+        elif hasattr(original_q, "get_embedding"):
             emb_orig = original_q.get_embedding()
             orig_text = original_q.text
         else:
             emb_orig = get_cached_embedding_fn(original_q, st_model)
             orig_text = original_q
             
-        if hasattr(candidate_q, "get_embedding"):
+        if isinstance(candidate_q, QuestionProfile):
+            emb_cand = get_cached_embedding_fn(candidate_q.normalized_question, st_model)
+            cand_text = candidate_q.normalized_question
+        elif hasattr(candidate_q, "get_embedding"):
             emb_cand = candidate_q.get_embedding()
             cand_text = candidate_q.text
         else:

@@ -5,7 +5,8 @@
   "brokenButtons": [],
   "consoleErrors": [],
   "consoleWarnings": [
-    "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation",
+    "[PERF-WARNING] pollBatchStatus() exceeded 50ms threshold: 63.10 ms"
   ],
   "pageExceptions": [],
   "failedRequests": []

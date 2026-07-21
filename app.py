@@ -9,7 +9,6 @@ import io
 import json
 import time
 import re
-import string
 from collections import Counter
 from datetime import datetime
 import threading
@@ -17,7 +16,7 @@ import torch
 import pandas as pd
 import platform
 import transformers
-from flask import Flask, request, jsonify, render_template, session, send_file
+from flask import Flask, request, jsonify, render_template, session, send_file, Response
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -26,7 +25,6 @@ from transformers import (
 import PyPDF2
 import docx
 from fpdf import FPDF
-from difflib import SequenceMatcher
 from werkzeug.utils import secure_filename
 import pptx
 from dataclasses import dataclass
@@ -34,10 +32,6 @@ from config import (
     MODES,
     ACTIVE_MODE,
     DOMAIN_MAP,
-    CONCEPT_SYNONYMS,
-    BLOOM_PROFILES,
-    CONCEPT_SEMANTIC_THRESHOLD,
-    DUPLICATE_SEMANTIC_THRESHOLD,
     NUM_CANDIDATES_BY_BLOOM,
 )
 from prompt_templates import build_prompt
@@ -59,9 +53,17 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 # In-memory session storage for large batch results
 MEMORY_STORE = {}
 BATCH_HISTORY = []
+SESSION_STATE = {
+    "manual_classifications": [],
+    "batch_history": BATCH_HISTORY,
+}
+
 
 # Startup timestamp
 STARTUP_TIMESTAMP = time.time()
+
+# Performance Logging Flag (Set to True for verbose per-question timing logs in terminal)
+ENABLE_PERFORMANCE_LOGS = False
 
 # Thread locks
 MODEL_LOCK = threading.Lock()
@@ -181,6 +183,8 @@ class ValidationResult:
     candidates_generated: int = 0
     candidates_validated: int = 0
     candidates_rejected_before_validation: int = 0
+    retry_history: list = None
+
 
 
 REJECTION_LOGS = []
@@ -600,37 +604,69 @@ def generate_dynamic_explanation(
     return f"{s1} {s2} {s3}"
 
 
-def classify_text(text: str):
+def classify_text(text: str, return_details: bool = False):
     if deberta_model is None or deberta_tokenizer is None:
         raise RuntimeError("DeBERTa model is not loaded.")
 
     try:
-        device = next(deberta_model.parameters()).device
+        t_tok_start = time.perf_counter()
         inputs = deberta_tokenizer(
             text, return_tensors="pt", truncation=True, max_length=512
         )
+        t_tok = (time.perf_counter() - t_tok_start) * 1000.0
+
+        t_inf_start = time.perf_counter()
+        device = next(deberta_model.parameters()).device
         inputs = {k: v.to(device) for k, v in inputs.items()}
         with torch.inference_mode():
             outputs = deberta_model(**inputs)
             logits = outputs.logits
-            probs = torch.nn.functional.softmax(logits, dim=-1)
-            predicted_class_id = logits.argmax().item()
-            confidence = probs[0][predicted_class_id].item() * 100
+        t_inf = (time.perf_counter() - t_inf_start) * 1000.0
 
-            index_to_bloom = {
-                0: "Remember",
-                1: "Understand",
-                2: "Apply",
-                3: "Analyze",
-                4: "Evaluate",
-                5: "Create",
+        t_bloom_start = time.perf_counter()
+        predicted_class_id = logits.argmax().item()
+        index_to_bloom = {
+            0: "Remember",
+            1: "Understand",
+            2: "Apply",
+            3: "Analyze",
+            4: "Evaluate",
+            5: "Create",
+        }
+        bloom = index_to_bloom.get(predicted_class_id, "Analyze")
+        t_bloom = (time.perf_counter() - t_bloom_start) * 1000.0
+
+        t_diff_start = time.perf_counter()
+        diff = BLOOM_TO_DIFFICULTY.get(bloom, "Medium")
+        t_diff = (time.perf_counter() - t_diff_start) * 1000.0
+
+        t_conf_start = time.perf_counter()
+        probs = torch.nn.functional.softmax(logits, dim=-1)
+        confidence = probs[0][predicted_class_id].item() * 100
+        t_conf = (time.perf_counter() - t_conf_start) * 1000.0
+
+        if return_details:
+            return bloom, diff, round(confidence, 2), {
+                "tokenizer": t_tok,
+                "deberta_inference": t_inf,
+                "bloom_mapping": t_bloom,
+                "difficulty_mapping": t_diff,
+                "confidence_calc": t_conf,
             }
-            bloom = index_to_bloom.get(predicted_class_id, "Analyze")
-            diff = BLOOM_TO_DIFFICULTY.get(bloom, "Medium")
-            return bloom, diff, round(confidence, 2)
+
+        return bloom, diff, round(confidence, 2)
     except Exception as e:
         print(f"Error in classification: {e}")
+        if return_details:
+            return "Unknown", "Unknown", 0.0, {
+                "tokenizer": 0.0,
+                "deberta_inference": 0.0,
+                "bloom_mapping": 0.0,
+                "difficulty_mapping": 0.0,
+                "confidence_calc": 0.0,
+            }
         return "Unknown", "Unknown", 0.0
+
 
 
 def generate_single_variant(
@@ -659,7 +695,6 @@ def generate_single_variant(
 
     topic_to_use = required_concept if required_concept else topic
 
-    print(f"[PROMPT SELECTION] Mode: '{mode_name}' -> Calling build_prompt()")
     prompt = build_prompt(
         question=question,
         source_bloom=source_bloom,
@@ -787,6 +822,38 @@ def extract_questions_from_file(file):
     return questions
 
 
+def update_batch_history_stats(session_id):
+    if session_id not in MEMORY_STORE:
+        return
+    store = MEMORY_STORE[session_id]
+    for hist in BATCH_HISTORY:
+        if hist["session_id"] == session_id:
+            hist["total_questions"] = store["total_questions"]
+            hist["completed_questions"] = store["completed_questions"]
+            
+            easy, medium, hard = 0, 0, 0
+            bloom_counts = { "Remember": 0, "Understand": 0, "Apply": 0, "Analyze": 0, "Evaluate": 0, "Create": 0 }
+            total_conf = 0
+            for r in store["results"]:
+                d = r.get("difficulty")
+                if d == 'Easy': easy += 1
+                elif d in ['Medium', 'Moderate']: medium += 1
+                elif d in ['Hard', 'Difficult']: hard += 1
+                
+                bl = r.get("bloom_level")
+                if bl in bloom_counts:
+                    bloom_counts[bl] += 1
+                
+                total_conf += float(r.get("confidence", 0))
+            
+            hist["easy_count"] = easy
+            hist["medium_count"] = medium
+            hist["hard_count"] = hard
+            hist["bloom_counts"] = bloom_counts
+            hist["avg_confidence"] = round((total_conf / len(store["results"])), 1) if len(store["results"]) > 0 else 0
+            break
+
+
 def process_batch_background(session_id):
     store = MEMORY_STORE.get(session_id)
     if not store:
@@ -794,43 +861,251 @@ def process_batch_background(session_id):
 
     store["status"] = "PROCESSING"
     store["start_time"] = time.time()
+    batch_start_perf = time.perf_counter()
 
     questions = store["questions"]
-    for i, q in enumerate(questions):
-        if store["stop"]:
-            store["status"] = "STOPPED"
-            break
+    total_q = len(questions)
 
-        cleaned_q = clean_source_question(q)
-        bloom, diff, conf = classify_text(cleaned_q)
-        required_concept = normalize_academic_concept(cleaned_q)
-        explanation = generate_dynamic_explanation(cleaned_q, required_concept, bloom, diff)
+    import spacy_utils
 
-        timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        result = {
-            "id": i + 1,
-            "question": cleaned_q,
-            "original_question": q,
-            "bloom_level": bloom,
-            "difficulty": diff,
-            "confidence": conf,
-            "explanation": explanation,
-            "timestamp": timestamp_str,
-            "status": (
-                "Verified"
-                if float(conf) >= 95
-                else ("Review" if float(conf) >= 80 else "Low Confidence")
-            ),
-            "previous_classification": None,
-            "variants": [],
-            "notes": "",
-            "tags": [],
-        }
-        store["results"].append(result)
-        store["completed_questions"] = i + 1
+    # --- Log One-Time Costs at Batch Start ---
+    print(f"\n==================================================")
+    print(f"Batch Started : Session {session_id} ({total_q} questions)")
+    print(f"==================================================")
+    print(f"Tokenizer Status          : Loaded ({DEBERTA_PATH})")
+    print(f"SentenceTransformer Status : {'Loaded' if _st_model is not None else 'Unloaded / Lazy'}")
+    print(f"spaCy Model Status        : {'Loaded' if spacy_utils._nlp is not None else 'Not Loaded (Will Lazy Load)'}")
+    print(f"Cache Initialization      : Embedding Cache ({len(EMBEDDING_CACHE)} keys, Hits: {EMBEDDING_CACHE_HITS}, Misses: {EMBEDDING_CACHE_MISSES})")
+    print(f"spaCy Doc Cache           : {len(spacy_utils._doc_cache)} documents")
+    print(f"Thread Info               : ID {threading.get_ident()} ({threading.current_thread().name})")
+    print(f"Memory Usage              : {get_current_process_memory():.2f} MB")
+    print(f"==================================================\n")
 
-    if not store["stop"] and store["completed_questions"] == store["total_questions"]:
-        store["status"] = "COMPLETED"
+    batch_timings = []
+
+    try:
+        for i, raw_q in enumerate(questions):
+            if store["stop"]:
+                store["status"] = "STOPPED"
+                break
+
+            q_num = i + 1
+
+            # 1. Question Extraction
+            t_ext_start = time.perf_counter()
+            q = raw_q
+            t_ext = (time.perf_counter() - t_ext_start) * 1000.0
+
+            # 2. Input Validation
+            t_val_start = time.perf_counter()
+            is_valid = isinstance(q, str) and len(q.strip()) > 0
+            t_val = (time.perf_counter() - t_val_start) * 1000.0
+
+            # 3. Text Cleaning
+            t_clean_start = time.perf_counter()
+            cleaned_q = clean_source_question(q)
+            t_clean = (time.perf_counter() - t_clean_start) * 1000.0
+
+            # 4. spaCy Processing (Deferred to Phase 2 after classification)
+            t_spacy = 0.0
+
+            # 5. SentenceTransformer (Deferred to Phase 2 after classification)
+            t_st = 0.0
+
+            # 6. Cache Lookup
+            t_cache = 0.0
+
+            # 7-11. Tokenizer, DeBERTa Inference, Bloom Mapping, Difficulty Mapping, Confidence Calculation
+            bloom, diff, conf, det_timings = classify_text(cleaned_q, return_details=True)
+            t_tok = det_timings["tokenizer"]
+            t_inf = det_timings["deberta_inference"]
+            t_bloom = det_timings["bloom_mapping"]
+            t_diff = det_timings["difficulty_mapping"]
+            t_conf = det_timings["confidence_calc"]
+
+            # 12. Explanation Generation
+            t_exp_start = time.perf_counter()
+            required_concept = normalize_academic_concept(cleaned_q)
+            explanation = generate_dynamic_explanation(cleaned_q, required_concept, bloom, diff)
+            t_exp = (time.perf_counter() - t_exp_start) * 1000.0
+
+            timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            result = {
+                "id": q_num,
+                "question": cleaned_q,
+                "original_question": q,
+                "bloom_level": bloom,
+                "difficulty": diff,
+                "confidence": conf,
+                "explanation": explanation,
+                "timestamp": timestamp_str,
+                "status": (
+                    "Verified"
+                    if float(conf) >= 95
+                    else ("Review" if float(conf) >= 80 else "Low Confidence")
+                ),
+                "previous_classification": None,
+                "variants": [],
+                "notes": "",
+                "tags": [],
+            }
+
+            # 13. Session Update
+            t_sess_start = time.perf_counter()
+            store["completed_questions"] = q_num
+            t_sess = (time.perf_counter() - t_sess_start) * 1000.0
+
+            # 14. Result Storage
+            t_store_start = time.perf_counter()
+            store["results"].append(result)
+            t_store = (time.perf_counter() - t_store_start) * 1000.0
+
+            stages = {
+                "Question Extraction": t_ext,
+                "Input Validation": t_val,
+                "Text Cleaning": t_clean,
+                "spaCy Processing": t_spacy,
+                "SentenceTransformer": t_st,
+                "Cache Lookup": t_cache,
+                "Tokenizer": t_tok,
+                "DeBERTa Inference": t_inf,
+                "Bloom Mapping": t_bloom,
+                "Difficulty Mapping": t_diff,
+                "Confidence Calculation": t_conf,
+                "Explanation Generation": t_exp,
+                "Session Update": t_sess,
+                "Result Storage": t_store,
+            }
+
+            total_q_ms = sum(stages.values())
+            slowest_stage_name, slowest_stage_val = max(stages.items(), key=lambda x: x[1])
+
+            batch_timings.append({
+                "q_num": q_num,
+                "total_ms": total_q_ms,
+                "stages": stages,
+                "slowest_stage": (slowest_stage_name, slowest_stage_val),
+            })
+
+            # Print per-question instrumentation log (if enabled)
+            if ENABLE_PERFORMANCE_LOGS:
+                print(f"==================================================")
+                print(f"Question {q_num}")
+                print(f"==================================================")
+                for s_name, s_val in stages.items():
+                    print(f"{s_name:<25}: {s_val:8.2f} ms")
+                print(f"\nTOTAL                    : {total_q_ms:8.2f} ms")
+                print(f"Slowest Stage            : {slowest_stage_name} ({slowest_stage_val:.2f} ms)")
+                print(f"==================================================\n")
+
+        if not store["stop"] and store["completed_questions"] == store["total_questions"]:
+            store["status"] = "COMPLETED"
+
+    except Exception as e:
+        import traceback
+        print("Exception in background batch processing:")
+        traceback.print_exc()
+        store["status"] = "FAILED"
+
+    # --- Batch Performance Report & Group Comparisons ---
+    if batch_timings:
+        total_batch_ms = (time.perf_counter() - batch_start_perf) * 1000.0
+        n = len(batch_timings)
+        avg_q_ms = total_batch_ms / n
+
+        fastest = min(batch_timings, key=lambda x: x["total_ms"])
+        slowest = max(batch_timings, key=lambda x: x["total_ms"])
+        sorted_by_slow = sorted(batch_timings, key=lambda x: x["total_ms"], reverse=True)
+        top5 = sorted_by_slow[:5]
+
+        # Group comparison (Q1-10 vs Q11+)
+        q1_10 = batch_timings[:10]
+        q11_plus = batch_timings[10:]
+
+        avg_q1_10 = sum(x["total_ms"] for x in q1_10) / len(q1_10) if q1_10 else 0.0
+        avg_q11_plus = sum(x["total_ms"] for x in q11_plus) / len(q11_plus) if q11_plus else 0.0
+        diff_groups = avg_q1_10 - avg_q11_plus if q11_plus else 0.0
+
+        # Stage averages across batch
+        stage_totals = {k: 0.0 for k in batch_timings[0]["stages"].keys()}
+        stage_q1_10_totals = {k: 0.0 for k in batch_timings[0]["stages"].keys()}
+        stage_q11_plus_totals = {k: 0.0 for k in batch_timings[0]["stages"].keys()}
+
+        for item in batch_timings:
+            for s_k, s_v in item["stages"].items():
+                stage_totals[s_k] += s_v
+
+        for item in q1_10:
+            for s_k, s_v in item["stages"].items():
+                stage_q1_10_totals[s_k] += s_v
+
+        for item in q11_plus:
+            for s_k, s_v in item["stages"].items():
+                stage_q11_plus_totals[s_k] += s_v
+
+        stage_avgs = {k: v / n for k, v in stage_totals.items()}
+        stage_q1_10_avgs = {k: v / len(q1_10) for k, v in stage_q1_10_totals.items()} if q1_10 else {}
+        stage_q11_plus_avgs = {k: v / len(q11_plus) for k, v in stage_q11_plus_totals.items()} if q11_plus else {}
+
+        largest_bottleneck_name, largest_bottleneck_val = max(stage_avgs.items(), key=lambda x: x[1])
+        bottleneck_pct = (largest_bottleneck_val / (sum(stage_avgs.values()) or 1.0)) * 100.0
+
+        # Warm-up Bottlenecks
+        warmup_bottlenecks = []
+        if q11_plus:
+            for s_k in stage_avgs.keys():
+                q1_10_avg = stage_q1_10_avgs.get(s_k, 0.0)
+                q11_avg = stage_q11_plus_avgs.get(s_k, 0.0)
+                if q1_10_avg > 2.0 * (q11_avg or 1.0) and q1_10_avg > 20.0:
+                    warmup_bottlenecks.append((s_k, q1_10_avg, q11_avg))
+
+        if ENABLE_PERFORMANCE_LOGS:
+            print(f"\n==================================================")
+            print(f"            Group Performance Analysis            ")
+            print(f"==================================================")
+            print(f"Questions 1-10 Average Classification Time  : {avg_q1_10:.2f} ms")
+            if q11_plus:
+                print(f"Questions 11-{n} Average Classification Time: {avg_q11_plus:.2f} ms")
+                print(f"Difference (First 10 vs Later Questions)  : {diff_groups:+.2f} ms")
+            print(f"\nAverage Stage Times Across Batch:")
+            for s_k, s_v in stage_avgs.items():
+                q1_avg = stage_q1_10_avgs.get(s_k, 0.0)
+                q11_avg = stage_q11_plus_avgs.get(s_k, 0.0) if q11_plus else 0.0
+                print(f"  {s_k:<25}: Batch Avg {s_v:7.2f} ms | Q1-10 {q1_avg:7.2f} ms | Q11+ {q11_avg:7.2f} ms")
+
+            if warmup_bottlenecks:
+                print(f"\n[WARM-UP BOTTLENECKS DETECTED]")
+                for wb_name, wb_q1, wb_q11 in warmup_bottlenecks:
+                    print(f"  - Possible Warm-up Bottleneck: {wb_name} (Q1-10 Avg: {wb_q1:.2f} ms -> Q11+ Avg: {wb_q11:.2f} ms)")
+
+            print(f"\n==================================================")
+            print(f"            Batch Performance Report              ")
+            print(f"==================================================")
+            print(f"Total Questions         : {n}")
+            print(f"Total Time              : {total_batch_ms:.2f} ms")
+            print(f"Average Time            : {avg_q_ms:.2f} ms")
+            print(f"Fastest Question        : Question {fastest['q_num']} ({fastest['total_ms']:.2f} ms)")
+            print(f"Slowest Question        : Question {slowest['q_num']} ({slowest['total_ms']:.2f} ms)")
+            print(f"\nTop 5 Slowest Questions:")
+            for idx_top, item in enumerate(top5, 1):
+                s_name, s_val = item['slowest_stage']
+                print(f"  {idx_top}. Question {item['q_num']} - {item['total_ms']:.2f} ms (Slowest Stage: {s_name} {s_val:.2f} ms)")
+
+            print(f"\nAverage Time Per Stage:")
+            for s_name, s_val in stage_avgs.items():
+                print(f"  {s_name:<25}: {s_val:8.2f} ms")
+
+            print(f"\nLargest Bottleneck      : {largest_bottleneck_name} ({largest_bottleneck_val:.2f} ms / {bottleneck_pct:.1f}% of per-question latency)")
+
+            print(f"\nRecommendations:")
+            if warmup_bottlenecks:
+                top_wb = warmup_bottlenecks[0]
+                print(f"  - Pre-warm '{top_wb[0]}' during system startup (load_models/run_warmup) to eliminate the initial {top_wb[1]:.0f} ms spike.")
+            else:
+                print(f"  - System stages exhibit consistent execution across batch questions.")
+            print(f"==================================================\n")
+
+    print(f"Batch {store['status']}: Session {session_id} ({store['completed_questions']}/{store['total_questions']} completed)")
 
     # Update History
     for hist in BATCH_HISTORY:
@@ -838,6 +1113,10 @@ def process_batch_background(session_id):
             hist["status"] = store["status"]
             hist["completed_questions"] = store["completed_questions"]
             break
+
+    update_batch_history_stats(session_id)
+
+
 
 
 @app.route("/")
@@ -965,6 +1244,18 @@ def classify():
     required_concept = normalize_academic_concept(cleaned_q)
     explanation = generate_dynamic_explanation(cleaned_q, required_concept, bloom, diff)
 
+    new_classification = {
+        "id": "manual-" + str(int(time.time() * 1000)),
+        "question": cleaned_q,
+        "bloom_level": bloom,
+        "difficulty": diff,
+        "confidence": conf,
+        "explanation": explanation,
+        "upload_time": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")[:-4] + "Z",
+        "status": "Completed"
+    }
+    SESSION_STATE["manual_classifications"].append(new_classification)
+
     return jsonify(
         {
             "question": cleaned_q,
@@ -975,6 +1266,12 @@ def classify():
             "explanation": explanation,
         }
     )
+
+
+@app.route("/manual-classifications", methods=["GET"])
+def get_manual_classifications():
+    return jsonify(SESSION_STATE["manual_classifications"])
+
 
 
 @app.route("/parse-upload", methods=["POST"])
@@ -1008,6 +1305,7 @@ def parse_upload():
 
 @app.route("/upload-batch", methods=["POST"])
 def upload_batch():
+    t_start = time.perf_counter()
     data = request.json
     if not data or "questions" not in data:
         return jsonify({"error": "Missing questions data"}), 400
@@ -1042,11 +1340,18 @@ def upload_batch():
                 "total_questions": len(questions),
                 "completed_questions": 0,
                 "status": "PENDING",
+                "easy_count": 0,
+                "medium_count": 0,
+                "hard_count": 0,
+                "bloom_counts": { "Remember": 0, "Understand": 0, "Apply": 0, "Analyze": 0, "Evaluate": 0, "Create": 0 },
+                "avg_confidence": 0
             },
         )
-        # Keep history at max 50
         if len(BATCH_HISTORY) > 50:
             BATCH_HISTORY.pop()
+
+        t_proc_ms = (time.perf_counter() - t_start) * 1000.0
+        print(f"[PERF-API] POST /upload-batch Processing Time: {t_proc_ms:.2f} ms ({len(questions)} questions)")
 
         return jsonify(
             {
@@ -1075,9 +1380,11 @@ def start_batch(session_id):
 
 @app.route("/batch-status/<session_id>", methods=["GET"])
 def get_batch_status(session_id):
+    t_route_start = time.perf_counter()
     if session_id not in MEMORY_STORE:
         return jsonify({"error": "Invalid session ID"}), 404
 
+    t_proc_start = time.perf_counter()
     store = MEMORY_STORE[session_id]
 
     speed = 0.0
@@ -1089,17 +1396,27 @@ def get_batch_status(session_id):
             remaining_q = store["total_questions"] - store["completed_questions"]
             if speed > 0:
                 eta = int(remaining_q / speed)
+    t_proc_ms = (time.perf_counter() - t_proc_start) * 1000.0
 
-    return jsonify(
-        {
-            "status": store["status"],
-            "total": store["total_questions"],
-            "processed": store["completed_questions"],
-            "results": store["results"],
-            "speed": round(speed, 1),
-            "eta": eta,
-        }
-    )
+    t_json_start = time.perf_counter()
+    response_obj = {
+        "status": store["status"],
+        "total": store["total_questions"],
+        "processed": store["completed_questions"],
+        "results": store["results"],
+        "speed": round(speed, 1),
+        "eta": eta,
+    }
+    json_bytes = json.dumps(response_obj).encode("utf-8")
+    t_json_ms = (time.perf_counter() - t_json_start) * 1000.0
+
+    payload_kb = len(json_bytes) / 1024.0
+    t_total_ms = (time.perf_counter() - t_route_start) * 1000.0
+
+    if ENABLE_PERFORMANCE_LOGS:
+        print(f"[PERF-API] GET /batch-status: Server Proc={t_proc_ms:.2f}ms | JSON Serialization={t_json_ms:.2f}ms | Response Size={payload_kb:.2f} KB | Total={t_total_ms:.2f}ms")
+
+    return Response(json_bytes, mimetype="application/json")
 
 
 @app.route("/stop-batch/<session_id>", methods=["POST"])
@@ -1150,6 +1467,8 @@ def update_question(session_id, question_id):
     question_to_update["explanation"] = explanation
     question_to_update["bloom_level"] = pred_bloom
 
+    update_batch_history_stats(session_id)
+
     return jsonify(
         {
             "message": "Question updated successfully",
@@ -1160,9 +1479,6 @@ def update_question(session_id, question_id):
 
 @app.route("/export-rejections", methods=["GET"])
 def export_rejections():
-    import csv
-    import json
-
     if REJECTION_LOGS:
         with open("rejection_statistics.csv", "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(
@@ -1211,6 +1527,8 @@ def delete_question(session_id, question_id):
             hist["total_questions"] = store["total_questions"]
             hist["completed_questions"] = store["completed_questions"]
             break
+
+    update_batch_history_stats(session_id)
 
     return jsonify({"message": "Question deleted successfully"})
 
@@ -1465,252 +1783,73 @@ def infer_domain(question: str, concept: str) -> str:
     return "General Computer Science"
 
 
-def _generate_validated_variant_mode_e(
-    question,
-    src_bloom,
-    src_diff,
-    target_bloom,
-    target_difficulty,
-    domain,
-    required_concept,
-    session_seen,
-    config_mode,
-    mode_name,
-):
-    start_time = time.time()
-    t_tok = flan_tokenizer
-    
-    orig_ctx = NLPContext(question, _get_st_model(), get_cached_embedding)
-    
-    flan_calls_count = 0
-    deberta_calls_count = 0
-    candidates_generated_count = 0
-    candidates_validated_count = 0
-    candidates_rejected_before_validation_count = 0
-    
-    all_candidates_log = []
-    seen_questions = set()
-    best_candidate = None
-    
-    failure_hint_round_2 = ""
-    round_1_candidates = []
-    rejected_questions = []
-    
-    def get_starting_verb(q):
-        words = re.findall(r"\b\w+\b", q.strip().lower())
-        return words[0] if words else ""
+from question_understanding import QuestionUnderstandingEngine
+from question_profile import QuestionProfile
+from pipeline_context import PipelineContext
 
-    max_rounds = config_mode.get("max_generation_rounds", 2)
-
-    for current_round in range(1, max_rounds + 1):
-        flan_calls_count += 1
+def pre_cache_embeddings(texts: list, st_model):
+    if not texts or st_model is None:
+        return
+    
+    unique_non_cached = []
+    with EMBEDDING_CACHE_LOCK:
+        for t in texts:
+            key = normalize_embedding_key(t)
+            if key not in EMBEDDING_CACHE:
+                unique_non_cached.append((t, key))
+                
+    if not unique_non_cached:
+        return
         
-        candidates_list, prompt_used = generate_single_variant(
-            question,
-            src_bloom,
-            src_diff,
-            target_bloom,
-            target_difficulty,
-            domain=domain,
-            topic=required_concept,
-            required_concept=required_concept,
-            attempt_number=current_round,
-            failure_hint=failure_hint_round_2 if current_round > 1 else "",
-            config_mode=config_mode,
-            mode_name=mode_name,
+    try:
+        raw_texts = [item[0] for item in unique_non_cached]
+        embeddings = st_model.encode(raw_texts, convert_to_tensor=True)
+        
+        with EMBEDDING_CACHE_LOCK:
+            for (t, key), emb in zip(unique_non_cached, embeddings):
+                EMBEDDING_CACHE[key] = emb
+    except Exception as e:
+        print(f"Error pre-caching embeddings: {e}")
+
+
+def classify_texts_batch(texts: list) -> list:
+    if not texts:
+        return []
+    if deberta_model is None or deberta_tokenizer is None:
+        raise RuntimeError("DeBERTa model is not loaded.")
+    try:
+        device = next(deberta_model.parameters()).device
+        inputs = deberta_tokenizer(
+            texts, padding=True, truncation=True, max_length=512, return_tensors="pt"
         )
-        
-        if not isinstance(candidates_list, list):
-            candidates_list = [candidates_list]
+        inputs = {k: v.to(device) for k, v in inputs.items()}
+        with torch.inference_mode():
+            outputs = deberta_model(**inputs)
+            logits = outputs.logits
+            probs = torch.nn.functional.softmax(logits, dim=-1)
             
-        candidates_generated_count += len(candidates_list)
-        
-        unique_candidates = []
-        for idx, cand_text in enumerate(candidates_list):
-            cand_text = sanitize_generated_question(cand_text)
-            
-            if cand_text in unique_candidates or cand_text in session_seen or cand_text in seen_questions:
-                candidates_rejected_before_validation_count += 1
-                candidate_info = {
-                    "Candidate ID": f"Round_{current_round}_Index_{idx}",
-                    "Question": cand_text,
-                    "Bloom Prediction": "N/A",
-                    "Difficulty": "N/A",
-                    "Confidence": 0.0,
-                    "Concept Score": "N/A",
-                    "Duplicate Score": 1.0,
-                    "Entity Score": 0.0,
-                    "entity_score": 0.0,
-                    "Validation Status": "Deduplicated",
-                    "Rejection Reason": "Duplicate",
-                    "Generation Round": current_round,
-                    "Rank Score": 0.0,
-                }
-                all_candidates_log.append(candidate_info)
-            else:
-                unique_candidates.append(cand_text)
-                
-        # Validate unique candidates one by one
-        round_candidates = []
-        passing_candidate = None
-        
-        is_final_retries = (current_round == max_rounds)
-        
-        def classify_text_device(text: str):
-            if deberta_model is None or deberta_tokenizer is None:
-                raise RuntimeError("DeBERTa model is not loaded.")
-            try:
-                inputs = deberta_tokenizer(
-                    text, return_tensors="pt", truncation=True, max_length=512
-                )
-                device = next(deberta_model.parameters()).device
-                inputs = {k: v.to(device) for k, v in inputs.items()}
-                with torch.inference_mode():
-                    outputs = deberta_model(**inputs)
-                    logits = outputs.logits
-                    probs = torch.nn.functional.softmax(logits, dim=-1)
-                    predicted_class_id = logits.argmax().item()
-                    confidence = probs[0][predicted_class_id].item() * 100
- 
-                    index_to_bloom = {
-                        0: "Remember",
-                        1: "Understand",
-                        2: "Apply",
-                        3: "Analyze",
-                        4: "Evaluate",
-                        5: "Create",
-                    }
-                    bloom = index_to_bloom.get(predicted_class_id, "Analyze")
-                    diff = BLOOM_TO_DIFFICULTY.get(bloom, "Medium")
-                    return bloom, diff, round(confidence, 2)
-            except Exception as e:
-                print(f"Error in classification: {e}")
-                return "Unknown", "Unknown", 0.0
- 
-        for idx, gen_text in enumerate(unique_candidates):
-            # Evaluate using the new 7-stage NLP validation engine
-            val_out = evaluate_candidate(
-                original_q=orig_ctx,
-                candidate_q=gen_text,
-                target_bloom=target_bloom,
-                target_difficulty=target_difficulty,
-                seen_questions=seen_questions,
-                session_seen=session_seen,
-                config_mode=config_mode,
-                deberta_classifier_fn=classify_text_device,
-                st_model=_get_st_model(),
-                get_cached_embedding_fn=get_cached_embedding,
-                validate_bloom_verbs_fn=validate_bloom_verbs,
-                is_final_round=is_final_retries
-            )
-            
-            # Extract metrics for logging/UI compatibility
-            new_bloom = val_out.detailed_metrics.get("bloom", {}).get("predicted_bloom", "Unknown") if "bloom" in val_out.detailed_metrics else "N/A"
-            new_diff = val_out.detailed_metrics.get("bloom", {}).get("predicted_difficulty", "Unknown") if "bloom" in val_out.detailed_metrics else "N/A"
-            new_conf = val_out.detailed_metrics.get("bloom", {}).get("confidence", 0.0) if "bloom" in val_out.detailed_metrics else 0.0
-            
-            concept_match_score = f"{len(val_out.detailed_metrics.get('concept', {}).get('matched_concepts', []))}/{len(val_out.detailed_metrics.get('concept', {}).get('original_concepts', []))}" if "concept" in val_out.detailed_metrics else "N/A"
-            concept_sim = val_out.detailed_metrics.get("concept", {}).get("preservation_percentage", 0.0) if "concept" in val_out.detailed_metrics else 0.0
-            concept_method = "nlp_spacy"
-            matched_words_str = ", ".join(val_out.detailed_metrics.get("concept", {}).get("matched_concepts", [])) if "concept" in val_out.detailed_metrics else ""
-            
-            max_duplicate_ratio = val_out.detailed_metrics.get("duplicate", {}).get("max_duplicate_ratio", 0.0) if "duplicate" in val_out.detailed_metrics else 1.0
-            
-            # Increment counts for tracking
-            if val_out.rejection_reason not in ("Too Short", "Duplicate"):
-                candidates_validated_count += 1
-                if "bloom" in val_out.detailed_metrics:
-                    deberta_calls_count += 1
-                    
-            candidate_info = {
-                "Candidate ID": f"Round_{current_round}_Index_{idx}",
-                "Question": gen_text,
-                "Bloom Prediction": new_bloom,
-                "Difficulty": new_diff,
-                "Confidence": round(new_conf, 2),
-                "Concept Score": concept_match_score,
-                "Duplicate Score": round(max_duplicate_ratio, 4),
-                "Entity Score": val_out.entity_score,
-                "entity_score": val_out.entity_score,
-                "Validation Status": "Pass" if val_out.passed else "Fail",
-                "Rejection Reason": val_out.rejection_reason,
-                "Generation Round": current_round,
-                "Rank Score": calculate_nlp_rank_score(val_out),
-
-                # Compatibility fields
-                "bloom_prediction": new_bloom,
-                "difficulty_prediction": new_diff,
-                "confidence": new_conf,
-                "rejection_reason": val_out.rejection_reason,
-                "concept_similarity_score": concept_sim,
-                "duplicate_score": max_duplicate_ratio,
-                "validation_status": "Pass" if val_out.passed else "Fail",
-                "generated_question": gen_text,
-                "attempt_number": current_round,
-                "prompt": prompt_used,
-                "prompt_tokens": len(t_tok.encode(prompt_used)) if t_tok is not None else 0,
-                "completion_tokens": len(t_tok.encode(gen_text)) if t_tok is not None else 0,
-                "concept_match_score": concept_match_score,
-                "concept_match_method": concept_method,
-                "concept_similarity_score_raw": val_out.detailed_metrics.get("semantic", {}).get("similarity", 0.0) if "semantic" in val_out.detailed_metrics else 0.0,
-                "matched_keywords": matched_words_str,
-
-                # Per-stage scores for benchmark reporting
-                "bloom_score": val_out.bloom_score,
-                "concept_score": val_out.concept_score,
-                "semantic_score": val_out.semantic_score,
-                "number_score": val_out.number_score,
-                "grammar_score": val_out.grammar_score,
-                "total_score": val_out.total_score,
+            results = []
+            index_to_bloom = {
+                0: "Remember",
+                1: "Understand",
+                2: "Apply",
+                3: "Analyze",
+                4: "Evaluate",
+                5: "Create",
             }
-            
-            round_candidates.append(candidate_info)
-            all_candidates_log.append(candidate_info)
-            if not val_out.passed:
-                rejected_questions.append(gen_text)
-                
-        passing_in_round = [c for c in round_candidates if c["validation_status"] == "Pass"]
-        if passing_in_round:
-            passing_in_round = rank_candidates_dicts(passing_in_round)
-            best_candidate = passing_in_round[0]
-            break
-        else:
-            # Perform ranking update on failed candidates
-            for c in round_candidates:
-                seen_questions.add(c["generated_question"])
-                
-        if current_round < max_rounds:
-            round_1_candidates = round_candidates
-            # Issue 9: Keep only the 5 most recent rejected candidates to avoid prompt bloat.
-            recent_rejected = rejected_questions[-5:]
-            rejected_questions_list = [f"{idx_rej+1}. {q_text}" for idx_rej, q_text in enumerate(recent_rejected)]
-            rejected_str = "\n".join(rejected_questions_list)
-            
-            verbs_map = {
-                "Create": "Design, Create, Develop, Formulate, or Construct",
-                "Evaluate": "Evaluate, Assess, Critique, Justify, Defend, or Determine",
-                "Analyze": "Analyze, Compare, Differentiate, Examine, Contrast, or Distinguish",
-                "Apply": "Apply, Implement, Use, Demonstrate, Solve, or Calculate",
-                "Understand": "Explain, Describe, Discuss, Summarize, or Interpret",
-                "Remember": "Define, Identify, List, Name, State, or Recall"
-            }
-            allowed_verbs_str = verbs_map.get(target_bloom, "")
-            
-            failure_hint_round_2 = (
-                f"\n\nPrevious rejected questions:\n{rejected_str}\n\n"
-                f"Avoid the structures and verbs of the rejected questions above. "
-                f"The new question MUST start with one of the following verbs: {allowed_verbs_str}. "
-                f"Ensure it evaluates the concept '{required_concept}' at the {target_bloom} ({target_difficulty}) level."
-            )
-            
-    if best_candidate is None:
-        all_validated = [c for c in all_candidates_log if c.get("validation_status") in ["Pass", "Fail"]]
-        if all_validated:
-            all_validated = rank_candidates_dicts(all_validated)
-            best_candidate = all_validated[0]
-            
-    generation_time = time.time() - start_time
-    
+            for i in range(len(texts)):
+                pred_class = logits[i].argmax().item()
+                conf = probs[i][pred_class].item() * 100
+                bloom = index_to_bloom.get(pred_class, "Analyze")
+                diff = BLOOM_TO_DIFFICULTY.get(bloom, "Medium")
+                results.append((bloom, diff, round(conf, 2)))
+            return results
+    except Exception as e:
+        print(f"Error in batch classification: {e}")
+        return [("Unknown", "Unknown", 0.0)] * len(texts)
+
+
+def _write_benchmark_logs(all_candidates_log: list):
     try:
         log_file_path = "candidate_ranking_log.json"
         existing_candidates = []
@@ -1741,15 +1880,374 @@ def _generate_validated_variant_mode_e(
             json.dump(existing_candidates, lf, indent=4)
     except Exception as exc:
         print(f"[WARNING] Error writing to candidate_ranking_log.json: {exc}")
+
+
+def generate_validated_variant(
+    question,
+    src_bloom,
+    src_diff,
+    target_bloom,
+    target_difficulty,
+    domain,
+    required_concept,
+    session_seen,
+    config_mode=None,
+    mode_name=None,
+):
+    """
+    Executes the unified Mode E generation pipeline with batched model evaluation.
+    Applies all validation checks and returns the best candidate or the best failed attempt.
+    """
+    start_time = time.time()
+    t_tok = flan_tokenizer
+    
+    if config_mode is None:
+        config_mode = MODES[ACTIVE_MODE]
+        mode_name = ACTIVE_MODE
+    if mode_name is None:
+        mode_name = ACTIVE_MODE
         
+    t_prof_start = time.time()
+    orig_profile = QuestionUnderstandingEngine.build_profile(question, src_bloom)
+    prof_duration = time.time() - t_prof_start
+    
+    pipeline_ctx = PipelineContext(
+        source_question=question,
+        source_bloom=src_bloom,
+        target_bloom=target_bloom,
+        target_difficulty=target_difficulty,
+        source_profile=orig_profile,
+    )
+    pipeline_ctx.timings["profiling"] = prof_duration
+    
+    # Extract domain and concept from the profile
+    domain = orig_profile.domain
+    required_concept = orig_profile.topic
+    
+    # Pre-cache original question/concepts in SentenceTransformer embedding cache
+    st_model = _get_st_model()
+    if st_model is not None:
+        orig_texts = [orig_profile.normalized_question, orig_profile.raw_question]
+        orig_texts.extend(orig_profile.concepts)
+        orig_texts.extend(orig_profile.technical_entities)
+        orig_texts.extend(orig_profile.noun_chunks)
+        pre_cache_embeddings(orig_texts, st_model)
+        
+    flan_calls_count = 0
+    deberta_calls_count = 0
+    candidates_generated_count = 0
+    candidates_validated_count = 0
+    candidates_rejected_before_validation_count = 0
+    
+    all_candidates_log = []
+    seen_questions = set()
+    best_candidate = None
+    retry_history_log = []
+    prev_best_score = -1.0
+    is_semantic_drift_round = False
+    failure_hint_round_2 = ""
+    rejected_questions = []
+    
+    max_rounds = config_mode.get("max_generation_rounds", 2)
+    
+    for current_round in range(1, max_rounds + 1):
+        flan_calls_count += 1
+        
+        candidates_list, prompt_used = generate_single_variant(
+            question,
+            src_bloom,
+            src_diff,
+            target_bloom,
+            target_difficulty,
+            domain=domain,
+            topic=required_concept,
+            required_concept=required_concept,
+            attempt_number=current_round,
+            failure_hint=failure_hint_round_2 if current_round > 1 else "",
+            config_mode=config_mode,
+            mode_name=mode_name,
+        )
+        
+        if not isinstance(candidates_list, list):
+            candidates_list = [candidates_list]
+            
+        candidates_generated_count += len(candidates_list)
+        
+        # Deduplicate
+        unique_candidates = []
+        for idx, cand_text in enumerate(candidates_list):
+            cand_text = sanitize_generated_question(cand_text)
+            
+            if cand_text in unique_candidates or cand_text in session_seen or cand_text in seen_questions:
+                candidates_rejected_before_validation_count += 1
+                candidate_info = {
+                    "Candidate ID": f"Round_{current_round}_Index_{idx}",
+                    "Question": cand_text,
+                    "Bloom Prediction": "N/A",
+                    "Difficulty": "N/A",
+                    "Confidence": 0.0,
+                    "Concept Score": "N/A",
+                    "Duplicate Score": 1.0,
+                    "Entity Score": 0.0,
+                    "entity_score": 0.0,
+                    "Validation Status": "Deduplicated",
+                    "Rejection Reason": "Duplicate",
+                    "Generation Round": current_round,
+                    "Rank Score": 0.0,
+                    
+                    "bloom_prediction": "N/A",
+                    "difficulty_prediction": "N/A",
+                    "confidence": 0.0,
+                    "rejection_reason": "Duplicate",
+                    "concept_similarity_score": 0.0,
+                    "duplicate_score": 1.0,
+                    "validation_status": "Deduplicated",
+                    "generated_question": cand_text,
+                    "attempt_number": current_round,
+                    "prompt": prompt_used,
+                    "prompt_tokens": len(t_tok.encode(prompt_used)) if t_tok is not None else 0,
+                    "completion_tokens": len(t_tok.encode(cand_text)) if t_tok is not None else 0,
+                    "concept_match_score": "N/A",
+                    "concept_match_method": "N/A",
+                    "concept_similarity_score_raw": 0.0,
+                    "matched_keywords": "",
+                    
+                    "bloom_score": 0.0,
+                    "concept_score": 0.0,
+                    "entity_score": 0.0,
+                    "semantic_score": 0.0,
+                    "number_score": 0.0,
+                    "grammar_score": 0.0,
+                    "duplicate_score": 0.0,
+                    "domain_score": 0.0,
+                    "topic_score": 0.0,
+                    "total_score": 0.0,
+                }
+                all_candidates_log.append(candidate_info)
+            else:
+                unique_candidates.append(cand_text)
+                
+        if not unique_candidates:
+            continue
+            
+        # Batch pre-computations
+        batch_classifications = classify_texts_batch(unique_candidates)
+        classification_by_question = dict(zip(unique_candidates, batch_classifications))
+        
+        def cached_classify_deberta(text: str):
+            if text in classification_by_question:
+                return classification_by_question[text]
+            return classify_text(text)
+            
+        cand_profiles_temp = []
+        texts_to_pre_cache = []
+        for gen_text in unique_candidates:
+            cp = QuestionUnderstandingEngine.build_profile(gen_text, target_bloom)
+            cand_profiles_temp.append((gen_text, cp))
+            texts_to_pre_cache.append(cp.normalized_question)
+            texts_to_pre_cache.extend(cp.concepts)
+            texts_to_pre_cache.extend(cp.technical_entities)
+            texts_to_pre_cache.extend(cp.noun_chunks)
+            
+        if st_model is not None:
+            pre_cache_embeddings(texts_to_pre_cache, st_model)
+            
+        # Validate unique candidates
+        round_candidates = []
+        is_final_retries = (current_round == max_rounds)
+        
+        for idx, (gen_text, cand_prof) in enumerate(cand_profiles_temp):
+            pipeline_ctx.generated_candidates.append(gen_text)
+            pipeline_ctx.candidate_profiles.append(cand_prof)
+            
+            val_out = evaluate_candidate(
+                original_q=orig_profile,
+                candidate_q=cand_prof,
+                target_bloom=target_bloom,
+                target_difficulty=target_difficulty,
+                seen_questions=seen_questions,
+                session_seen=session_seen,
+                config_mode=config_mode,
+                deberta_classifier_fn=cached_classify_deberta,
+                st_model=st_model,
+                get_cached_embedding_fn=get_cached_embedding,
+                validate_bloom_verbs_fn=validate_bloom_verbs,
+                is_final_round=is_final_retries
+            )
+            pipeline_ctx.validation_results.append(val_out)
+            
+            new_bloom = val_out.detailed_metrics.get("bloom", {}).get("predicted_bloom", "Unknown") if "bloom" in val_out.detailed_metrics else "N/A"
+            new_diff = val_out.detailed_metrics.get("bloom", {}).get("predicted_difficulty", "Unknown") if "bloom" in val_out.detailed_metrics else "N/A"
+            new_conf = val_out.detailed_metrics.get("bloom", {}).get("confidence", 0.0) if "bloom" in val_out.detailed_metrics else 0.0
+            
+            concept_match_score = f"{len(val_out.detailed_metrics.get('concept', {}).get('matched_concepts', []))}/{len(val_out.detailed_metrics.get('concept', {}).get('original_concepts', []))}" if "concept" in val_out.detailed_metrics else "N/A"
+            concept_sim = val_out.detailed_metrics.get("concept", {}).get("preservation_percentage", 0.0) if "concept" in val_out.detailed_metrics else "N/A"
+            concept_method = "nlp_spacy"
+            matched_words_str = ", ".join(val_out.detailed_metrics.get("concept", {}).get("matched_concepts", [])) if "concept" in val_out.detailed_metrics else ""
+            
+            max_duplicate_ratio = val_out.detailed_metrics.get("duplicate", {}).get("max_duplicate_ratio", 0.0) if "duplicate" in val_out.detailed_metrics else 1.0
+            
+            if val_out.rejection_reason not in ("Too Short", "Duplicate"):
+                candidates_validated_count += 1
+                if "bloom" in val_out.detailed_metrics:
+                    deberta_calls_count += 1
+                    
+            candidate_info = {
+                "Candidate ID": f"Round_{current_round}_Index_{idx}",
+                "Question": gen_text,
+                "Bloom Prediction": new_bloom,
+                "Difficulty": new_diff,
+                "Confidence": round(new_conf, 2),
+                "Concept Score": concept_match_score,
+                "Duplicate Score": round(max_duplicate_ratio, 4),
+                "Entity Score": val_out.entity_score,
+                "entity_score": val_out.entity_score,
+                "Validation Status": "Pass" if val_out.passed else "Fail",
+                "Rejection Reason": val_out.rejection_reason,
+                "Generation Round": current_round,
+                "Rank Score": calculate_nlp_rank_score(val_out),
+                
+                # Compatibility fields
+                "bloom_prediction": new_bloom,
+                "difficulty_prediction": new_diff,
+                "confidence": new_conf,
+                "rejection_reason": val_out.rejection_reason,
+                "concept_similarity_score": concept_sim,
+                "duplicate_score": max_duplicate_ratio,
+                "validation_status": "Pass" if val_out.passed else "Fail",
+                "generated_question": gen_text,
+                "attempt_number": current_round,
+                "prompt": prompt_used,
+                "prompt_tokens": len(t_tok.encode(prompt_used)) if t_tok is not None else 0,
+                "completion_tokens": len(t_tok.encode(gen_text)) if t_tok is not None else 0,
+                "concept_match_score": concept_match_score,
+                "concept_match_method": concept_method,
+                "concept_similarity_score_raw": val_out.detailed_metrics.get("semantic", {}).get("similarity", 0.0) if "semantic" in val_out.detailed_metrics else 0.0,
+                "matched_keywords": matched_words_str,
+                
+                # Per-stage scores for benchmark reporting
+                "bloom_score": val_out.bloom_score,
+                "concept_score": val_out.concept_score,
+                "entity_score": val_out.entity_score,
+                "semantic_score": val_out.semantic_score,
+                "number_score": val_out.number_score,
+                "grammar_score": val_out.grammar_score,
+                "duplicate_score": val_out.duplicate_score,
+                "domain_score": val_out.domain_score,
+                "topic_score": val_out.topic_score,
+                "total_score": val_out.total_score,
+                "val_out": val_out,
+                "cand_prof": cand_prof,
+            }
+            
+            round_candidates.append(candidate_info)
+            all_candidates_log.append(candidate_info)
+            if not val_out.passed:
+                rejected_questions.append(gen_text)
+                
+        passing_in_round = [c for c in round_candidates if c["validation_status"] == "Pass"]
+        if passing_in_round:
+            passing_in_round = rank_candidates_dicts(passing_in_round)
+            best_candidate = passing_in_round[0]
+            
+            best_round_score = best_candidate.get("total_score", 100.0)
+            improved = False
+            if current_round > 1:
+                improved = best_round_score > prev_best_score
+            retry_history_log.append({
+                "round": current_round,
+                "failure_reason": "None",
+                "retry_feedback": "",
+                "validation_score": best_round_score,
+                "passed": True,
+                "improved_from_previous": improved
+            })
+            break
+        else:
+            for c in round_candidates:
+                seen_questions.add(c["generated_question"])
+                
+            round_rejection_reasons = set()
+            best_round_score = -1.0
+            
+            for c in round_candidates:
+                vo = c.get("val_out")
+                if vo:
+                    round_rejection_reasons.add(vo.rejection_reason)
+                    best_round_score = max(best_round_score, vo.total_score)
+                    
+            improved = False
+            if current_round > 1:
+                improved = best_round_score > prev_best_score
+            prev_best_score = best_round_score
+            
+            has_drift = "Semantic Drift" in round_rejection_reasons or "Concept Drift" in round_rejection_reasons
+            has_missing_or_reduced = False
+            for c in round_candidates:
+                vo = c.get("val_out")
+                if vo and hasattr(vo, "detailed_metrics") and vo.detailed_metrics:
+                    concept_data = vo.detailed_metrics.get("concept", {}) or {}
+                    missing_concepts = concept_data.get("missing_concepts", []) or []
+                    concept_preservation = concept_data.get("preservation_percentage", 1.0)
+                    
+                    entity_data = vo.detailed_metrics.get("entity", {}) or {}
+                    missing_entities = entity_data.get("missing_entities", []) or []
+                    
+                    if len(missing_concepts) > 0 or len(missing_entities) > 0 or concept_preservation < 1.0:
+                        has_missing_or_reduced = True
+                        break
+            is_semantic_drift_round = has_drift and has_missing_or_reduced
+            
+            failure_reasons_str = ", ".join(sorted(list(round_rejection_reasons))) if round_rejection_reasons else "None"
+            retry_history_log.append({
+                "round": current_round,
+                "failure_reason": failure_reasons_str,
+                "retry_feedback": "",
+                "validation_score": best_round_score,
+                "passed": False,
+                "improved_from_previous": improved
+            })
+            
+        if current_round < max_rounds:
+            recent_rejected = rejected_questions[-5:]
+            rejected_questions_list = [f"{idx_rej+1}. {q_text}" for idx_rej, q_text in enumerate(recent_rejected)]
+            rejected_str = "\n".join(rejected_questions_list)
+            
+            verbs_map = {
+                "Create": "Design, Create, Develop, Formulate, or Construct",
+                "Evaluate": "Evaluate, Assess, Critique, Justify, Defend, or Determine",
+                "Analyze": "Analyze, Compare, Differentiate, Examine, Contrast, or Distinguish",
+                "Apply": "Apply, Implement, Use, Demonstrate, Solve, or Calculate",
+                "Understand": "Explain, Describe, Discuss, Summarize, or Interpret",
+                "Remember": "Define, Identify, List, Name, State, or Recall"
+            }
+            allowed_verbs_str = verbs_map.get(target_bloom, "")
+            
+            failure_hint_round_2 = (
+                f"\n\nPrevious rejected questions:\n{rejected_str}\n\n"
+                f"Avoid the structures and verbs of the rejected questions above. "
+                f"The new question MUST start with one of the following verbs: {allowed_verbs_str}. "
+                f"Ensure it evaluates the concept '{required_concept}' at the {target_bloom} ({target_difficulty}) level."
+            )
+            
+    generation_time = time.time() - start_time
+    
+    # Decoupled Logging I/O
+    _write_benchmark_logs(all_candidates_log)
+    
+    # Build attempts list schema
     attempts_list = []
     for c in all_candidates_log:
         if c.get("validation_status") in ["Pass", "Fail"]:
             attempts_list.append({
                 "attempt": c.get("attempt_number", 1),
-                "generated_question": c.get("generated_question", ""),
+                "attempt_number": c.get("attempt_number", 1),
+                "generated_question": c.get("Question", ""),
+                "question": c.get("Question", ""),
                 "bloom_prediction": c.get("bloom_prediction", ""),
+                "predicted_bloom": c.get("bloom_prediction", ""),
                 "difficulty_prediction": c.get("difficulty_prediction", ""),
+                "predicted_difficulty": c.get("difficulty_prediction", ""),
                 "confidence": c.get("confidence", 0.0),
                 "concept_score": c.get("concept_match_score", 0.0),
                 "duplicate_score": c.get("duplicate_score", 0.0),
@@ -1758,11 +2256,30 @@ def _generate_validated_variant_mode_e(
                 "semantic_score": c.get("semantic_score", 0.0),
                 "number_score": c.get("number_score", 0.0),
                 "grammar_score": c.get("grammar_score", 0.0),
+                "domain_score": c.get("domain_score", 0.0),
+                "topic_score": c.get("topic_score", 0.0),
                 "total_score": c.get("total_score", 0.0),
                 "validation_status": c.get("validation_status", ""),
                 "rejection_reason": c.get("rejection_reason", ""),
-                "generation_time": generation_time / flan_calls_count,
+                "generation_time": generation_time / flan_calls_count if flan_calls_count else 0.0,
+                "val_out": c.get("val_out"),
+                "cand_prof": c.get("cand_prof"),
+                "prompt": c.get("prompt", ""),
+                "prompt_tokens": c.get("prompt_tokens", 0),
+                "completion_tokens": c.get("completion_tokens", 0),
+                "advisor_activated": False,
+                "advisor_guidance_produced": False,
+                "advisor_skipped": False,
+                "missing_preferred": [],
+                "missing_supporting": [],
+                "generic_terms_detected": [],
             })
+            
+    if best_candidate is None:
+        all_validated = [c for c in all_candidates_log if c.get("validation_status") in ["Pass", "Fail"]]
+        if all_validated:
+            all_validated = rank_candidates_dicts(all_validated)
+            best_candidate = all_validated[0]
             
     if best_candidate is None:
         return ValidationResult(
@@ -1788,10 +2305,11 @@ def _generate_validated_variant_mode_e(
             candidates_generated=candidates_generated_count,
             candidates_validated=candidates_validated_count,
             candidates_rejected_before_validation=candidates_rejected_before_validation_count,
+            retry_history=retry_history_log,
         )
         
     is_pass = best_candidate.get("validation_status") == "Pass"
-    gen_q = best_candidate.get("generated_question", "[FAILED]")
+    gen_q = best_candidate.get("Question", "[FAILED]")
     p_bloom = best_candidate.get("bloom_prediction", "Unknown")
     p_diff = best_candidate.get("difficulty_prediction", "Unknown")
     
@@ -1813,8 +2331,30 @@ def _generate_validated_variant_mode_e(
             "<div class='text-amber-600 dark:text-amber-400 font-bold mb-2'>[VALIDATION FAILED - RETURNING BEST CANDIDATE]</div>",
             f"Generation failed after {flan_calls_count} rounds. Below is the diagnostic report:<br>"
         ]
+        for att in attempts_list:
+            explanation_lines.append(
+                "<div class='mt-2.5 p-2 bg-slate-50 dark:bg-slate-800/50 "
+                "border border-slate-100 dark:border-slate-800 rounded text-xs'>"
+                f"<strong>Attempt {att['attempt_number']}</strong> &bull; "
+                f"<span class='text-rose-500 font-semibold'>{att['rejection_reason']}</span><br>"
+                f"<span class='text-slate-500'>Question:</span> \"{att['question']}\"<br>"
+                f"<span class='text-slate-500'>Extracted Concept:</span> "
+                f"\"{att.get('extracted_concept', required_concept)}\" &bull; "
+                f"<span class='text-slate-500'>Concept Match:</span> "
+                f"{att.get('concept_match_method', 'N/A')} "
+                f"(similarity: {att.get('concept_similarity_score', 0.0)})<br>"
+                f"<span class='text-slate-500'>Prediction:</span> "
+                f"{att.get('predicted_bloom', 'Unknown')} "
+                f"({att.get('predicted_difficulty', 'Unknown')}) &bull; "
+                f"<span class='text-slate-500'>Confidence:</span> {att.get('confidence', 0.0)}% &bull; "
+                f"<span class='text-slate-500'>Latency:</span> {att.get('generation_time', 0.0)}s"
+                f"</div>"
+            )
         explanation = "\n".join(explanation_lines)
         
+    pipeline_ctx.best_candidate = gen_q
+    pipeline_ctx.timings["total_pipeline"] = time.time() - start_time
+    
     return ValidationResult(
         generated_question=gen_q,
         source_question=question,
@@ -1840,344 +2380,9 @@ def _generate_validated_variant_mode_e(
         candidates_generated=candidates_generated_count,
         candidates_validated=candidates_validated_count,
         candidates_rejected_before_validation=candidates_rejected_before_validation_count,
+        retry_history=retry_history_log,
     )
 
-
-def generate_validated_variant(
-    question,
-    src_bloom,
-    src_diff,
-    target_bloom,
-    target_difficulty,
-    domain,
-    required_concept,
-    session_seen,
-    config_mode=None,
-    mode_name=None,
-):
-    """
-    Executes the full beam-search retry loop and applies all validation checks.
-    Returns the successful variant or the best failed attempt, along with performance metrics.
-    """
-    if config_mode is None:
-        if mode_name is not None and mode_name in MODES:
-            config_mode = MODES[mode_name]
-        else:
-            config_mode = MODES[ACTIVE_MODE]
-            mode_name = ACTIVE_MODE
-
-    if mode_name is None:
-        mode_name = config_mode.get("mode_name")
-        if not mode_name:
-            for name, m_dict in MODES.items():
-                if m_dict is config_mode:
-                    mode_name = name
-                    break
-
-    if mode_name == "Mode E (Multi-Candidate Ranking)":
-        return _generate_validated_variant_mode_e(
-            question=question,
-            src_bloom=src_bloom,
-            src_diff=src_diff,
-            target_bloom=target_bloom,
-            target_difficulty=target_difficulty,
-            domain=domain,
-            required_concept=required_concept,
-            session_seen=session_seen,
-            config_mode=config_mode,
-            mode_name=mode_name,
-        )
-
-    import time
-
-    start_time = time.time()
-    t_tok = flan_tokenizer
-
-    orig_ctx = NLPContext(question, _get_st_model(), get_cached_embedding)
-
-    best_candidate = None
-    best_score = -1
-    attempts_log = []
-    attempts = 0
-    seen_questions = set()
-    _last_failure_hint = ""  # Adaptive retry: carries failure reason to next prompt
-
-    bloom_key = target_bloom.lower() + "_attempts"
-    max_attempts = config_mode[bloom_key]
-
-    while attempts < max_attempts:
-        attempts += 1
-        attempt_start = time.time()
-        
-        gen_text, prompt_used = generate_single_variant(
-            question,
-            src_bloom,
-            src_diff,
-            target_bloom,
-            target_difficulty,
-            domain=domain,
-            topic=required_concept,
-            required_concept=required_concept,
-            attempt_number=attempts,
-            failure_hint=_last_failure_hint,
-            config_mode=config_mode,
-            mode_name=mode_name,
-        )
-        gen_text = sanitize_generated_question(gen_text)
-        
-        prompt_tokens = len(t_tok.encode(prompt_used)) if t_tok is not None else 0
-        completion_tokens = len(t_tok.encode(gen_text)) if t_tok is not None else 0
-        
-        is_final_retries = (max_attempts - attempts) <= 1
-        
-        # Call the modular 7-stage validation engine
-        val_out = evaluate_candidate(
-            original_q=orig_ctx,
-            candidate_q=gen_text,
-            target_bloom=target_bloom,
-            target_difficulty=target_difficulty,
-            seen_questions=seen_questions,
-            session_seen=session_seen,
-            config_mode=config_mode,
-            deberta_classifier_fn=classify_text_device,
-            st_model=_get_st_model(),
-            get_cached_embedding_fn=get_cached_embedding,
-            validate_bloom_verbs_fn=validate_bloom_verbs,
-            is_final_round=is_final_retries
-        )
-        
-        # Extract metrics for logging/UI compatibility
-        new_bloom = val_out.detailed_metrics.get("bloom", {}).get("predicted_bloom", "Unknown") if "bloom" in val_out.detailed_metrics else "N/A"
-        new_diff = val_out.detailed_metrics.get("bloom", {}).get("predicted_difficulty", "Unknown") if "bloom" in val_out.detailed_metrics else "N/A"
-        new_conf = val_out.detailed_metrics.get("bloom", {}).get("confidence", 0.0) if "bloom" in val_out.detailed_metrics else 0.0
-        
-        concept_match_score = f"{len(val_out.detailed_metrics.get('concept', {}).get('matched_concepts', []))}/{len(val_out.detailed_metrics.get('concept', {}).get('original_concepts', []))}" if "concept" in val_out.detailed_metrics else "N/A"
-        concept_sim = val_out.detailed_metrics.get("concept", {}).get("preservation_percentage", 0.0) if "concept" in val_out.detailed_metrics else 0.0
-        concept_method = "nlp_spacy"
-        matched_words_str = ", ".join(val_out.detailed_metrics.get("concept", {}).get("matched_concepts", [])) if "concept" in val_out.detailed_metrics else ""
-        
-        max_duplicate_ratio = val_out.detailed_metrics.get("duplicate", {}).get("max_duplicate_ratio", 0.0) if "duplicate" in val_out.detailed_metrics else 1.0
-        attempt_time = time.time() - attempt_start
-        
-        attempt_info = {
-            "attempt": attempts,
-            "prompt": prompt_used,
-            "generated_question": gen_text,
-            "bloom_prediction": new_bloom,
-            "difficulty_prediction": new_diff,
-            "confidence": round(new_conf, 2),
-            "concept_score": concept_match_score,
-            "duplicate_score": round(max_duplicate_ratio, 4),
-            "validation_status": "Pass" if val_out.passed else "Fail",
-            "rejection_reason": val_out.rejection_reason,
-            "generation_time": round(attempt_time, 4),
-            "prompt_tokens": prompt_tokens,
-            "completion_tokens": completion_tokens,
-            
-            # Compatibility fields
-            "attempt_number": attempts,
-            "question": gen_text,
-            "predicted_bloom": new_bloom,
-            "predicted_difficulty": new_diff,
-            "target_bloom": target_bloom,
-            "target_difficulty": target_difficulty,
-            "matched_keywords": matched_words_str,
-            "concept_match_method": concept_method,
-            "concept_similarity_score": concept_sim,
-            "extracted_concept": required_concept,
-            "Rank Score": calculate_nlp_rank_score(val_out),
-            "concept_similarity_score_raw": val_out.detailed_metrics.get("semantic", {}).get("similarity", 0.0) if "semantic" in val_out.detailed_metrics else 0.0,
-        }
-        
-        attempts_log.append(attempt_info)
-        
-        REJECTION_LOGS.append({
-            "question": gen_text,
-            "target_bloom": target_bloom,
-            "reason": val_out.rejection_reason,
-        })
-        
-        seen_questions.add(gen_text)
-        
-        # Adaptive Retry Hints
-        if not val_out.passed:
-            if val_out.rejection_reason == "Concept Drift":
-                _last_failure_hint = (
-                    f"concept drift (the question did not contain the concept '{required_concept}'). "
-                    f"You MUST explicitly include the exact phrase '{required_concept}' in the generated question! "
-                    f"Do NOT replace or generalize this concept under any circumstances."
-                )
-            elif val_out.rejection_reason == "Classification Mismatch":
-                verbs_map = {
-                    "Create": "Design, Create or Develop",
-                    "Evaluate": "Evaluate, Assess or Critique",
-                    "Analyze": "Analyze, Compare or Differentiate",
-                    "Apply": "Apply, Implement or Use",
-                    "Understand": "Explain, Describe or Discuss",
-                    "Remember": "Define, List or State"
-                }
-                target_verbs = verbs_map.get(target_bloom, f"appropriate verbs for {target_bloom}")
-                _last_failure_hint = (
-                    f"classification mismatch (predicted {new_bloom}, target {target_bloom}). "
-                    f"WARNING: Do not generate an {new_bloom} question. "
-                    f"Generate a {target_bloom} question beginning with {target_verbs}."
-                )
-            elif val_out.rejection_reason == "Repetition":
-                _last_failure_hint = (
-                    "repetition detected in generated question. "
-                    "Avoid repeating phrases or words. Generate a clean question."
-                )
-            elif val_out.rejection_reason == "Duplicate":
-                _last_failure_hint = (
-                    "duplicate question. "
-                    "WARNING: The generated question was too similar to previously generated questions. "
-                    "Generate a uniquely phrased and structurally distinct question."
-                )
-            else:
-                _last_failure_hint = f"verb violation ({val_out.rejection_reason}) — use a verb appropriate for {target_bloom} level"
-        else:
-            best_candidate = attempt_info
-            session_seen.append(gen_text)
-            max_history = config_mode["session_history_length"]
-            while len(session_seen) > max_history:
-                session_seen.pop(0)
-            break
-            
-    if best_candidate is None and attempts_log:
-        ranked_attempts = rank_candidates_dicts(attempts_log)
-        best_candidate = ranked_attempts[0]
-        
-    generation_time = time.time() - start_time
-
-
-    # Export all attempts to attempt_logs.json
-    try:
-        import json
-        log_file_path = "attempt_logs.json"
-        existing_entries = []
-        if os.path.exists(log_file_path):
-            try:
-                with open(log_file_path, "r", encoding="utf-8") as lf:
-                    existing_entries = json.load(lf)
-            except Exception:
-                existing_entries = []
-
-        for att in attempts_log:
-            log_entry = {
-                "attempt": att["attempt"],
-                "prompt": att["prompt"],
-                "generated_question": att["generated_question"],
-                "bloom_prediction": att["bloom_prediction"],
-                "difficulty_prediction": att["difficulty_prediction"],
-                "confidence": att["confidence"],
-                "concept_score": att["concept_score"],
-                "duplicate_score": att["duplicate_score"],
-                "validation_status": att["validation_status"],
-                "rejection_reason": att["rejection_reason"],
-                "generation_time": att["generation_time"]
-            }
-            existing_entries.append(log_entry)
-
-        with open(log_file_path, "w", encoding="utf-8") as lf:
-            json.dump(existing_entries, lf, indent=4)
-    except Exception as exc:
-        print(f"[WARNING] Error writing to attempt_logs.json: {exc}")
-
-    if best_candidate is None:
-        return ValidationResult(
-            generated_question="[FAILED]",
-            source_question=question,
-            source_bloom=src_bloom,
-            source_difficulty=src_diff,
-            target_bloom=target_bloom,
-            target_difficulty=target_difficulty,
-            predicted_bloom="Unknown",
-            predicted_difficulty="Unknown",
-            confidence=0.0,
-            attempts=attempts,
-            generation_time=generation_time,
-            concept_match_score="N/A",
-            rejection_reason="Fatal Error",
-            prompt_used="",
-            explanation="Fatal error: No generation attempt occurred.",
-            validation_status="Fail",
-            attempts_list=[],
-            flan_calls=attempts,
-            deberta_calls=attempts,
-            candidates_generated=attempts,
-            candidates_validated=attempts,
-            candidates_rejected_before_validation=0,
-        )
-
-    is_pass = best_candidate.get("validation_status") == "Pass"
-    gen_q = best_candidate.get("generated_question", "[FAILED]")
-    p_bloom = best_candidate.get("bloom_prediction", "Unknown")
-    p_diff = best_candidate.get("difficulty_prediction", "Unknown")
-
-    explanation = ""
-    val_status = "Fail"
-
-    if is_pass:
-        explanation = generate_dynamic_explanation(
-            gen_q, required_concept, p_bloom, p_diff
-        )
-        val_status = calculate_validation_status(
-            p_bloom, p_diff, target_bloom, target_difficulty
-        )
-    else:
-        # FAILED but returned as Best Candidate
-        val_status = "Best Candidate"
-        explanation_lines = [
-            "<div class='text-amber-600 dark:text-amber-400 font-bold mb-2'>[VALIDATION FAILED - RETURNING BEST CANDIDATE]</div>",
-            f"Generation failed after {attempts} attempts. Below is the diagnostic report for all attempts:<br>"
-        ]
-        for att in attempts_log:
-            explanation_lines.append(
-                "<div class='mt-2.5 p-2 bg-slate-50 dark:bg-slate-800/50 "
-                "border border-slate-100 dark:border-slate-800 rounded text-xs'>"
-                f"<strong>Attempt {att['attempt_number']}</strong> &bull; "
-                f"<span class='text-rose-500 font-semibold'>{att['rejection_reason']}</span><br>"
-                f"<span class='text-slate-500'>Question:</span> \"{att['question']}\"<br>"
-                f"<span class='text-slate-500'>Extracted Concept:</span> "
-                f"\"{att.get('extracted_concept', required_concept)}\" &bull; "
-                f"<span class='text-slate-500'>Concept Match:</span> "
-                f"{att.get('concept_match_method', 'N/A')} "
-                f"(similarity: {att.get('concept_similarity_score', 0.0)})<br>"
-                f"<span class='text-slate-500'>Prediction:</span> "
-                f"{att.get('predicted_bloom', 'Unknown')} "
-                f"({att.get('predicted_difficulty', 'Unknown')}) &bull; "
-                f"<span class='text-slate-500'>Confidence:</span> {att.get('confidence', 0.0)}% &bull; "
-                f"<span class='text-slate-500'>Latency:</span> {att.get('generation_time', 0.0)}s"
-                f"</div>"
-            )
-        explanation = "\n".join(explanation_lines)
-
-    return ValidationResult(
-        generated_question=gen_q,
-        source_question=question,
-        source_bloom=src_bloom,
-        source_difficulty=src_diff,
-        target_bloom=target_bloom,
-        target_difficulty=target_difficulty,
-        predicted_bloom=p_bloom,
-        predicted_difficulty=p_diff,
-        confidence=best_candidate.get("confidence", 0.0),
-        attempts=attempts,
-        generation_time=generation_time,
-        concept_match_score=best_candidate.get("concept_score", "N/A"),
-        rejection_reason=best_candidate.get("rejection_reason", "Unknown"),
-        prompt_used=best_candidate.get("prompt", ""),
-        explanation=explanation,
-        validation_status=val_status,
-        attempts_list=attempts_log,
-        prompt_tokens=best_candidate.get("prompt_tokens", 0) if best_candidate else 0,
-        completion_tokens=best_candidate.get("completion_tokens", 0) if best_candidate else 0,
-        flan_calls=attempts,
-        deberta_calls=attempts,
-        candidates_generated=attempts,
-        candidates_validated=attempts,
-        candidates_rejected_before_validation=0,
-    )
 
 
 @app.route("/rephrase", methods=["POST"])

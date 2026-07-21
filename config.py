@@ -7,6 +7,10 @@ benchmarking and comparison.
 
 DEBUG = False
 
+# Configuration flags for retry advisor and context injection
+ENABLE_RETRY_TOPIC_CONTEXT = True
+
+
 # ---------------------------------------------------------------------------
 # Domain keyword mapping used by infer_domain()
 # ---------------------------------------------------------------------------
@@ -64,14 +68,136 @@ DOMAIN_MAP = {
         "training"
     ],
 
-    "artificial intelligence": [
-        "expert system",
-        "knowledge representation",
+   "artificial intelligence": {
+
+    "Search Algorithms": [
+        "search",
         "search algorithm",
-        "agent",
-        "reasoning",
-        "heuristic"
+        "breadth first search",
+        "bfs",
+        "depth first search",
+        "dfs",
+        "best first search",
+        "a*",
+        "astar",
+        "hill climbing",
+        "beam search",
+        "uniform cost search",
+        "bidirectional search",
+        "iterative deepening",
+        "graph search",
+        "tree search",
+        "state space",
+        "heuristic",
+        "heuristic search",
+        "local search",
+        "blind search",
+        "informed search",
+        "queue",
+        "priority queue",
+        "frontier",
+        "visited",
+        "goal state",
+        "path finding",
+        "traversal",
+        "graph traversal"
     ],
+
+    "Knowledge Representation": [
+        "knowledge representation",
+        "knowledge base",
+        "knowledge graph",
+        "facts",
+        "rules",
+        "predicate logic",
+        "first order logic",
+        "propositional logic",
+        "semantic network",
+        "frame",
+        "ontology",
+        "production system",
+        "expert system",
+        "inference engine"
+    ],
+
+    "Reasoning": [
+        "reasoning",
+        "forward chaining",
+        "backward chaining",
+        "deduction",
+        "induction",
+        "abduction",
+        "resolution",
+        "constraint satisfaction",
+        "logical inference"
+    ],
+
+    "Planning": [
+        "planning",
+        "goal stack planning",
+        "planning graph",
+        "state transition",
+        "operator",
+        "action",
+        "plan generation",
+        "goal state"
+    ],
+
+    "Machine Learning": [
+        "machine learning",
+        "classification",
+        "regression",
+        "clustering",
+        "decision tree",
+        "random forest",
+        "naive bayes",
+        "support vector machine",
+        "svm",
+        "knn",
+        "neural network",
+        "training",
+        "testing",
+        "feature selection",
+        "dataset"
+    ],
+
+    "Natural Language Processing": [
+        "nlp",
+        "tokenization",
+        "stemming",
+        "lemmatization",
+        "named entity recognition",
+        "ner",
+        "part of speech",
+        "pos tagging",
+        "language model",
+        "text classification",
+        "word embedding",
+        "transformer",
+        "bert"
+    ],
+
+    "Computer Vision": [
+        "computer vision",
+        "image processing",
+        "image segmentation",
+        "object detection",
+        "feature extraction",
+        "edge detection",
+        "cnn",
+        "opencv"
+    ],
+
+    "Robotics": [
+        "robot",
+        "robotics",
+        "sensor",
+        "actuator",
+        "motion planning",
+        "autonomous robot",
+        "path planning"
+    ]
+},
 
     "compiler design": [
         "lexer",
@@ -264,6 +390,25 @@ SEMANTIC_SCORE = 10.0
 NUMBER_SCORE = 5.0
 DUPLICATE_SCORE = 5.0
 GRAMMAR_SCORE = 5.0
+
+VALIDATION_WEIGHTS = {
+    "bloom": 35,
+    "domain": 20,
+    "topic": 15,
+    "concept": 10,
+    "entity": 10,
+    "number": 5,
+    "grammar": 3,
+    "duplicate": 2
+}
+
+TOPIC_SCORE = {
+    "same_topic": 1.0,
+    "related_topic": 0.8,
+    "same_domain": 0.4,
+    "different_domain": 0.0,
+}
+
 
 MIN_CONTENT_WORDS = 2
 ENTITY_PENALTY = 0.2
@@ -503,6 +648,127 @@ GRAMMAR_LEGIT_REPEATS = {
 
 # Entity validator similarity threshold
 ENTITY_SIMILARITY_THRESHOLD = 0.90
+
+# ---------------------------------------------------------------------------
+# Pipeline Versioning  (v2.1 — Knowledge Consistency Update)
+# Stored in every benchmark report for full reproducibility.
+# ---------------------------------------------------------------------------
+PIPELINE_VERSION    = "2.1.0"
+DEBERTA_VERSION     = "1.0"
+FLAN_VERSION        = "1.0"
+KNOWLEDGE_VERSION   = "2.0"
+SPACY_MODEL_VERSION = "en_core_web_sm"
+
+MATCH_WEIGHTS = {
+    "exact": 10,
+    "phrase": 9,
+    "alias": 8,
+    "entity": 7,
+    "keyword": 6,
+    "lemma": 5,
+    "verb": 3,
+    "semantic": 2
+}
+
+# ---------------------------------------------------------------------------
+# Validation Profiles  — load one profile at runtime via ACTIVE_VALIDATION_PROFILE
+# ---------------------------------------------------------------------------
+VALIDATION_PROFILES = {
+    "strict": {
+        "semantic_drift_threshold":       0.75,
+        "domain_confidence_ignore":       0.65,
+        "domain_confidence_reject":       0.95,
+        "domain_penalty":                 8,
+        "topic_penalty":                  4,
+        "reject_threshold":               0.93,
+    },
+    "balanced": {
+        "semantic_drift_threshold":       0.70,
+        "domain_confidence_ignore":       0.60,
+        "domain_confidence_reject":       0.93,
+        "domain_penalty":                 6,
+        "topic_penalty":                  3,
+        "reject_threshold":               0.90,
+    },
+    "relaxed": {
+        "semantic_drift_threshold":       0.65,
+        "domain_confidence_ignore":       0.55,
+        "domain_confidence_reject":       0.90,
+        "domain_penalty":                 4,
+        "topic_penalty":                  2,
+        "reject_threshold":               0.85,
+    },
+}
+
+ACTIVE_VALIDATION_PROFILE = "balanced"
+
+# ---------------------------------------------------------------------------
+# Knowledge Consistency  (knowledge/concepts.py + knowledge_consistency_validator.py)
+# ---------------------------------------------------------------------------
+
+# Concept importance scoring — multi-signal weights
+IMPORTANCE_WEIGHT_POSITION    = 0.40   # keyword position in TOPIC_MAP list
+IMPORTANCE_WEIGHT_FREQUENCY   = 0.30   # occurrence frequency in extracted concepts
+IMPORTANCE_WEIGHT_CENTRALITY  = 0.20   # graph centrality (degree of node in graph)
+IMPORTANCE_WEIGHT_MANUAL      = 0.10   # manual supplement override bonus
+
+# Penalty factors applied per extra concept: penalty = importance × factor
+DOMAIN_PENALTY_FACTOR         = 0.30   # for Different-Domain concepts
+UNKNOWN_PENALTY_FACTOR        = 0.10   # for Unknown concepts
+
+# Intent mismatch penalty (subtracted from knowledge_score)
+INTENT_MISMATCH_PENALTY       = 1.5
+
+# Knowledge score component weights (must sum to 1.0)
+KNOWLEDGE_WEIGHT_CORE         = 0.50   # core/primary concept preservation
+KNOWLEDGE_WEIGHT_SUPPORTING   = 0.30   # supporting concept preservation
+KNOWLEDGE_WEIGHT_GRAPH        = 0.20   # graph neighbour relationship bonus
+
+# Matching thresholds for knowledge consistency validator
+KNOWLEDGE_SEMANTIC_THRESHOLD  = 0.55   # SentenceTransformer cosine similarity floor
+KNOWLEDGE_FUZZY_THRESHOLD     = 88     # rapidfuzz ratio floor (last resort only)
+
+# Default importance assigned to concepts not found in knowledge base
+KNOWLEDGE_DEFAULT_IMPORTANCE  = 5
+
+
+# Canonical Domain Mapping for reporting and consistency normalization
+CANONICAL_DOMAIN_MAPPING = {
+    "database management systems": "Database Management Systems",
+    "computer networks": "Computer Networks",
+    "operating systems": "Operating Systems",
+    "machine learning": "Machine Learning",
+    "artificial intelligence": "Artificial Intelligence",
+    "data structures": "Data Structures",
+    "software engineering": "Software Engineering",
+    "cyber security": "Cyber Security",
+    
+    "cloud computing": "Software Engineering",
+    "web technologies": "Software Engineering",
+    "distributed systems": "Software Engineering",
+    "mobile computing": "Software Engineering",
+    "human computer interaction": "Software Engineering",
+    "c programming": "Software Engineering",
+    "python programming": "Software Engineering",
+    "java programming": "Software Engineering",
+    "compiler design": "Software Engineering",
+    
+    "design and analysis of algorithms": "Data Structures",
+    
+    "computer architecture": "Operating Systems",
+    "computer organization": "Operating Systems",
+    "digital electronics": "Operating Systems",
+    "internet of things": "Operating Systems",
+    
+    "data mining": "Machine Learning",
+    "natural language processing": "Machine Learning",
+    
+    "big data analytics": "Database Management Systems",
+    "management information systems": "Database Management Systems",
+    
+    "other computer science": "Software Engineering"
+}
+
 
 
 

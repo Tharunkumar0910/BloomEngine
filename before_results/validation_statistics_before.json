@@ -1,0 +1,38 @@
+{
+    "validation_pass_rate_percent": 87.0,
+    "bloom_exact_match_percent": 100.0,
+    "average_bloom_confidence_percent": 99.69,
+    "concept_validation_success_percent": 100.0,
+    "duplicate_rejection_rate_percent": 8.04,
+    "nlp_metrics": {
+        "average_bleu": 0.376,
+        "average_rouge_1": 0.6463,
+        "average_rouge_2": 0.4647,
+        "average_rouge_l": 0.5961
+    },
+    "average_stage_scores": {
+        "bloom": 30.0289,
+        "concept": 6.042,
+        "entity": 6.7313,
+        "semantic": 7.0155,
+        "number": 4.9726,
+        "grammar": 2.921,
+        "duplicate": 1.7587,
+        "domain": 15.5393,
+        "topic": 11.4808,
+        "total": 78.1774
+    },
+    "attempt_success_counts": {
+        "attempt_1_success": 147,
+        "attempt_2_success": 16,
+        "attempt_3_success": 2,
+        "attempt_4plus_success": 3
+    },
+    "failure_distribution": {
+        "Semantic Drift": 219,
+        "Classification Mismatch": 77,
+        "Duplicate": 44,
+        "Domain Mismatch": 35,
+        "Topic Mismatch": 4
+    }
+}

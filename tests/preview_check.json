@@ -2,9 +2,9 @@
   "fileName": "demo.txt",
   "questionCount": 3,
   "questions": [
-    "Explain the concept of backpropagation in deep neural networks. How does it calculate the gradient of the loss function with respect to weights?",
-    "What is the difference between supervised and unsupervised learning? Provide typical examples of algorithms for each.",
-    "What is a convolutional neural network (CNN)? Explain its core layers, specifically convolution, activation, pooling, and fully-connected layers."
+    "Explain the concept of backpropagation in deep neural networks.\nHow does it calculate the gradient of the loss function with respect to weights?",
+    "What is the difference between supervised and unsupervised learning?\nProvide typical examples of algorithms for each.",
+    "What is a convolutional neural network (CNN)?\nExplain its core layers, specifically convolution, activation, pooling, and fully-connected layers."
   ],
   "hasDuplicates": false,
   "hasEncodingIssues": true,

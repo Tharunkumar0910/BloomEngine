@@ -27,7 +27,10 @@ def validate_duplicates(
     Validates that a candidate is not a duplicate.
     Returns: (score, details_dict)
     """
-    if hasattr(candidate_q, "text"):  # NLPContext
+    from question_profile import QuestionProfile
+    if isinstance(candidate_q, QuestionProfile):
+        candidate_text = candidate_q.normalized_question
+    elif hasattr(candidate_q, "text"):  # NLPContext
         candidate_text = candidate_q.text
     else:
         candidate_text = candidate_q
@@ -65,7 +68,9 @@ def validate_duplicates(
         if all_seen:
             try:
                 import torch as _torch
-                if hasattr(candidate_q, "get_embedding"):
+                if isinstance(candidate_q, QuestionProfile):
+                    gen_emb = get_cached_embedding_fn(candidate_q.normalized_question, st_model)
+                elif hasattr(candidate_q, "get_embedding"):
                     gen_emb = candidate_q.get_embedding()
                 else:
                     gen_emb = get_cached_embedding_fn(candidate_text, st_model)

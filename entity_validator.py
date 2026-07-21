@@ -54,14 +54,96 @@ def detect_entities(text) -> set:
             entities.add(token.text.lower().strip())
             
     # Read ignore list from config
+    # Define ignore sets
+    ACADEMIC_VERBS = {
+        "define", "list", "state", "recall", "name", "identify", "mention",
+        "label", "what", "which", "explain", "describe", "summarize",
+        "interpret", "discuss", "apply", "implement", "use", "demonstrate",
+        "solve", "calculate", "execute", "illustrate", "analyze", "compare",
+        "differentiate", "examine", "contrast", "distinguish", "appraise",
+        "test", "experiment", "question", "evaluate", "assess", "critique",
+        "justify", "judge", "recommend", "design", "develop", "construct",
+        "formulate", "propose", "create", "make", "build", "write", "suggest",
+        "retrieve", "find", "locate", "recognize", "classify", "translate",
+        "rephrase", "outline", "compute", "operate", "prepare", "select",
+        "criticize", "deconstruct", "attribute", "defend", "support", "rate",
+        "choose", "compose", "plan", "generate", "devise", "assemble", "show",
+        "provide", "provides", "provided", "shows", "shown", "determines"
+    }
+
+    EXTRA_ACADEMIC_WORDS = {
+        "role", "purpose", "concept", "scenario", "context", "approach",
+        "method", "system", "difference", "comparison", "relationship",
+        "process", "technique", "techniques", "advantage", "advantages",
+        "disadvantage", "disadvantages", "benefit", "benefits", "challenge",
+        "challenges", "limitation", "limitations", "drawback", "drawbacks",
+        "tradeoff", "trade-off", "tradeoffs", "trade-offs", "feature", "features",
+        "aspect", "aspects", "efficiency", "performance", "suitability",
+        "effectiveness", "example", "examples", "program", "code", "theory",
+        "following", "term", "type", "class", "function", "value",
+        "implementation", "need", "reason", "step", "way", "question", "questions",
+        "answer", "answers", "problem", "problems", "solution", "solutions",
+        "given", "correct", "correctly", "incorrect", "incorrectly", "appropriate",
+        "scenarios", "study", "case", "based"
+    }
+
     generic_ignore = getattr(config, "ENTITY_IGNORE_WORDS", set())
-    entities = {e for e in entities if e not in generic_ignore and len(e) > 1}
-    return entities
+    all_ignores = ACADEMIC_VERBS | EXTRA_ACADEMIC_WORDS | {w.lower() for w in generic_ignore}
+
+    def _get_lemma(word: str) -> str:
+        word_lower = word.lower()
+        for token in doc:
+            if token.text.lower() == word_lower:
+                return token.lemma_.lower()
+        try:
+            sub_doc = get_spacy_doc(word_lower)
+            if len(sub_doc) > 0:
+                return sub_doc[0].lemma_.lower()
+        except Exception:
+            pass
+        return word_lower
+
+    filtered_entities = set()
+    for ent in entities:
+        ent_clean = ent.strip().lower()
+        if not ent_clean:
+            continue
+        if " " not in ent_clean:
+            lemma = _get_lemma(ent_clean)
+            if ent_clean in all_ignores or lemma in all_ignores:
+                continue
+            filtered_entities.add(ent_clean)
+        else:
+            words = ent_clean.split()
+            filtered_words = []
+            for w in words:
+                w_lemma = _get_lemma(w)
+                if w not in all_ignores and w_lemma not in all_ignores and len(w) > 1:
+                    filtered_words.append(w)
+            cleaned = " ".join(filtered_words).strip()
+            if len(cleaned) > 1:
+                filtered_entities.add(cleaned)
+
+    return filtered_entities
+
 
 def is_entity_present(entity: str, cand_entities: set, cand_text: str, st_model=None, get_cached_embedding_fn=None) -> bool:
     """Helper to check if a specific entity (or abbreviation or semantic equivalent) exists in candidate."""
     if entity in cand_entities:
         return True
+        
+    # Canonical comparison
+    from knowledge.concepts import are_equivalent, get_equivalent_terms, normalize_concept
+    ent_canon = normalize_concept(entity)
+    for ce in cand_entities:
+        if are_equivalent(str(ce), ent_canon):
+            return True
+    equiv_terms = get_equivalent_terms(entity)
+    for term in equiv_terms:
+        regex = r'(?<![a-zA-Z0-9_-])' + re.escape(term) + r'(?![a-zA-Z0-9_-])'
+        if re.search(regex, cand_text.lower()):
+            return True
+            
     norm_ent = expand_abbreviations(entity)
     norm_cand = expand_abbreviations(cand_text.lower())
     if norm_ent in norm_cand:
@@ -85,21 +167,32 @@ def validate_entities(original_q, candidate_q, st_model=None, get_cached_embeddi
     (O(N+M)) and reused throughout, avoiding redundant SentenceTransformer calls.
     Returns: (score, details_dict)
     """
-    if hasattr(original_q, "entities"):  # NLPContext
-        orig_ctx = original_q
-        orig_entities = orig_ctx.entities
-        original_text = orig_ctx.text
-    else:
-        orig_ctx = original_q
-        orig_entities = detect_entities(original_q)
-        original_text = original_q
+    from question_profile import QuestionProfile
 
-    if hasattr(candidate_q, "entities"):  # NLPContext
+    if isinstance(original_q, QuestionProfile):
+        orig_entities = set(original_q.technical_entities)
+        original_text = original_q.normalized_question
+        orig_concepts = original_q.concepts
+    else:
+        if hasattr(original_q, "entities"):  # NLPContext
+            orig_ctx = original_q
+            orig_entities = orig_ctx.entities
+            original_text = orig_ctx.text
+            orig_concepts = orig_ctx.concepts
+        else:
+            orig_entities = detect_entities(original_q)
+            original_text = original_q
+            from concept_validator import extract_concepts
+            orig_concepts = extract_concepts(original_q)
+
+    if isinstance(candidate_q, QuestionProfile):
+        cand_entities = set(candidate_q.technical_entities)
+        candidate_text = candidate_q.normalized_question
+    elif hasattr(candidate_q, "entities"):  # NLPContext
         cand_ctx = candidate_q
         cand_entities = cand_ctx.entities
         candidate_text = cand_ctx.text
     else:
-        cand_ctx = candidate_q
         cand_entities = detect_entities(candidate_q)
         candidate_text = candidate_q
 
@@ -108,11 +201,6 @@ def validate_entities(original_q, candidate_q, st_model=None, get_cached_embeddi
     entity_related_threshold = getattr(config, "ENTITY_RELATED_THRESHOLD", 0.60)
 
     # Extract comparison texts (original entities + concepts)
-    orig_concepts = orig_ctx.concepts if hasattr(orig_ctx, "concepts") else None
-    if orig_concepts is None:
-        from concept_validator import extract_concepts
-        orig_concepts = extract_concepts(orig_ctx)
-
     comparison_texts = list(orig_entities) + list(orig_concepts)
 
     # ── Precompute all embeddings in one pass ──────────────────────────────
@@ -138,6 +226,19 @@ def validate_entities(original_q, candidate_q, st_model=None, get_cached_embeddi
     def _is_present(entity: str) -> bool:
         if entity in cand_entities:
             return True
+            
+        # Canonical comparison
+        from knowledge.concepts import are_equivalent, get_equivalent_terms, normalize_concept
+        ent_canon = normalize_concept(entity)
+        for ce in cand_entities:
+            if are_equivalent(str(ce), ent_canon):
+                return True
+        equiv_terms = get_equivalent_terms(entity)
+        for term in equiv_terms:
+            regex = r'(?<![a-zA-Z0-9_-])' + re.escape(term) + r'(?![a-zA-Z0-9_-])'
+            if re.search(regex, candidate_text.lower()):
+                return True
+                
         norm_ent = expand_abbreviations(entity)
         norm_cand = expand_abbreviations(candidate_text.lower())
         if norm_ent in norm_cand:
@@ -157,6 +258,11 @@ def validate_entities(original_q, candidate_q, st_model=None, get_cached_embeddi
 
     # ── Helper: check if a candidate entity is related to the original context ──
     def _is_related(c_ent: str) -> bool:
+        from knowledge.concepts import are_equivalent, normalize_concept
+        c_canon = normalize_concept(c_ent)
+        for comp_txt in comparison_texts:
+            if are_equivalent(comp_txt, c_canon):
+                return True
         c_ent_expanded = expand_abbreviations(c_ent)
         for comp_txt in comparison_texts:
             if c_ent == comp_txt or c_ent_expanded == expand_abbreviations(comp_txt):

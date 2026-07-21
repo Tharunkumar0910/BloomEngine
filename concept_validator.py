@@ -83,14 +83,84 @@ def extract_concepts_with_compounds(text) -> tuple:
             
     # Read ignore list from config
     ignore_words = getattr(config, "CONCEPT_IGNORE_WORDS", set())
-    
-    # Filter by ignore list and length
-    raw_concepts = {c for c in raw_concepts if c not in ignore_words and len(c) > 1}
+
+    # Define ignore sets
+    ACADEMIC_VERBS = {
+        "define", "list", "state", "recall", "name", "identify", "mention",
+        "label", "what", "which", "explain", "describe", "summarize",
+        "interpret", "discuss", "apply", "implement", "use", "demonstrate",
+        "solve", "calculate", "execute", "illustrate", "analyze", "compare",
+        "differentiate", "examine", "contrast", "distinguish", "appraise",
+        "test", "experiment", "question", "evaluate", "assess", "critique",
+        "justify", "judge", "recommend", "design", "develop", "construct",
+        "formulate", "propose", "create", "make", "build", "write", "suggest",
+        "retrieve", "find", "locate", "recognize", "classify", "translate",
+        "rephrase", "outline", "compute", "operate", "prepare", "select",
+        "criticize", "deconstruct", "attribute", "defend", "support", "rate",
+        "choose", "compose", "plan", "generate", "devise", "assemble", "show",
+        "provide", "provides", "provided", "shows", "shown", "determines"
+    }
+
+    EXTRA_ACADEMIC_WORDS = {
+        "role", "purpose", "concept", "scenario", "context", "approach",
+        "method", "system", "difference", "comparison", "relationship",
+        "process", "technique", "techniques", "advantage", "advantages",
+        "disadvantage", "disadvantages", "benefit", "benefits", "challenge",
+        "challenges", "limitation", "limitations", "drawback", "drawbacks",
+        "tradeoff", "trade-off", "tradeoffs", "trade-offs", "feature", "features",
+        "aspect", "aspects", "efficiency", "performance", "suitability",
+        "effectiveness", "example", "examples", "program", "code", "theory",
+        "following", "term", "type", "class", "function", "value",
+        "implementation", "need", "reason", "step", "way", "question", "questions",
+        "answer", "answers", "problem", "problems", "solution", "solutions",
+        "given", "correct", "correctly", "incorrect", "incorrectly", "appropriate",
+        "scenarios", "study", "case", "based"
+    }
+
+    all_ignores = ACADEMIC_VERBS | EXTRA_ACADEMIC_WORDS | {w.lower() for w in ignore_words}
+
+    def _get_lemma(word: str) -> str:
+        word_lower = word.lower()
+        for token in doc:
+            if token.text.lower() == word_lower:
+                return token.lemma_.lower()
+        try:
+            sub_doc = get_spacy_doc(word_lower)
+            if len(sub_doc) > 0:
+                return sub_doc[0].lemma_.lower()
+        except Exception:
+            pass
+        return word_lower
+
+    filtered_concepts = set()
+    for c in raw_concepts:
+        c_clean = c.strip().lower()
+        if not c_clean:
+            continue
+        if " " not in c_clean:
+            lemma = _get_lemma(c_clean)
+            if c_clean in all_ignores or lemma in all_ignores:
+                continue
+            filtered_concepts.add(c_clean)
+        else:
+            words = c_clean.split()
+            filtered_words = []
+            for w in words:
+                w_lemma = _get_lemma(w)
+                if w not in all_ignores and w_lemma not in all_ignores and len(w) > 1:
+                    filtered_words.append(w)
+            cleaned = " ".join(filtered_words).strip()
+            if len(cleaned) > 1:
+                filtered_concepts.add(cleaned)
+
+    raw_concepts = filtered_concepts
+
     
     # ISSUE 1 FIX: Remove only exact duplicates, NOT substring-covered concepts.
     # Keeping both "database" and "database management system" is intentional —
     # generated questions often preserve the root word without the full compound.
-    concepts = raw_concepts
+    from knowledge.concepts import Concept, normalize_concept
+    concepts = {Concept(c, normalize_concept(c)) for c in raw_concepts}
     
     # Classify compound concepts as those containing a space
     compound_concepts = {c for c in concepts if " " in c}
@@ -136,6 +206,23 @@ def check_concept_match(
     concept_lower = concept.lower()
     cand_lower = cand_text.lower()
     
+    # 0. Canonical Comparison
+    from knowledge.concepts import are_equivalent, get_equivalent_terms, normalize_concept
+    concept_canon = normalize_concept(concept_lower)
+    
+    # Check if candidate's precomputed concepts contains any canonically equivalent concept
+    if cand_concepts_precomputed is not None:
+        for cc in cand_concepts_precomputed:
+            if are_equivalent(str(cc), concept_canon):
+                return True, "canonical_match", 1.0
+                
+    # Check if any equivalent terms (aliases/canonical forms) are present in the candidate text
+    equiv_terms = get_equivalent_terms(concept_lower)
+    for term in equiv_terms:
+        regex = r'(?<![a-zA-Z0-9_-])' + re.escape(term) + r'(?![a-zA-Z0-9_-])'
+        if re.search(regex, cand_lower):
+            return True, "canonical_match", 1.0
+            
     # 1. Exact Match
     if concept_lower in cand_lower:
         return True, "exact", 1.0
@@ -218,30 +305,37 @@ def validate_concepts(original_q, candidate_q, st_model=None, get_cached_embeddi
     for every original concept loop iteration, avoiding repeated extraction.
     Returns: (score, details_dict)
     """
-    if hasattr(original_q, "text"):  # NLPContext
+    from question_profile import QuestionProfile
+
+    if isinstance(original_q, QuestionProfile):
+        orig_concepts = original_q.concepts
+        orig_compounds = {c for c in orig_concepts if " " in c}
+        original_text = original_q.normalized_question
+    elif hasattr(original_q, "text"):  # NLPContext
         orig_ctx = original_q
         original_text = orig_ctx.text
+        orig_concepts, orig_compounds = extract_concepts_with_compounds(orig_ctx)
     else:
-        orig_ctx = original_q
         original_text = original_q
+        orig_concepts, orig_compounds = extract_concepts_with_compounds(original_q)
 
-    if hasattr(candidate_q, "text"):  # NLPContext
+    if isinstance(candidate_q, QuestionProfile):
+        candidate_text = candidate_q.normalized_question
+        cand_doc = get_spacy_doc(candidate_text)
+        cand_concepts_pre = candidate_q.concepts
+        cand_compounds_pre = {c for c in cand_concepts_pre if " " in c}
+        cand_ctx = candidate_text
+    elif hasattr(candidate_q, "text"):  # NLPContext
         cand_ctx = candidate_q
         candidate_text = cand_ctx.text
         cand_doc = cand_ctx.doc
+        cand_concepts_pre, cand_compounds_pre = cand_ctx.concepts_and_compounds
     else:
         cand_ctx = candidate_q
         candidate_text = candidate_q
         cand_doc = get_spacy_doc(candidate_q)
-        
-    orig_concepts, orig_compounds = extract_concepts_with_compounds(orig_ctx)
-    
-    # Issue 4: Extract candidate concepts ONCE here, then pass to every check_concept_match call.
-    if hasattr(cand_ctx, "concepts"):  # NLPContext — already cached
-        cand_concepts_pre, cand_compounds_pre = cand_ctx.concepts_and_compounds
-    else:
         cand_concepts_pre, cand_compounds_pre = extract_concepts_with_compounds(cand_doc)
-    
+
     concept_stage_score = getattr(config, "CONCEPT_STAGE_SCORE", 25.0)
     
     if not orig_concepts:
@@ -290,10 +384,14 @@ def validate_concepts(original_q, candidate_q, st_model=None, get_cached_embeddi
     preservation = matched_weight / total_weight if total_weight > 0 else 0.0
     score = round(concept_stage_score * preservation, 2)
     
+    from knowledge.concepts import detect_duplicate_equivalent_terms
+    dup_aliases = detect_duplicate_equivalent_terms(cand_concepts_pre)
+    
     return score, {
         "preservation_percentage": preservation,
         "original_concepts": list(orig_concepts),
         "matched_concepts": matched,
         "missing_concepts": missing,
-        "match_details": match_details
+        "match_details": match_details,
+        "duplicate_aliases": dup_aliases
     }

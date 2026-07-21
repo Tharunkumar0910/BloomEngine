@@ -1,7 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* ---------- Stitch Design Tokens ---------- */
+:root {
+  /* Google Fonts and generic fallbacks */
+  --font-sans: 'Inter', sans-serif;
+  --font-headline: 'Hanken Grotesk', sans-serif;
+  --font-mono: 'Geist Mono', 'Geist', monospace;
+
+  /* Stitch Light Mode Analytics Palette */
+  --analytics-bg: #ffffff;
+  --analytics-surface: #ffffff;
+  --analytics-border: #e2e8f0;
+  --analytics-text: #1e293b;
+  --analytics-primary: #1e88e5;
+  --analytics-secondary: #64748b;
+  
+  --analytics-chart-bar: #1e88e5;
+  --analytics-chart-pie-easy: #22c55e;
+  --analytics-chart-pie-medium: #eab308;
+  --analytics-chart-pie-hard: #ef4444;
+  --analytics-chart-donut-high: #1e88e5;
+  --analytics-chart-donut-medium: #64748b;
+  --analytics-chart-donut-low: #cbd5e1;
+  --analytics-chart-line: #1e88e5;
+  --analytics-chart-grid: rgba(226, 232, 240, 0.8);
+  --analytics-chart-legend: #475569;
+  --analytics-chart-tooltip-bg: #1e293b;
+  --analytics-chart-tooltip-text: #ffffff;
+  
+  /* Theme Toggle Segmented Control (Light Mode Active) */
+  --theme-toggle-active-bg: #ffffff;
+  --theme-toggle-active-text: #1e88e5;
+}
+
+.dark {
+  /* Stitch Dark Mode Analytics Palette */
+  --analytics-bg: #0b1326;
+  --analytics-surface: #171f33;
+  --analytics-border: #464554;
+  --analytics-text: #dae2fd;
+  --analytics-primary: #c0c1ff;
+  --analytics-secondary: #4edea3;
+  
+  --analytics-chart-bar: #c0c1ff;
+  --analytics-chart-pie-easy: #4e8c56;
+  --analytics-chart-pie-medium: #d4a017;
+  --analytics-chart-pie-hard: #b83d3d;
+  --analytics-chart-donut-high: #c0c1ff;
+  --analytics-chart-donut-medium: #4edea3;
+  --analytics-chart-donut-low: #908fa0;
+  --analytics-chart-line: #c0c1ff;
+  --analytics-chart-grid: rgba(70, 69, 84, 0.4);
+  --analytics-chart-legend: #dae2fd;
+  --analytics-chart-tooltip-bg: #e1e0ff;
+  --analytics-chart-tooltip-text: #0b1326;
+  
+  /* Theme Toggle Segmented Control (Dark Mode Active) */
+  --theme-toggle-active-bg: #171f33;
+  --theme-toggle-active-text: #c0c1ff;
+}
+
+/* Question wrapping formatting class to avoid hanging indentations and mid-word breaks */
+.question-wrap {
+  white-space: pre-line !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  text-indent: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* ---------- Stitch Analytics Styles ---------- */
+.analytics-section-container {
+  background-color: var(--analytics-bg);
+  border: 1px solid var(--analytics-border);
+  padding: 24px;
+  border-radius: 16px;
+  color: var(--analytics-text);
+  margin-top: 24px;
+}
+
+.analytics-card {
+  background-color: var(--analytics-surface);
+  border: 1px solid var(--analytics-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.analytics-title {
+  font-family: var(--font-headline);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--analytics-text);
+  border-bottom: 1px solid var(--analytics-border);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+/* Stat badge styling using Stitch colors */
+.stat-card-bloom {
+  background-color: rgba(30, 136, 229, 0.05);
+  border: 1px solid rgba(30, 136, 229, 0.2);
+}
+.dark .stat-card-bloom {
+  background-color: rgba(192, 193, 255, 0.05);
+  border: 1px solid rgba(192, 193, 255, 0.2);
+}
+
+.stat-card-avg {
+  background-color: rgba(100, 116, 139, 0.05);
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+.dark .stat-card-avg {
+  background-color: rgba(78, 222, 163, 0.05);
+  border: 1px solid rgba(78, 222, 163, 0.2);
+}
+
+.stat-card-high {
+  background-color: rgba(0, 100, 128, 0.05);
+  border: 1px solid rgba(0, 100, 128, 0.2);
+}
+.dark .stat-card-high {
+  background-color: rgba(192, 193, 255, 0.05);
+  border: 1px solid rgba(192, 193, 255, 0.2);
+}
+
+.stat-card-low {
+  background-color: rgba(186, 26, 26, 0.05);
+  border: 1px solid rgba(186, 26, 26, 0.2);
+}
+.dark .stat-card-low {
+  background-color: rgba(186, 26, 26, 0.05);
+  border: 1px solid rgba(186, 26, 26, 0.2);
+}
+
 /* ---------- Base ---------- */
 body {
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   background-color: #f9fafb;
@@ -245,28 +381,26 @@ body {
 }
 
 /* ---------- Theme Segmented Control ---------- */
-.light #themeToggleLight[aria-pressed="true"] {
-  background-color: #ffffff;
-  color: #0f172a;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-}
+.light #themeToggleLight[aria-pressed="true"],
 .light #themeToggleDark[aria-pressed="true"] {
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: var(--theme-toggle-active-bg) !important;
+  color: var(--theme-toggle-active-text) !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--analytics-border) !important;
 }
 
 .dark #themeToggleLight[aria-pressed="true"],
 .dark #themeToggleDark[aria-pressed="true"] {
-  background-color: #334155;
-  color: #ffffff;
+  background-color: var(--theme-toggle-active-bg) !important;
+  color: var(--theme-toggle-active-text) !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--analytics-border) !important;
 }
 
 #themeToggleLight, #themeToggleDark {
   color: #64748b;
   background-color: transparent;
-  border: none;
+  border: 1px solid transparent;
 }
 .dark #themeToggleLight, .dark #themeToggleDark {
   color: #94a3b8;
@@ -285,9 +419,30 @@ body {
 
 #themeToggleLight:focus-visible,
 #themeToggleDark:focus-visible {
-  outline: 2px solid #0066ff;
+  outline: 2px solid var(--analytics-primary);
   outline-offset: 1px;
 }
+
+/* ---------- Layout Spacing Adjustments ---------- */
+main {
+  scroll-padding-top: 56px; /* Offset for internal page scrolling/anchors matching sticky header height */
+}
+
+/* ---------- Premium Custom Select Elements ---------- */
+select.custom-select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.5rem center !important;
+  background-size: 0.85rem !important;
+  padding-right: 2rem !important; /* Fix overlapping by reserving space for custom arrow */
+}
+.dark select.custom-select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+}
+
 
 
 

@@ -290,8 +290,7 @@ test.describe.serial('Bulk Processing Interactive QA Audit', () => {
     const drawerAnalyticsBtn = page.locator('#btnDrawerAnalytics');
     if (await drawerAnalyticsBtn.isVisible()) {
       await drawerAnalyticsBtn.click();
-      await page.waitForSelector('#view-analytics', { state: 'visible' });
-      await page.click('a[data-target="view-batch"]');
+      // Analytics are embedded in the batch view, so we land back on view-batch
       await page.waitForSelector('#view-batch', { state: 'visible' });
     } else {
       brokenButtons.push('btnDrawerAnalytics');

@@ -35,18 +35,25 @@ def validate_numbers(original_q, candidate_q) -> tuple:
     Validates number preservation.
     Returns: (score, details_dict)
     """
-    if hasattr(original_q, "text"):
-        orig_text = original_q.text
-    else:
-        orig_text = original_q
+    from question_profile import QuestionProfile
 
-    if hasattr(candidate_q, "text"):
-        cand_text = candidate_q.text
+    if isinstance(original_q, QuestionProfile):
+        orig_nums = set(original_q.numbers)
     else:
-        cand_text = candidate_q
+        if hasattr(original_q, "text"):
+            orig_text = original_q.text
+        else:
+            orig_text = original_q
+        orig_nums = extract_numbers_and_standards(orig_text)
 
-    orig_nums = extract_numbers_and_standards(orig_text)
-    cand_nums = extract_numbers_and_standards(cand_text)
+    if isinstance(candidate_q, QuestionProfile):
+        cand_nums = set(candidate_q.numbers)
+    else:
+        if hasattr(candidate_q, "text"):
+            cand_text = candidate_q.text
+        else:
+            cand_text = candidate_q
+        cand_nums = extract_numbers_and_standards(cand_text)
     
     number_score_max = getattr(config, "NUMBER_SCORE", 5.0)
     
