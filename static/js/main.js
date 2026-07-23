@@ -1,3 +1,15 @@
+function displayDifficulty(difficulty) {
+    switch (difficulty) {
+        case "Medium":
+            return "Moderate";
+        case "Hard":
+            return "Difficult";
+        default:
+            return difficulty || "";
+    }
+}
+window.displayDifficulty = displayDifficulty;
+
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- View Navigation Logic ---
@@ -331,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleEl = document.getElementById('dashChartTitle');
         if (titleEl) titleEl.textContent = titleText;
 
-        const labels = isBloom ? Object.keys(bloomCounts) : Object.keys(diffCounts);
+        const labels = isBloom ? Object.keys(bloomCounts) : Object.keys(diffCounts).map(displayDifficulty);
         const data = isBloom ? Object.values(bloomCounts) : Object.values(diffCounts);
         const maxVal = Math.max(...data, 0);
         const step = calculateNiceStep(maxVal);
@@ -415,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isDiff = dashDistType === 'difficulty';
         const bloomColors = ['#6366f1','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'];
         const diffColors = ['#22c55e','#f59e0b','#ef4444'];
-        const labels = isDiff ? ['Easy','Medium','Hard'] : Object.keys(bloomCounts);
+        const labels = isDiff ? ['Easy', displayDifficulty('Medium'), displayDifficulty('Hard')] : Object.keys(bloomCounts);
         const data = isDiff ? Object.values(diffCounts) : Object.values(bloomCounts);
         const colors = isDiff ? diffColors : bloomColors;
         const total = data.reduce((a,b) => a+b, 0);
@@ -500,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (query) {
             combined = combined.filter(item => {
                 return item.details.toLowerCase().includes(query) || 
-                       (item.type === 'manual' && (item.raw.bloom_level.toLowerCase().includes(query) || item.raw.difficulty.toLowerCase().includes(query))) ||
+                       (item.type === 'manual' && (item.raw.bloom_level.toLowerCase().includes(query) || item.raw.difficulty.toLowerCase().includes(query) || displayDifficulty(item.raw.difficulty).toLowerCase().includes(query))) ||
                        item.status.toLowerCase().includes(query);
             });
         }
@@ -550,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Bloom badge colors
         const bloomBadge = (b) => { const map = {Remember:'bg-purple-100 text-purple-700',Understand:'bg-blue-100 text-blue-700',Apply:'bg-cyan-100 text-cyan-700',Analyze:'bg-amber-100 text-amber-700',Evaluate:'bg-orange-100 text-orange-700',Create:'bg-pink-100 text-pink-700'}; const cls = map[b]||'bg-slate-100 text-slate-600'; return `<span class="inline-flex items-center rounded-md ${cls} px-2 py-0.5 text-[11px] font-semibold">${b||'—'}</span>`; };
-        const diffBadge = (d) => { const map = {Easy:'bg-green-100 text-green-700',Medium:'bg-yellow-100 text-yellow-700',Moderate:'bg-yellow-100 text-yellow-700',Hard:'bg-red-100 text-red-700',Difficult:'bg-red-100 text-red-700'}; const cls = map[d]||'bg-slate-100 text-slate-600'; return d ? `<span class="inline-flex items-center rounded-md ${cls} px-2 py-0.5 text-[11px] font-semibold">${d}</span>` : '—'; };
+        const diffBadge = (d) => { const map = {Easy:'bg-green-100 text-green-700',Medium:'bg-yellow-100 text-yellow-700',Moderate:'bg-yellow-100 text-yellow-700',Hard:'bg-red-100 text-red-700',Difficult:'bg-red-100 text-red-700'}; const cls = map[d]||'bg-slate-100 text-slate-600'; return d ? `<span class="inline-flex items-center rounded-md ${cls} px-2 py-0.5 text-[11px] font-semibold">${displayDifficulty(d)}</span>` : '—'; };
         const relTime = (ts) => { if(!ts) return '—'; const diff = Date.now() - new Date(ts).getTime(); const m=Math.floor(diff/60000); if(m<1)return 'just now'; if(m<60)return m+' min ago'; const h=Math.floor(m/60); if(h<24)return h+(h===1?' hour':' hours')+' ago'; return Math.floor(h/24)+'d ago'; };
 
         pageItems.forEach((item, idx) => {
@@ -789,13 +801,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 color: 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 dark:border-emerald-500/20 dark:bg-emerald-500/5 dark:text-emerald-400'
             },
             {
-                name: 'Medium Questions',
+                name: displayDifficulty('Medium') + ' Questions',
                 desc: 'Apply, Analyze',
                 target: 'Medium',
                 color: 'border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:border-amber-500/20 dark:bg-amber-500/5 dark:text-amber-400'
             },
             {
-                name: 'Hard Questions',
+                name: displayDifficulty('Hard') + ' Questions',
                 desc: 'Evaluate, Create',
                 target: 'Hard',
                 color: 'border-rose-200 bg-rose-50 text-rose-800 hover:bg-rose-100 dark:border-rose-500/20 dark:bg-rose-500/5 dark:text-rose-400'
@@ -1622,6 +1634,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 r.question.toLowerCase().includes(query) || 
                 r.bloom_level.toLowerCase().includes(query) ||
                 r.difficulty.toLowerCase().includes(query) ||
+                displayDifficulty(r.difficulty).toLowerCase().includes(query) ||
                 (r.tags && r.tags.some(t => t.toLowerCase().includes(query)));
                 
             const matchStatus = !statusFilter || r.status === statusFilter;
@@ -1710,11 +1723,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let diffBadge = '';
             if (r.difficulty === 'Easy') {
-                diffBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">Easy</span>';
+                diffBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">${displayDifficulty('Easy')}</span>`;
             } else if (r.difficulty === 'Medium' || r.difficulty === 'Moderate') {
-                diffBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">Medium</span>';
+                diffBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">${displayDifficulty('Medium')}</span>`;
             } else {
-                diffBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20">Hard</span>';
+                diffBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20">${displayDifficulty('Hard')}</span>`;
             }
             
             let statusBadge = '';
@@ -1777,11 +1790,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let diffBadge;
         if (r.difficulty === 'Easy') {
-            diffBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">Easy</span>';
+            diffBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">${displayDifficulty('Easy')}</span>`;
         } else if (r.difficulty === 'Medium' || r.difficulty === 'Moderate') {
-            diffBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">Medium</span>';
+            diffBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">${displayDifficulty('Medium')}</span>`;
         } else {
-            diffBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20">Hard</span>';
+            diffBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20">${displayDifficulty('Hard')}</span>`;
         }
 
         let statusBadge;
@@ -1935,7 +1948,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const diffBadge = document.getElementById('drawerDiff');
             if (diffBadge) {
-                diffBadge.textContent = r.difficulty;
+                diffBadge.textContent = displayDifficulty(r.difficulty);
                 diffBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ';
                 if (r.difficulty === 'Easy') {
                     diffBadge.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'dark:bg-emerald-500/10', 'dark:text-emerald-400', 'dark:border-emerald-500/20');
@@ -1975,7 +1988,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const prevDiffBadge = document.getElementById('drawerPrevDiff');
                 if (prevDiffBadge) {
-                    prevDiffBadge.textContent = r.previous_classification.difficulty;
+                    prevDiffBadge.textContent = displayDifficulty(r.previous_classification.difficulty);
                     prevDiffBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ';
                     if (r.previous_classification.difficulty === 'Easy') {
                         prevDiffBadge.classList.add('bg-emerald-50/70', 'text-emerald-700/70', 'border-emerald-200/70', 'dark:bg-emerald-500/5', 'dark:text-emerald-400/70', 'dark:border-emerald-500/10');
@@ -2007,18 +2020,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 let options = [];
                 if (r.difficulty === 'Easy') {
                     options = [
-                        { label: 'Medium', target: 'Medium', colorClass: 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-900/30 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20' },
-                        { label: 'Hard', target: 'Hard', colorClass: 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900/30 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20' }
+                        { label: displayDifficulty('Medium'), target: 'Medium', colorClass: 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-900/30 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20' },
+                        { label: displayDifficulty('Hard'), target: 'Hard', colorClass: 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900/30 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20' }
                     ];
                 } else if (r.difficulty === 'Medium') {
                     options = [
-                        { label: 'Easy', target: 'Easy', colorClass: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/30 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20' },
-                        { label: 'Hard', target: 'Hard', colorClass: 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900/30 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20' }
+                        { label: displayDifficulty('Easy'), target: 'Easy', colorClass: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/30 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20' },
+                        { label: displayDifficulty('Hard'), target: 'Hard', colorClass: 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900/30 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20' }
                     ];
                 } else if (r.difficulty === 'Hard') {
                     options = [
-                        { label: 'Easy', target: 'Easy', colorClass: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/30 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20' },
-                        { label: 'Medium', target: 'Medium', colorClass: 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-900/30 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20' }
+                        { label: displayDifficulty('Easy'), target: 'Easy', colorClass: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/30 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20' },
+                        { label: displayDifficulty('Medium'), target: 'Medium', colorClass: 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-900/30 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20' }
                     ];
                 }
                 
@@ -2183,7 +2196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let targetDifficulty = v.target_difficulty || v.predicted_difficulty || 'Unknown';
             if (targetDifficulty === 'Moderate') targetDifficulty = 'Medium';
             if (targetDifficulty === 'Difficult') targetDifficulty = 'Hard';
-            let difficultyLabel = targetDifficulty;
+            let difficultyLabel = displayDifficulty(targetDifficulty);
             
             if (targetDifficulty === 'Easy') { borderClass = 'border-emerald-500'; textClass = 'text-emerald-600 dark:text-emerald-400'; }
             else if (targetDifficulty === 'Medium') { borderClass = 'border-amber-500'; textClass = 'text-amber-600 dark:text-amber-400'; }
@@ -2254,7 +2267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const resDiff = document.getElementById('resDiff');
         if (resDiff) {
-            resDiff.textContent = v.predicted_difficulty;
+            resDiff.textContent = displayDifficulty(v.predicted_difficulty);
             resDiff.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold border ' + getDifficultyBadgeClass(v.predicted_difficulty);
         }
         
@@ -2407,7 +2420,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btnDrawerCopy').addEventListener('click', () => {
             if (currentDrawerIndex === -1) return;
             const r = globalBatchResults[currentDrawerIndex];
-            const details = `ID: ${r.id}\nQuestion: ${r.question}\nBloom: ${r.bloom_level}\nDifficulty: ${r.difficulty}\nConfidence: ${r.confidence}%\nExplanation: ${r.explanation}`;
+            const details = `ID: ${r.id}\nQuestion: ${r.question}\nBloom: ${r.bloom_level}\nDifficulty: ${displayDifficulty(r.difficulty)}\nConfidence: ${r.confidence}%\nExplanation: ${r.explanation}`;
             copyText(details);
         });
     }
@@ -2435,7 +2448,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (alBloom) alBloom.textContent = r.bloom_level;
             
             const alDiff = document.getElementById('alDiff');
-            if (alDiff) alDiff.textContent = r.difficulty;
+            if (alDiff) alDiff.textContent = displayDifficulty(r.difficulty);
             
             const alConf = document.getElementById('alConf');
             if (alConf) alConf.textContent = r.confidence + '%';
@@ -2486,7 +2499,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const resDiff = document.getElementById('resDiff');
             if (resDiff) {
-                resDiff.textContent = r.difficulty;
+                resDiff.textContent = displayDifficulty(r.difficulty);
                 resDiff.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold border ' + getDifficultyBadgeClass(r.difficulty);
             }
             
@@ -2636,7 +2649,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('carouselCounter').textContent = `${currentFilteredIndex + 1} / ${displayList.length}`;
         document.getElementById('carouselQuestion').textContent = r.question;
         document.getElementById('carouselBloom').textContent = r.bloom_level;
-        document.getElementById('carouselDiff').textContent = r.difficulty;
+        document.getElementById('carouselDiff').textContent = displayDifficulty(r.difficulty);
         document.getElementById('carouselConf').textContent = r.confidence + '%';
         document.getElementById('carouselExp').innerHTML = r.explanation;
         
@@ -2797,7 +2810,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dChart = new Chart(ctxDiff, {
                 type: 'pie',
                 data: {
-                    labels: ['Easy', 'Medium', 'Hard'],
+                    labels: ['Easy', displayDifficulty('Medium'), displayDifficulty('Hard')],
                     datasets: [{
                         data: [easy, mod, diff],
                         backgroundColor: pieColors
@@ -2986,7 +2999,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${variant.target_bloom || variant.predicted_bloom}
                     </span>
                     <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border ${diffBadgeClass}">
-                        ${variant.target_difficulty || targetDifficulty}
+                        ${displayDifficulty(variant.target_difficulty || targetDifficulty)}
                     </span>
                 </div>
 

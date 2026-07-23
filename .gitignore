@@ -27,12 +27,15 @@ test-results/
 .coverage
 htmlcov/
 
-# Logs
+# Logs & XML
 *.log
+*.xml
 
-# Temporary Directories
+# Temporary Directories & Scratch
 temp/
 tmp/
+scratch/
+before_results/
 
 # OS Specific
 .DS_Store
@@ -57,17 +60,14 @@ checkpoint-*/
 deberta_bloom_model/model.safetensors
 flan_t5_model/model.safetensors
 
-# Generated Reports & Logs
+# Automatically Generated Benchmark Output Logs & Statistics
 attempt_logs.json
 candidate_ranking_log.json
-retry_statistics.json
-generation_statistics.json
-validation_statistics.json
-performance_report.json
 benchmark_report.json
-benchmark_report.md
-benchmark_results.csv
-manual_review.csv
 confusion_matrix.json
+generation_statistics.json
 misclassification_report.json
-
+performance_report.json
+retry_statistics.json
+semantic_drift_breakdown.json
+validation_statistics.json

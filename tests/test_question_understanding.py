@@ -1,11 +1,9 @@
 import unittest
 import torch
-import time
-from question_profile import QuestionProfile
 from question_understanding import QuestionUnderstandingEngine
 from pipeline_context import PipelineContext
 from validation_engine import evaluate_candidate
-from candidate_ranker import rank_candidates, rank_candidates_dicts, calculate_nlp_rank_score
+from candidate_ranker import rank_candidates, rank_candidates_dicts
 from validation_models import ValidationEngineOutput
 
 class MockSTModel:

@@ -1,4 +1,3 @@
-from typing import Dict, Any
 import time
 import config
 from validation_models import ValidationEngineOutput
@@ -11,7 +10,6 @@ from grammar_validator import validate_grammar_and_formatting
 from bloom_validator import validate_bloom_verbs
 from question_profile import QuestionProfile
 from question_understanding import QuestionUnderstandingEngine
-from spacy_utils import get_spacy_doc
 from knowledge_consistency_validator import validate_knowledge_consistency
 from topic_validator import validate_topic
 

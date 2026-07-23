@@ -1,7 +1,7 @@
 import re
 import time
 import unicodedata
-from typing import Optional, Dict, Tuple, Any
+from typing import Optional, Dict, Tuple
 from collections import defaultdict
 
 import config

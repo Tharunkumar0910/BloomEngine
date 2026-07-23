@@ -9,7 +9,6 @@ import io
 import json
 import time
 import re
-from collections import Counter
 from datetime import datetime
 import threading
 import torch
@@ -38,7 +37,7 @@ from prompt_templates import build_prompt
 from validation_engine import evaluate_candidate
 from candidate_ranker import calculate_nlp_rank_score, rank_candidates, rank_candidates_dicts
 from bloom_validator import validate_bloom_verbs
-from spacy_utils import normalize_embedding_key, NLPContext
+from spacy_utils import normalize_embedding_key
 
 
 
