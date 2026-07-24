@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In &amp; Register - BloomEngine AI</title>
+  <meta name="description" content="Sign in or create an account for BloomEngine AI Platform to classify questions, generate AI reasoning, and analyze assessment cognitive depth.">
+
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo/favicon.ico') }}">
+  <link rel="icon" type="image/png"  href="{{ url_for('static', filename='images/logo/favicon.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+
+  <!-- ── TOP NAVBAR ──────────────────────────────────── -->
+  <nav class="auth-navbar">
+    <a href="/" class="auth-logo">
+      <div class="auth-logo-icon">
+        <!-- Brain icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9.5 2a4.5 4.5 0 0 1 4.5 4.5v.5h1a3 3 0 0 1 3 3 3 3 0 0 1-1 2.24V13a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4v-.76A3 3 0 0 1 6 10a3 3 0 0 1 3-3h.5v-.5A4.5 4.5 0 0 1 9.5 2z"/>
+          <path d="M12 17v4M9 21h6"/>
+        </svg>
+      </div>
+      <div class="auth-logo-text">
+        <div class="auth-logo-name"><span>Bloom</span>Engine</div>
+        <div class="auth-logo-sub">AI-Powered Bloom Taxonomy Platform</div>
+      </div>
+    </a>
+
+    <a href="/auth" class="btn-nav-signin">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Sign In
+    </a>
+  </nav>
+
+  <!-- ── MAIN CONTENT ────────────────────────────────── -->
+  <main class="auth-main">
+
+    <!-- ── LEFT SIDE ───────────────────────────────── -->
+    <div class="auth-left">
+
+      <!-- Headline -->
+      <div>
+        <h1 class="auth-headline">Understand Questions.<br><span class="purple">Assess Better.</span></h1>
+        <p class="auth-subtext">BloomEngine uses advanced AI models to classify questions, detect cognitive levels, and provide actionable insights with high accuracy and explainable results.</p>
+      </div>
+
+      <!-- Features -->
+      <div class="auth-features">
+        <div class="auth-feature">
+          <div class="auth-feature-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M9.5 2a4.5 4.5 0 0 1 4.5 4.5v.5h1a3 3 0 0 1 3 3 3 3 0 0 1-1 2.24V13a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4v-.76A3 3 0 0 1 6 10a3 3 0 0 1 3-3h.5v-.5A4.5 4.5 0 0 1 9.5 2z"/>
+            </svg>
+          </div>
+          <div class="auth-feature-body">
+            <h4>Advanced AI Explanations</h4>
+            <p>Get clear, human-like explanations with reasoning, keywords, and cognitive analysis.</p>
+          </div>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17h7M17 14v7"/>
+            </svg>
+          </div>
+          <div class="auth-feature-body">
+            <h4>Bloom Levels</h4>
+            <p>Classify questions across all 6 Bloom's Taxonomy levels with precision.</p>
+          </div>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <div class="auth-feature-body">
+            <h4>Actionable Insights</h4>
+            <p>Understand cognitive demand, difficulty, and learning objectives to improve assessment quality.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloom Taxonomy Card -->
+      <div class="auth-taxonomy-card">
+        <div class="auth-taxonomy-title">Bloom's 6 Cognitive Levels</div>
+        <div class="auth-tax-row">
+          <div class="auth-tax-level">
+            <div class="auth-tax-num tax-1">1</div>
+            <div class="auth-tax-lbl">Remember</div>
+          </div>
+          <div class="auth-tax-arrow">→</div>
+          <div class="auth-tax-level">
+            <div class="auth-tax-num tax-2">2</div>
+            <div class="auth-tax-lbl">Understand</div>
+          </div>
+          <div class="auth-tax-arrow">→</div>
+          <div class="auth-tax-level">
+            <div class="auth-tax-num tax-3">3</div>
+            <div class="auth-tax-lbl">Apply</div>
+          </div>
+          <div class="auth-tax-arrow">→</div>
+          <div class="auth-tax-level">
+            <div class="auth-tax-num tax-4">4</div>
+            <div class="auth-tax-lbl">Analyze</div>
+          </div>
+          <div class="auth-tax-arrow">→</div>
+          <div class="auth-tax-level">
+            <div class="auth-tax-num tax-5">5</div>
+            <div class="auth-tax-lbl">Evaluate</div>
+          </div>
+          <div class="auth-tax-arrow">→</div>
+          <div class="auth-tax-level">
+            <div class="auth-tax-num tax-6">6</div>
+            <div class="auth-tax-lbl">Create</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="auth-trust-row">
+        <div class="auth-trust-item">
+          <div class="auth-trust-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="auth-trust-body">
+            <h5>Secure &amp; Private</h5>
+            <p>Your data is encrypted and protected.</p>
+          </div>
+        </div>
+        <div class="auth-trust-item">
+          <div class="auth-trust-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <div class="auth-trust-body">
+            <h5>Trusted by Educators</h5>
+            <p>Built for teachers, researchers &amp; institutions.</p>
+          </div>
+        </div>
+        <div class="auth-trust-item">
+          <div class="auth-trust-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="auth-trust-body">
+            <h5>Fast &amp; Reliable</h5>
+            <p>Real-time analysis with powerful AI models.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /auth-left -->
+
+    <!-- ── RIGHT SIDE: AUTH CARD ───────────────────── -->
+    <div class="auth-card">
+
+      <!-- Icon + Title -->
+      <div class="auth-card-icon">
+        <div class="auth-icon-circle">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M9.5 2a4.5 4.5 0 0 1 4.5 4.5v.5h1a3 3 0 0 1 3 3 3 3 0 0 1-1 2.24V13a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4v-.76A3 3 0 0 1 6 10a3 3 0 0 1 3-3h.5v-.5A4.5 4.5 0 0 1 9.5 2z"/>
+            <path d="M12 17v4M9 21h6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="auth-card-title" id="cardTitle">Welcome Back!</div>
+          <div class="auth-card-sub" id="cardSub">Sign in to your BloomEngine AI Platform</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabSignIn" onclick="switchTab('signin')">Sign In</button>
+        <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- ── SIGN IN PANEL ─────────────────────────── -->
+      <div class="auth-panel" id="panelSignIn">
+        <div class="form-message" id="signinMsg"></div>
+
+        <form id="signinForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="signinEmail">Work Email</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+              </span>
+              <input type="email" id="signinEmail" class="form-input" placeholder="Enter your email" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="signinPassword" style="margin-bottom:0">Password</label>
+              <a href="#" class="form-forgot">Forgot password?</a>
+            </div>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input type="password" id="signinPassword" class="form-input" placeholder="Enter your password" autocomplete="current-password" required>
+              <button type="button" class="toggle-password" onclick="togglePwd('signinPassword', this)" title="Toggle password">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-check-row">
+            <input type="checkbox" id="rememberMe" checked>
+            <label class="form-check-label-text" for="rememberMe">Remember me for 30 days</label>
+          </div>
+
+          <button type="submit" class="btn-submit" id="signinBtn">
+            Sign In to Platform
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <div class="auth-divider">or continue with</div>
+
+        <button type="button" class="btn-google" onclick="socialRedirect()">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Sign in with Google
+        </button>
+
+        <div class="auth-signup-link">
+          New to BloomEngine? <a href="#" onclick="switchTab('register'); return false;">Create an account</a>
+        </div>
+      </div>
+
+      <!-- ── REGISTER PANEL ────────────────────────── -->
+      <div class="auth-panel hidden" id="panelRegister">
+        <div class="form-message" id="registerMsg"></div>
+
+        <form id="registerForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="regName">Full Name</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input type="text" id="regName" class="form-input" placeholder="Your full name" autocomplete="name" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regEmail">Work Email</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+              </span>
+              <input type="email" id="regEmail" class="form-input" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regPassword">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input type="password" id="regPassword" class="form-input" placeholder="Min 8 characters" autocomplete="new-password" required minlength="8">
+              <button type="button" class="toggle-password" onclick="togglePwd('regPassword', this)" title="Toggle password">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regConfirm">Confirm Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input type="password" id="regConfirm" class="form-input" placeholder="Repeat your password" autocomplete="new-password" required>
+              <button type="button" class="toggle-password" onclick="togglePwd('regConfirm', this)" title="Toggle password">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regOrg">Organization <span style="font-size:11px;color:#9CA3AF;font-weight:400;">(optional)</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </span>
+              <input type="text" id="regOrg" class="form-input" placeholder="University / School / Company">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="registerBtn">
+            Create Account
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <div class="auth-divider">or continue with</div>
+
+        <button type="button" class="btn-google" onclick="socialRedirect()">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Sign up with Google
+        </button>
+
+        <div class="auth-signup-link">
+          Already have an account? <a href="#" onclick="switchTab('signin'); return false;">Sign in</a>
+        </div>
+      </div>
+    </div><!-- /auth-card -->
+
+  </main>
+
+  <script>
+    // Tab switcher
+    function switchTab(tab) {
+      const isSignin = tab === 'signin';
+      document.getElementById('tabSignIn').classList.toggle('active', isSignin);
+      document.getElementById('tabRegister').classList.toggle('active', !isSignin);
+      document.getElementById('panelSignIn').classList.toggle('hidden', !isSignin);
+      document.getElementById('panelRegister').classList.toggle('hidden', isSignin);
+      document.getElementById('cardTitle').textContent = isSignin ? 'Welcome Back!' : 'Create Account';
+      document.getElementById('cardSub').textContent = isSignin ? 'Sign in to your BloomEngine AI Platform' : 'Start classifying questions for free';
+      document.getElementById('signinMsg').className = 'form-message';
+      document.getElementById('registerMsg').className = 'form-message';
+    }
+
+    // Toggle password visibility
+    function togglePwd(id, btn) {
+      const inp = document.getElementById(id);
+      const isText = inp.type === 'text';
+      inp.type = isText ? 'password' : 'text';
+      btn.innerHTML = isText
+        ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+        : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    }
+
+    // Message banners
+    function showMsg(id, type, text) {
+      const el = document.getElementById(id);
+      el.className = 'form-message ' + type;
+      el.textContent = text;
+    }
+
+    // Social redirect (no OAuth configured — go straight to dashboard)
+    function socialRedirect() {
+      window.location.href = '/dashboard';
+    }
+
+    // Sign In submit
+    document.getElementById('signinForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signinEmail').value.trim();
+      const pwd   = document.getElementById('signinPassword').value;
+      if (!email || !pwd) { showMsg('signinMsg', 'error', 'Please fill in all required fields.'); return; }
+      const btn = document.getElementById('signinBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .6s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Signing in...';
+      await new Promise(r => setTimeout(r, 900));
+      showMsg('signinMsg', 'success', 'Sign in successful! Redirecting...');
+      await new Promise(r => setTimeout(r, 600));
+      window.location.href = '/dashboard';
+    });
+
+    // Register submit
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name    = document.getElementById('regName').value.trim();
+      const email   = document.getElementById('regEmail').value.trim();
+      const pwd     = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regConfirm').value;
+      if (!name || !email || !pwd) { showMsg('registerMsg', 'error', 'Please fill in all required fields.'); return; }
+      if (pwd.length < 8) { showMsg('registerMsg', 'error', 'Password must be at least 8 characters.'); return; }
+      if (pwd !== confirm) { showMsg('registerMsg', 'error', 'Passwords do not match.'); return; }
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .6s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Creating account...';
+      await new Promise(r => setTimeout(r, 1000));
+      showMsg('registerMsg', 'success', 'Account created! Redirecting...');
+      await new Promise(r => setTimeout(r, 600));
+      window.location.href = '/dashboard';
+    });
+
+    // URL param pre-select
+    if (new URLSearchParams(window.location.search).get('tab') === 'register') switchTab('register');
+  </script>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+  </style>
+</body>
+</html>

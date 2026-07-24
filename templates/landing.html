@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomStudio — Academic Question Engine</title>
+  <meta name="description" content="Classify academic questions with Bloom's Taxonomy, generate higher-order variants, and process entire question banks with BloomStudio.">
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo/favicon.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+</head>
+<body>
+
+  <!-- ── NAVBAR ──────────────────────────────────────── -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="logo-brand">
+        <img src="{{ url_for('static', filename='images/logo/bloomengine-icon.png') }}" alt="BloomStudio">
+        <div class="logo-text">
+          <span class="logo-name">BloomStudio</span>
+          <span class="logo-sub">Academic Engine</span>
+        </div>
+      </a>
+
+      <button class="nav-mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#taxonomy" class="nav-link">Bloom Taxonomy</a></li>
+        <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+        <li><a href="https://github.com/Tharunkumar0910/BloomEngine" target="_blank" rel="noopener" class="nav-link">GitHub</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="/auth" class="btn-ghost">Sign In</a>
+        <a href="/auth" class="btn-primary">
+          Launch BloomStudio
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── HERO ────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Bloom's Taxonomy Engine
+        </div>
+
+        <h1 class="hero-title">
+          Classify Academic Questions with <span class="gradient">Bloom's Taxonomy</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Automatically classify questions, generate higher-order variants, provide detailed explanations, and process entire question banks using BloomStudio.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/auth" class="btn-hero-primary">
+            Launch BloomStudio
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#how-it-works" class="btn-hero-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 15l5-3-5-3v6z"/></svg>
+            Learn More
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">10K+</div>
+            <div class="hero-stat-label">Questions Processed</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">99%</div>
+            <div class="hero-stat-label">Classification Accuracy</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">6</div>
+            <div class="hero-stat-label">Bloom Levels</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Mockup -->
+      <div class="hero-visual">
+        <div class="dashboard-mockup">
+          <div class="mockup-bar">
+            <div class="mockup-dot red"></div>
+            <div class="mockup-dot yellow"></div>
+            <div class="mockup-dot green"></div>
+            <div class="mockup-url">bloomstudio.app / question-studio</div>
+          </div>
+          <div class="mockup-body">
+            <!-- Question Input Card -->
+            <div class="mockup-card">
+              <div class="mockup-card-label">Question Studio</div>
+              <div class="mockup-input-mock"></div>
+              <div style="margin-top:8px;height:28px;background:linear-gradient(135deg,#2563EB,#4F46E5);border-radius:7px;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:10px;color:#fff;font-weight:700;">⚡ Classify Question</span>
+              </div>
+            </div>
+            <!-- Classification Result Card -->
+            <div class="mockup-card">
+              <div class="mockup-card-label">Classification Result</div>
+              <div style="font-size:11px;color:#0F172A;font-weight:600;margin-bottom:8px;line-height:1.4;">What is the role of photosynthesis in cellular respiration?</div>
+              <div class="mockup-result-grid">
+                <div class="mockup-badge blue">🧠 Analyze</div>
+                <div class="mockup-badge green">📊 Moderate</div>
+              </div>
+              <div style="margin-top:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:8px;font-size:10px;color:#2563EB;line-height:1.5;">
+                This question requires the learner to examine the relationship between photosynthesis and cellular respiration.
+              </div>
+            </div>
+            <!-- Generated Variants Card -->
+            <div class="mockup-card">
+              <div class="mockup-card-label">Generated Variants</div>
+              <div class="mockup-variants">
+                <div class="mockup-variant-card">
+                  <div class="mockup-variant-badge">Apply · Easy</div>
+                  <div class="mockup-line"></div>
+                  <div class="mockup-line short"></div>
+                </div>
+                <div class="mockup-variant-card">
+                  <div class="mockup-variant-badge" style="background:#EDE9FE;color:#4F46E5;border-color:#C4B5FD;">Create · Hard</div>
+                  <div class="mockup-line"></div>
+                  <div class="mockup-line short"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ─────────────────────────────────────── -->
+  <section class="section section-alt" id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Capabilities</span>
+        <h2 class="section-title">Everything You Need for<br>Question Analysis</h2>
+        <p class="section-subtitle">A complete toolkit for educators and researchers to classify, analyze, and transform academic assessment questions.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+          </div>
+          <h3 class="feature-title">Question Classification</h3>
+          <p class="feature-desc">Automatically classify any academic question into the correct Bloom's Taxonomy level with high precision using fine-tuned DeBERTa models.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <h3 class="feature-title">Bloom Taxonomy Detection</h3>
+          <p class="feature-desc">Identify Remember, Understand, Apply, Analyze, Evaluate, and Create levels with confidence scores and detailed reasoning.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </div>
+          <h3 class="feature-title">Question Transformation</h3>
+          <p class="feature-desc">Generate higher or lower-order variants of any question to match target difficulty levels using FLAN-T5 language models.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 class="feature-title">Batch Processing</h3>
+          <p class="feature-desc">Upload CSV, TXT, PDF or DOCX files containing hundreds of questions and classify them all in one automated workflow.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <h3 class="feature-title">Detailed Explanations</h3>
+          <p class="feature-desc">Every classification comes with a human-readable explanation that describes why the question belongs to its identified Bloom level.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </div>
+          <h3 class="feature-title">Export Results</h3>
+          <p class="feature-desc">Download classification reports as CSV or PDF with full metadata including Bloom level, difficulty, confidence, and explanations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BLOOM TAXONOMY ─────────────────────────────────── -->
+  <section class="section" id="taxonomy">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Bloom's Taxonomy</span>
+        <h2 class="section-title">Six Cognitive Levels</h2>
+        <p class="section-subtitle">Benjamin Bloom's framework organizes cognitive learning into six progressive levels, from basic recall to complex creation.</p>
+      </div>
+      <div class="taxonomy-grid reveal">
+        <div class="taxonomy-level">
+          <div class="taxonomy-circle tax-1">1</div>
+          <div class="taxonomy-name">Remember</div>
+          <div class="taxonomy-desc">Recall facts and basic concepts</div>
+        </div>
+        <div class="taxonomy-level">
+          <div class="taxonomy-circle tax-2">2</div>
+          <div class="taxonomy-name">Understand</div>
+          <div class="taxonomy-desc">Explain ideas in own words</div>
+        </div>
+        <div class="taxonomy-level">
+          <div class="taxonomy-circle tax-3">3</div>
+          <div class="taxonomy-name">Apply</div>
+          <div class="taxonomy-desc">Use information in new situations</div>
+        </div>
+        <div class="taxonomy-level">
+          <div class="taxonomy-circle tax-4">4</div>
+          <div class="taxonomy-name">Analyze</div>
+          <div class="taxonomy-desc">Draw connections and examine</div>
+        </div>
+        <div class="taxonomy-level">
+          <div class="taxonomy-circle tax-5">5</div>
+          <div class="taxonomy-name">Evaluate</div>
+          <div class="taxonomy-desc">Justify decisions and positions</div>
+        </div>
+        <div class="taxonomy-level">
+          <div class="taxonomy-circle tax-6">6</div>
+          <div class="taxonomy-name">Create</div>
+          <div class="taxonomy-desc">Produce original work and designs</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ──────────────────────────────────── -->
+  <section class="section section-alt" id="how-it-works">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">How It Works</span>
+        <h2 class="section-title">Four Simple Steps</h2>
+        <p class="section-subtitle">From uploading your questions to exporting classified results — BloomStudio handles the entire workflow automatically.</p>
+      </div>
+      <div class="hiw-grid">
+        <div class="hiw-card reveal">
+          <div class="hiw-step">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <span class="hiw-step-num">1</span>
+          </div>
+          <h3 class="hiw-title">Upload Questions</h3>
+          <p class="hiw-desc">Paste a single question or upload a file with hundreds of questions in CSV, TXT, PDF, or DOCX format.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-step">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <span class="hiw-step-num">2</span>
+          </div>
+          <h3 class="hiw-title">Classification</h3>
+          <p class="hiw-desc">Our fine-tuned DeBERTa model classifies each question by Bloom level and difficulty with a detailed explanation.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-step">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            <span class="hiw-step-num">3</span>
+          </div>
+          <h3 class="hiw-title">Transformation</h3>
+          <p class="hiw-desc">Generate higher-order or lower-order variants of any question targeting a specific Bloom level and difficulty.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-step">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <span class="hiw-step-num">4</span>
+          </div>
+          <h3 class="hiw-title">Export Results</h3>
+          <p class="hiw-desc">Download your classified questions as a CSV or PDF report complete with Bloom levels, difficulty, and explanations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="{{ url_for('static', filename='images/logo/bloomengine-logo.png') }}" alt="BloomStudio">
+          <p style="margin-top:12px;">A premium academic question classification engine powered by Bloom's Taxonomy and fine-tuned AI models.</p>
+          <p style="margin-top:8px;font-size:12px;">Version 2.1.0 · Academic Engine</p>
+        </div>
+        <nav class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#taxonomy">Bloom Taxonomy</a></li>
+            <li><a href="/#how-it-works">How It Works</a></li>
+            <li><a href="/auth">Sign In</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://github.com/Tharunkumar0910/BloomEngine" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://github.com/Tharunkumar0910/BloomEngine/blob/main/README.md" target="_blank" rel="noopener">Documentation</a></li>
+            <li><a href="https://github.com/Tharunkumar0910/BloomEngine/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a></li>
+            <li><a href="https://github.com/Tharunkumar0910/BloomEngine/blob/main/LICENSE" target="_blank" rel="noopener">License</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 BloomStudio. All rights reserved.</span>
+        <span>Built with ❤️ for educators</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Sticky navbar
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Mobile menu toggle
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      document.getElementById('navMenu').classList.toggle('open');
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // Reveal on scroll
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>

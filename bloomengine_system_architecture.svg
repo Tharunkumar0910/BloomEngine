@@ -1,0 +1,356 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1280" width="1600" height="1280" style="background-color: #ffffff; font-family: 'Segoe UI', Arial, Helvetica, sans-serif;">
+  <defs>
+    <!-- Arrowhead markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155" />
+    </marker>
+    <!-- Drop Shadow for layered feel -->
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Title & Figure Caption -->
+  <text x="800" y="42" font-size="22" font-weight="bold" fill="#0F172A" text-anchor="middle">Figure 3.1 Overall System Architecture of BloomEngine</text>
+  <text x="800" y="66" font-size="13" font-weight="500" fill="#475569" text-anchor="middle">Layered Architecture Inferred from Implementation Source Code</text>
+
+  <!-- LAYER 1: USER LAYER -->
+  <g transform="translate(60, 90)">
+    <rect x="0" y="0" width="1480" height="90" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="180" height="90" rx="8" fill="#1E3A8A"/>
+    <rect x="170" y="0" width="10" height="90" fill="#1E3A8A"/>
+    <text x="90" y="42" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">1. USER LAYER</text>
+    <text x="90" y="58" font-size="11" fill="#93C5FD" text-anchor="middle">(Actors &amp; Clients)</text>
+
+    <!-- Cards inside Layer 1 -->
+    <g transform="translate(210, 15)">
+      <!-- Educator / Examiner -->
+      <rect x="0" y="0" width="380" height="60" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="190" y="26" font-size="13" font-weight="bold" fill="#1E293B" text-anchor="middle">Academic Educators / Test Creators</text>
+      <text x="190" y="44" font-size="11" fill="#64748B" text-anchor="middle">Input Examination Questions (Single / Batch File Upload)</text>
+
+      <!-- Web Browsers -->
+      <rect x="420" y="0" width="380" height="60" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="610" y="26" font-size="13" font-weight="bold" fill="#1E293B" text-anchor="middle">Client Web Browsers</text>
+      <text x="610" y="44" font-size="11" fill="#64748B" text-anchor="middle">Desktop / Mobile HTML5 Browsers (HTTP / REST API)</text>
+
+      <!-- Question Bank Consumers -->
+      <rect x="840" y="0" width="410" height="60" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="1045" y="26" font-size="13" font-weight="bold" fill="#1E293B" text-anchor="middle">Question Bank Administrators</text>
+      <text x="1045" y="44" font-size="11" fill="#64748B" text-anchor="middle">Manual Reviewers &amp; Multi-Format Export Consumers</text>
+    </g>
+  </g>
+
+  <!-- Connectors L1 -> L2 -->
+  <line x1="800" y1="180" x2="800" y2="204" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LAYER 2: PRESENTATION LAYER -->
+  <g transform="translate(60, 205)">
+    <rect x="0" y="0" width="1480" height="135" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="180" height="135" rx="8" fill="#1D4ED8"/>
+    <rect x="170" y="0" width="10" height="135" fill="#1D4ED8"/>
+    <text x="90" y="62" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">2. PRESENTATION</text>
+    <text x="90" y="78" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">LAYER</text>
+    <text x="90" y="96" font-size="11" fill="#BFDBFE" text-anchor="middle">(Frontend Web UI)</text>
+
+    <!-- Cards inside Layer 2 -->
+    <g transform="translate(200, 15)">
+      <!-- Landing Page -->
+      <rect x="0" y="0" width="235" height="105" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="117" y="25" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Landing Page Module</text>
+      <text x="117" y="45" font-size="11" fill="#475569" text-anchor="middle">templates/landing.html</text>
+      <text x="117" y="63" font-size="11" fill="#475569" text-anchor="middle">static/js/landing.js</text>
+      <text x="117" y="81" font-size="11" fill="#475569" text-anchor="middle">static/css/landing.css</text>
+
+      <!-- Auth Page -->
+      <rect x="250" y="0" width="235" height="105" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="367" y="25" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Authentication Page</text>
+      <text x="367" y="45" font-size="11" fill="#475569" text-anchor="middle">templates/auth.html</text>
+      <text x="367" y="63" font-size="11" fill="#475569" text-anchor="middle">static/js/auth.js</text>
+      <text x="367" y="81" font-size="11" fill="#475569" text-anchor="middle">static/css/auth.css</text>
+
+      <!-- Main Dashboard -->
+      <rect x="500" y="0" width="410" height="105" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.6"/>
+      <text x="705" y="25" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Interactive Main Dashboard UI</text>
+      <text x="705" y="45" font-size="11" fill="#334155" text-anchor="middle">templates/index.html | static/js/main.js | static/css/style.css</text>
+      <line x1="510" y1="52" x2="900" y2="52" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="705" y="69" font-size="11" fill="#475569" text-anchor="middle">• Single Classification &amp; Rephrasing UI</text>
+      <text x="705" y="85" font-size="11" fill="#475569" text-anchor="middle">• Drag-and-Drop Batch File Upload &amp; Progress Bar</text>
+
+      <!-- UI Modals & Widgets -->
+      <rect x="925" y="0" width="335" height="105" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="1092" y="25" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Dashboard Components &amp; Modals</text>
+      <text x="1092" y="45" font-size="11" fill="#475569" text-anchor="middle">• Manual Reclassification / Question Editor</text>
+      <text x="1092" y="63" font-size="11" fill="#475569" text-anchor="middle">• Analytics Metrics &amp; Validation Scores Dashboard</text>
+      <text x="1092" y="81" font-size="11" fill="#475569" text-anchor="middle">• Multi-Format Export Options Modal</text>
+    </g>
+  </g>
+
+  <!-- Connectors L2 -> L3 -->
+  <line x1="800" y1="340" x2="800" y2="364" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LAYER 3: BACKEND / APPLICATION LAYER -->
+  <g transform="translate(60, 365)">
+    <rect x="0" y="0" width="1480" height="195" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="180" height="195" rx="8" fill="#2563EB"/>
+    <rect x="170" y="0" width="10" height="195" fill="#2563EB"/>
+    <text x="90" y="82" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">3. APPLICATION</text>
+    <text x="90" y="98" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">LAYER</text>
+    <text x="90" y="116" font-size="11" fill="#DBEAFE" text-anchor="middle">(Flask Server &amp; APIs)</text>
+
+    <!-- Cards inside Layer 3 -->
+    <g transform="translate(200, 15)">
+      <!-- Flask Core Application Server -->
+      <rect x="0" y="0" width="310" height="165" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/>
+      <text x="155" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Flask Web Server (app.py)</text>
+      <line x1="10" y1="32" x2="300" y2="32" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="155" y="48" font-size="11" fill="#334155" text-anchor="middle">• Routing Engine &amp; Secret Key Management</text>
+      <text x="155" y="66" font-size="11" fill="#334155" text-anchor="middle">• Application Lifecycle &amp; Warmup Handler</text>
+      <text x="155" y="84" font-size="11" fill="#334155" text-anchor="middle">• Static Uploads Manager (static/uploads)</text>
+      <text x="155" y="102" font-size="11" fill="#334155" text-anchor="middle">• Performance Logging &amp; Process Metrics</text>
+      <text x="155" y="120" font-size="11" fill="#334155" text-anchor="middle">• In-Memory Session Memory Store</text>
+      <text x="155" y="138" font-size="11" fill="#334155" text-anchor="middle">• Multithreading Locks (MODEL_LOCK)</text>
+      <text x="155" y="154" font-size="11" fill="#64748B" text-anchor="middle">GET /, /landing, /dashboard, /auth, /health</text>
+
+      <!-- REST API Endpoints Router -->
+      <rect x="325" y="0" width="340" height="165" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="495" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">REST API Endpoints Services</text>
+      <line x1="335" y1="32" x2="655" y2="32" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="495" y="48" font-size="11" fill="#334155" text-anchor="middle">POST /classify - DeBERTa Bloom Classification</text>
+      <text x="495" y="66" font-size="11" fill="#334155" text-anchor="middle">POST /rephrase - Single Question Transformation</text>
+      <text x="495" y="84" font-size="11" fill="#334155" text-anchor="middle">POST /parse-upload - Document Parsing Endpoint</text>
+      <text x="495" y="102" font-size="11" fill="#334155" text-anchor="middle">POST /upload-batch &amp; /start-batch/&lt;id&gt; - Batch Init</text>
+      <text x="495" y="120" font-size="11" fill="#334155" text-anchor="middle">GET /batch-status/&lt;id&gt; &amp; POST /stop-batch/&lt;id&gt;</text>
+      <text x="495" y="138" font-size="11" fill="#334155" text-anchor="middle">PUT /update-question &amp; DELETE /delete-question</text>
+      <text x="495" y="154" font-size="11" fill="#334155" text-anchor="middle">GET /batch-history &amp; /manual-classifications</text>
+
+      <!-- Document Parsing Services -->
+      <rect x="680" y="0" width="280" height="165" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="820" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Document Extraction Engine</text>
+      <line x1="690" y1="32" x2="950" y2="32" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="820" y="50" font-size="11" fill="#334155" text-anchor="middle">Multi-Format Document Extractors:</text>
+      <text x="820" y="70" font-size="11" fill="#475569" text-anchor="middle">• Plain Text Parser (.txt)</text>
+      <text x="820" y="88" font-size="11" fill="#475569" text-anchor="middle">• CSV / TSV File Reader (csv, io)</text>
+      <text x="820" y="106" font-size="11" fill="#475569" text-anchor="middle">• PDF Document Reader (PyPDF2)</text>
+      <text x="820" y="124" font-size="11" fill="#475569" text-anchor="middle">• MS Word Reader (python-docx)</text>
+      <text x="820" y="146" font-size="11" fill="#64748B" text-anchor="middle">Question Normalizer &amp; Sanitizer</text>
+
+      <!-- Export Generators & Async Worker -->
+      <rect x="975" y="0" width="285" height="165" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="1117" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Async Processing &amp; Exporters</text>
+      <line x1="985" y1="32" x2="1250" y2="32" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="1117" y="48" font-size="11" fill="#334155" text-anchor="middle">Background Thread Worker (threading)</text>
+      <text x="1117" y="66" font-size="11" fill="#334155" text-anchor="middle">Multi-Format Question Bank Generators:</text>
+      <text x="1117" y="84" font-size="11" fill="#475569" text-anchor="middle">• CSV Exporter (csv, io)</text>
+      <text x="1117" y="102" font-size="11" fill="#475569" text-anchor="middle">• Excel Generator (pandas / openpyxl)</text>
+      <text x="1117" y="120" font-size="11" fill="#475569" text-anchor="middle">• MS Word Exporter (docx)</text>
+      <text x="1117" y="138" font-size="11" fill="#475569" text-anchor="middle">• PDF Generator (FPDF) &amp; PPTX (pptx)</text>
+      <text x="1117" y="154" font-size="11" fill="#64748B" text-anchor="middle">Rejection Log Exporter (/export-rejections)</text>
+    </g>
+  </g>
+
+  <!-- Connectors L3 -> L4 -->
+  <line x1="800" y1="560" x2="800" y2="584" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LAYER 4: AI / NLP PROCESSING LAYER -->
+  <g transform="translate(60, 585)">
+    <rect x="0" y="0" width="1480" height="215" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="180" height="215" rx="8" fill="#3B82F6"/>
+    <rect x="170" y="0" width="10" height="215" fill="#3B82F6"/>
+    <text x="90" y="90" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">4. AI / NLP</text>
+    <text x="90" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PROCESSING</text>
+    <text x="90" y="122" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">LAYER</text>
+    <text x="90" y="140" font-size="11" fill="#EFF6FF" text-anchor="middle">(Deep Learning Models)</text>
+
+    <!-- Cards inside Layer 4 -->
+    <g transform="translate(200, 15)">
+      <!-- DeBERTa Classifier -->
+      <rect x="0" y="0" width="300" height="185" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/>
+      <text x="150" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">DeBERTa Classifier Engine</text>
+      <text x="150" y="40" font-size="11" fill="#475569" text-anchor="middle">deberta_bloom_model/</text>
+      <line x1="10" y1="48" x2="290" y2="48" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="150" y="66" font-size="11" fill="#334155" text-anchor="middle">• AutoModelForSequenceClassification</text>
+      <text x="150" y="84" font-size="11" fill="#334155" text-anchor="middle">• Fine-tuned DeBERTa-v3 Architecture</text>
+      <text x="150" y="102" font-size="11" fill="#334155" text-anchor="middle">• Predicts 6 Bloom Taxonomy Levels:</text>
+      <text x="150" y="120" font-size="11" fill="#475569" text-anchor="middle">(Remember, Understand, Apply,</text>
+      <text x="150" y="136" font-size="11" fill="#475569" text-anchor="middle">Analyze, Evaluate, Create)</text>
+      <text x="150" y="154" font-size="11" fill="#334155" text-anchor="middle">• Target Difficulty Predictor</text>
+      <text x="150" y="172" font-size="11" fill="#64748B" text-anchor="middle">• Classification Confidence Score</text>
+
+      <!-- FLAN-T5 Generator & Prompt Engineering -->
+      <rect x="315" y="0" width="310" height="185" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/>
+      <text x="470" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">FLAN-T5 Question Generator</text>
+      <text x="470" y="40" font-size="11" fill="#475569" text-anchor="middle">flan_t5_model/ &amp; prompt_templates.py</text>
+      <line x1="325" y1="48" x2="615" y2="48" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="470" y="66" font-size="11" fill="#334155" text-anchor="middle">• AutoModelForSeq2SeqLM (FLAN-T5 Base)</text>
+      <text x="470" y="84" font-size="11" fill="#334155" text-anchor="middle">• Structured Prompt Construction Engine</text>
+      <text x="470" y="102" font-size="11" fill="#334155" text-anchor="middle">• Target Bloom Level Instruction Injection</text>
+      <text x="470" y="120" font-size="11" fill="#334155" text-anchor="middle">• Bloom Verb Constraints &amp; Concept Locks</text>
+      <text x="470" y="138" font-size="11" fill="#334155" text-anchor="middle">• Temperature &amp; Beam Search Sampling</text>
+      <text x="470" y="156" font-size="11" fill="#334155" text-anchor="middle">• Multi-Candidate Question Generation</text>
+      <text x="470" y="172" font-size="11" fill="#64748B" text-anchor="middle">• Candidate Beam Diversity Control</text>
+
+      <!-- Question Understanding Engine -->
+      <rect x="640" y="0" width="310" height="185" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="795" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Question Understanding Engine</text>
+      <text x="795" y="40" font-size="11" fill="#475569" text-anchor="middle">question_understanding.py &amp; profile.py</text>
+      <line x1="650" y1="48" x2="940" y2="48" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="795" y="66" font-size="11" fill="#334155" text-anchor="middle">• QuestionProfile Dataclass Extraction</text>
+      <text x="795" y="84" font-size="11" fill="#334155" text-anchor="middle">• Syntactic Dependency Parsing (spaCy)</text>
+      <text x="795" y="102" font-size="11" fill="#334155" text-anchor="middle">• Key Technical Concept Extraction</text>
+      <text x="795" y="120" font-size="11" fill="#334155" text-anchor="middle">• Action Verb &amp; Noun Chunk Profiling</text>
+      <text x="795" y="138" font-size="11" fill="#334155" text-anchor="middle">• Numeric Entity &amp; Formula Isolator</text>
+      <text x="795" y="156" font-size="11" fill="#334155" text-anchor="middle">• Sentence Transformers Embeddings</text>
+      <text x="795" y="172" font-size="11" fill="#64748B" text-anchor="middle">('all-MiniLM-L6-v2' via spacy_utils)</text>
+
+      <!-- Knowledge Base & Domain Hierarchy -->
+      <rect x="965" y="0" width="295" height="185" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="1112" y="24" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Domain Knowledge Taxonomy</text>
+      <text x="1112" y="40" font-size="11" fill="#475569" text-anchor="middle">domain_hierarchy_builder.py &amp; knowledge/</text>
+      <line x1="975" y1="48" x2="1250" y2="48" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="1112" y="66" font-size="11" fill="#334155" text-anchor="middle">• CS Domain Taxonomy (OS, Networks, DBMS)</text>
+      <text x="1112" y="84" font-size="11" fill="#334155" text-anchor="middle">• Concepts Registry (knowledge/concepts.py)</text>
+      <text x="1112" y="102" font-size="11" fill="#334155" text-anchor="middle">• Topic Maps (knowledge/topics.py)</text>
+      <text x="1112" y="120" font-size="11" fill="#334155" text-anchor="middle">• Domain Keyword Hierarchy Matching</text>
+      <text x="1112" y="138" font-size="11" fill="#334155" text-anchor="middle">• Candidate Ranker (candidate_ranker.py)</text>
+      <text x="1112" y="156" font-size="11" fill="#334155" text-anchor="middle">• BLEU &amp; ROUGE-L Metric Calculators</text>
+      <text x="1112" y="172" font-size="11" fill="#64748B" text-anchor="middle">• NLP Candidate Ranking Score</text>
+    </g>
+  </g>
+
+  <!-- Connectors L4 -> L5 -->
+  <line x1="800" y1="800" x2="800" y2="824" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LAYER 5: VALIDATION LAYER -->
+  <g transform="translate(60, 825)">
+    <rect x="0" y="0" width="1480" height="195" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="180" height="195" rx="8" fill="#64748B"/>
+    <rect x="170" y="0" width="10" height="195" fill="#64748B"/>
+    <text x="90" y="82" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">5. VALIDATION</text>
+    <text x="90" y="98" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ENGINE LAYER</text>
+    <text x="90" y="116" font-size="11" fill="#F1F5F9" text-anchor="middle">(7-Stage NLP Pipeline)</text>
+
+    <!-- Cards inside Layer 5: Orchestrator & 7 Stages -->
+    <g transform="translate(200, 15)">
+      <!-- Orchestrator Box -->
+      <rect x="0" y="0" width="1260" height="38" rx="5" fill="#1E3A8A"/>
+      <text x="630" y="24" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Validation Engine Orchestrator (validation_engine.py &amp; validation_models.py) | Active Profiles: Strict / Balanced / Relaxed</text>
+
+      <!-- 7 Stage Cards in 2 Rows -->
+      <!-- Row 1: Stages 1-4 -->
+      <g transform="translate(0, 48)">
+        <!-- S1: Bloom -->
+        <rect x="0" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2"/>
+        <text x="150" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Stage 1: Bloom Classification &amp; Verbs</text>
+        <text x="150" y="38" font-size="10" fill="#475569" text-anchor="middle">bloom_validator.py | DeBERTa Model | Weight: 35%</text>
+
+        <!-- S2: Concept -->
+        <rect x="320" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+        <text x="470" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Stage 2: Concept Preservation</text>
+        <text x="470" y="38" font-size="10" fill="#475569" text-anchor="middle">concept_validator.py | Cosine Similarity | Weight: 10%</text>
+
+        <!-- S3: Entity -->
+        <rect x="640" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+        <text x="790" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Stage 3: Technical Entity Preservation</text>
+        <text x="790" y="38" font-size="10" fill="#475569" text-anchor="middle">entity_validator.py | spaCy NER | Weight: 10%</text>
+
+        <!-- S4: Number -->
+        <rect x="960" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+        <text x="1110" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Stage 4: Number &amp; Constraint Check</text>
+        <text x="1110" y="38" font-size="10" fill="#475569" text-anchor="middle">number_validator.py | Exact Numeric Match | Weight: 5%</text>
+      </g>
+
+      <!-- Row 2: Stages 5-7 + Domain/Topic -->
+      <g transform="translate(0, 110)">
+        <!-- S5: Knowledge & Domain Drift -->
+        <rect x="0" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+        <text x="150" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Stage 5: Knowledge &amp; Drift Check</text>
+        <text x="150" y="38" font-size="10" fill="#475569" text-anchor="middle">knowledge_consistency_validator.py | Penalty Check</text>
+
+        <!-- S6: Semantic & Duplicate -->
+        <rect x="320" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+        <text x="470" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Stage 6: Semantic Drift &amp; Duplicates</text>
+        <text x="470" y="38" font-size="10" fill="#475569" text-anchor="middle">semantic_validator.py &amp; duplicate_validator.py</text>
+
+        <!-- S7: Grammar -->
+        <rect x="640" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+        <text x="790" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Stage 7: Grammar &amp; Formatting</text>
+        <text x="790" y="38" font-size="10" fill="#475569" text-anchor="middle">grammar_validator.py | Structural Length | Weight: 3%</text>
+
+        <!-- Domain & Topic Validators -->
+        <rect x="960" y="0" width="300" height="55" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+        <text x="1110" y="22" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Domain &amp; Topic Validation</text>
+        <text x="1110" y="38" font-size="10" fill="#475569" text-anchor="middle">topic_validator.py | Domain: 20% | Topic: 15%</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Connectors L5 -> L6 -->
+  <line x1="800" y1="1020" x2="800" y2="1044" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LAYER 6: STORAGE & CACHING LAYER -->
+  <g transform="translate(60, 1045)">
+    <rect x="0" y="0" width="1480" height="110" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="180" height="110" rx="8" fill="#475569"/>
+    <rect x="170" y="0" width="10" height="110" fill="#475569"/>
+    <text x="90" y="52" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">6. STORAGE &amp;</text>
+    <text x="90" y="68" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">CACHING LAYER</text>
+    <text x="90" y="86" font-size="11" fill="#CBD5E1" text-anchor="middle">(Memory &amp; Local Disk)</text>
+
+    <!-- Cards inside Layer 6 -->
+    <g transform="translate(200, 15)">
+      <!-- In-Memory Session Store -->
+      <rect x="0" y="0" width="390" height="80" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="195" y="26" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">In-Memory Application Session Store</text>
+      <text x="195" y="44" font-size="11" fill="#475569" text-anchor="middle">MEMORY_STORE &amp; SESSION_STATE (in app.py)</text>
+      <text x="195" y="62" font-size="11" fill="#64748B" text-anchor="middle">BATCH_HISTORY &amp; Active Session Question Registry</text>
+
+      <!-- Thread-Safe Embedding Cache -->
+      <rect x="415" y="0" width="390" height="80" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/>
+      <text x="610" y="26" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Thread-Safe Sentence Embedding Cache</text>
+      <text x="610" y="44" font-size="11" fill="#475569" text-anchor="middle">EMBEDDING_CACHE &amp; EMBEDDING_CACHE_LOCK</text>
+      <text x="610" y="62" font-size="11" fill="#64748B" text-anchor="middle">Hits/Misses Performance Tracker (normalize_embedding_key)</text>
+
+      <!-- Local File System Storage -->
+      <rect x="830" y="0" width="430" height="80" rx="6" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="1045" y="26" font-size="13" font-weight="bold" fill="#1E3A8A" text-anchor="middle">Local File System Storage</text>
+      <text x="1045" y="44" font-size="11" fill="#475569" text-anchor="middle">• Uploaded Document Storage (static/uploads/)</text>
+      <text x="1045" y="62" font-size="11" fill="#475569" text-anchor="middle">• Model Weights (model.safetensors) &amp; Json Benchmarks</text>
+    </g>
+  </g>
+
+  <!-- Connectors L6 -> L7 -->
+  <line x1="800" y1="1155" x2="800" y2="1179" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LAYER 7: OUTPUT LAYER -->
+  <g transform="translate(60, 1180)">
+    <rect x="0" y="0" width="1480" height="75" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="180" height="75" rx="8" fill="#0F172A"/>
+    <rect x="170" y="0" width="10" height="75" fill="#0F172A"/>
+    <text x="90" y="38" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">7. OUTPUT LAYER</text>
+    <text x="90" y="54" font-size="11" fill="#94A3B8" text-anchor="middle">(Artifacts &amp; Files)</text>
+
+    <!-- Cards inside Layer 7 -->
+    <g transform="translate(200, 12)">
+      <!-- Rephrased Questions -->
+      <rect x="0" y="0" width="290" height="50" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="145" y="22" font-size="12" font-weight="bold" fill="#1E293B" text-anchor="middle">Validated Question Bank</text>
+      <text x="145" y="38" font-size="10" fill="#475569" text-anchor="middle">Rephrased Target Bloom Level Questions</text>
+
+      <!-- Exported Files -->
+      <rect x="310" y="0" width="310" height="50" rx="5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/>
+      <text x="465" y="22" font-size="12" font-weight="bold" fill="#1E293B" text-anchor="middle">Multi-Format Question Bank Files</text>
+      <text x="465" y="38" font-size="10" fill="#475569" text-anchor="middle">CSV, Excel (.xlsx), Word (.docx), PDF, PPTX</text>
+
+      <!-- Rejection Audit Log -->
+      <rect x="640" y="0" width="300" height="50" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="790" y="22" font-size="12" font-weight="bold" fill="#1E293B" text-anchor="middle">Rejection Audit Log</text>
+      <text x="790" y="38" font-size="10" fill="#475569" text-anchor="middle">Failed Questions &amp; Detailed Stage Reasons</text>
+
+      <!-- Analytics Reports -->
+      <rect x="960" y="0" width="300" height="50" rx="5" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="1110" y="22" font-size="12" font-weight="bold" fill="#1E293B" text-anchor="middle">Benchmarking &amp; QA Reports</text>
+      <text x="1110" y="38" font-size="10" fill="#475569" text-anchor="middle">benchmark_report.md, bloomengine_qa_report</text>
+    </g>
+  </g>
+</svg>

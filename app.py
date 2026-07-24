@@ -11,6 +11,7 @@ import time
 import re
 from datetime import datetime
 import threading
+import functools
 import torch
 import pandas as pd
 import platform
@@ -61,8 +62,9 @@ SESSION_STATE = {
 # Startup timestamp
 STARTUP_TIMESTAMP = time.time()
 
-# Performance Logging Flag (Set to True for verbose per-question timing logs in terminal)
-ENABLE_PERFORMANCE_LOGS = False
+# Performance Logging Flags
+ENABLE_PERFORMANCE_LOGS = True
+ENABLE_GENERATION_PERFORMANCE_LOGS = True
 
 # Thread locks
 MODEL_LOCK = threading.Lock()
@@ -421,6 +423,62 @@ def sanitize_generated_question(text: str) -> str:
 # PREPROCESSING & EXPLANATION LAYER
 # =====================================================================
 
+# Pre-compiled regex patterns and module-level lookups for Preprocessing Layer
+RE_CLEAN_1 = re.compile(r'^[\(\[][Qq]?\d+[\)\]]\s*')
+RE_CLEAN_2 = re.compile(r'^(?:[Qq](?:uestion|uest|uery)?\s*[\.\-\:]?\s*)?\d+(?:[\.\)\:]\s*|\-\s+|\s+)')
+
+RE_NON_ALPHANUM = re.compile(r'[^a-zA-Z0-9]')
+
+_CONCEPT_MAPPINGS = {
+    "normalization in dbms": "Database Normalization",
+    "normalization in database management systems": "Database Normalization",
+    "normalization": "Database Normalization",
+    "database normalization": "Database Normalization",
+    "un-normalised relational table": "Database Normalization",
+    "un normalised relational table": "Database Normalization",
+    "acid properties of a database transaction": "ACID Properties",
+    "acid properties": "ACID Properties",
+    "acid": "ACID Properties",
+    "osi model": "OSI Model",
+    "osi": "OSI Model",
+    "tcp congestion control": "TCP Congestion Control",
+    "tcp": "TCP Protocol",
+    "udp": "UDP Protocol",
+    "binary search tree": "Binary Search Tree",
+    "avl tree": "AVL Tree",
+    "binary search": "Binary Search",
+    "big data": "Big Data",
+    "deadlock": "Deadlock",
+    "deadlock avoidance": "Deadlock Avoidance",
+    "deadlock detection": "Deadlock Detection",
+    "page fault": "Page Fault",
+    "cpu scheduling": "CPU Scheduling",
+    "agile methodology": "Agile Methodology",
+    "software design principles": "Software Design Principles",
+    "solid principles": "SOLID Principles",
+    "design patterns": "Design Patterns",
+    "version control": "Version Control",
+    "graph traversal": "Graph Traversal",
+    "hash tables": "Hash Tables",
+    "heaps": "Heaps",
+    "gradient descent": "Gradient Descent",
+    "learning paradigms": "Learning Paradigms",
+    "convolutional neural networks": "Convolutional Neural Networks",
+    "search algorithms": "Search Algorithms",
+}
+
+_ACRONYMS = {
+    "dbms": "DBMS", "tcp": "TCP", "udp": "UDP", "osi": "OSI", "sql": "SQL",
+    "nosql": "NoSQL", "lru": "LRU", "fifo": "FIFO", "acid": "ACID", "bcnf": "BCNF",
+    "3nf": "3NF", "2nf": "2NF", "1nf": "1NF", "uml": "UML", "ip": "IP",
+    "dhcp": "DHCP", "arp": "ARP", "avl": "AVL", "cidr": "CIDR", "rsa": "RSA",
+    "cpu": "CPU", "solid": "SOLID", "gui": "GUI", "api": "API", "dns": "DNS",
+    "lan": "LAN", "wan": "WAN", "mac": "MAC", "http": "HTTP", "https": "HTTPS",
+    "xml": "XML", "json": "JSON",
+}
+
+
+@functools.lru_cache(maxsize=1024)
 def clean_source_question(question: str) -> str:
     """
     Remove leading question numbering, prefixes (e.g. Q1., Q2), (3), 1., 2)
@@ -429,15 +487,14 @@ def clean_source_question(question: str) -> str:
     if not question:
         return ""
     q = question.strip()
-    # Pattern 1: (3) or [3] or (Q3) or [Q3]
-    q_clean = re.sub(r'^[\(\[][Qq]?\d+[\)\]]\s*', '', q)
-    # Pattern 2: 1. or 2) or Q3. or Q3) or 3 - or Question 3: or Question 3)
-    q_clean = re.sub(r'^(?:[Qq](?:uestion|uest|uery)?\s*[\.\-\:]?\s*)?\d+(?:[\.\)\:]\s*|\-\s+|\s+)', '', q_clean)
+    q_clean = RE_CLEAN_1.sub('', q)
+    q_clean = RE_CLEAN_2.sub('', q_clean)
     if not q_clean.strip():
         return q
     return q_clean.strip()
 
 
+@functools.lru_cache(maxsize=1024)
 def format_academic_concept(concept: str) -> str:
     """
     Formats the extracted concept to be a clean, Title-Cased academic name,
@@ -449,105 +506,25 @@ def format_academic_concept(concept: str) -> str:
         
     concept_lower = concept.lower().strip()
     
-    # Direct mappings for common/requested concept improvements
-    mappings = {
-        "normalization in dbms": "Database Normalization",
-        "normalization in database management systems": "Database Normalization",
-        "normalization": "Database Normalization",
-        "database normalization": "Database Normalization",
-        "un-normalised relational table": "Database Normalization",
-        "un normalised relational table": "Database Normalization",
-        "acid properties of a database transaction": "ACID Properties",
-        "acid properties": "ACID Properties",
-        "acid": "ACID Properties",
-        "osi model": "OSI Model",
-        "osi": "OSI Model",
-        "tcp congestion control": "TCP Congestion Control",
-        "tcp": "TCP Protocol",
-        "udp": "UDP Protocol",
-        "binary search tree": "Binary Search Tree",
-        "avl tree": "AVL Tree",
-        "binary search": "Binary Search",
-        "big data": "Big Data",
-        "deadlock": "Deadlock",
-        "deadlock avoidance": "Deadlock Avoidance",
-        "deadlock detection": "Deadlock Detection",
-        "page fault": "Page Fault",
-        "cpu scheduling": "CPU Scheduling",
-        "agile methodology": "Agile Methodology",
-        "software design principles": "Software Design Principles",
-        "solid principles": "SOLID Principles",
-        "design patterns": "Design Patterns",
-        "version control": "Version Control",
-        "graph traversal": "Graph Traversal",
-        "hash tables": "Hash Tables",
-        "heaps": "Heaps",
-        "gradient descent": "Gradient Descent",
-        "learning paradigms": "Learning Paradigms",
-        "convolutional neural networks": "Convolutional Neural Networks",
-        "search algorithms": "Search Algorithms",
-    }
-    
-    if concept_lower in mappings:
-        return mappings[concept_lower]
+    if concept_lower in _CONCEPT_MAPPINGS:
+        return _CONCEPT_MAPPINGS[concept_lower]
         
-    # Check if it contains "normalization" and "dbms" / "database"
     if "normalization" in concept_lower and ("dbms" in concept_lower or "database" in concept_lower):
         return "Database Normalization"
         
-    # Standardize casing to Title Case, preserving technical acronyms
-    acronyms = {
-        "dbms": "DBMS",
-        "tcp": "TCP",
-        "udp": "UDP",
-        "osi": "OSI",
-        "sql": "SQL",
-        "nosql": "NoSQL",
-        "lru": "LRU",
-        "fifo": "FIFO",
-        "acid": "ACID",
-        "bcnf": "BCNF",
-        "3nf": "3NF",
-        "2nf": "2NF",
-        "1nf": "1NF",
-        "uml": "UML",
-        "ip": "IP",
-        "dhcp": "DHCP",
-        "arp": "ARP",
-        "avl": "AVL",
-        "cidr": "CIDR",
-        "rsa": "RSA",
-        "cpu": "CPU",
-        "solid": "SOLID",
-        "gui": "GUI",
-        "api": "API",
-        "dns": "DNS",
-        "lan": "LAN",
-        "wan": "WAN",
-        "mac": "MAC",
-        "http": "HTTP",
-        "https": "HTTPS",
-        "xml": "XML",
-        "json": "JSON",
-    }
-    
     words = concept_lower.split()
     formatted_words = []
     for w in words:
-        w_clean = re.sub(r'[^a-zA-Z0-9]', '', w)
-        if w_clean in acronyms:
-            # Preserve punctuation and casing of acronym
-            val = acronyms[w_clean]
+        w_clean = RE_NON_ALPHANUM.sub('', w)
+        if w_clean in _ACRONYMS:
+            val = _ACRONYMS[w_clean]
             formatted_word = w.replace(w_clean, val)
             formatted_words.append(formatted_word)
         else:
-            # Title Case
             formatted_words.append(w.capitalize())
             
     res = " ".join(formatted_words).strip()
     
-    # Safety check: if concept is too long (e.g. > 5 words) or looks like a full sentence,
-    # truncate it to the first 3 words to avoid using the full question.
     res_words = res.split()
     if len(res_words) > 5:
         res = " ".join(res_words[:3])
@@ -558,6 +535,7 @@ def format_academic_concept(concept: str) -> str:
     return res
 
 
+@functools.lru_cache(maxsize=1024)
 def normalize_academic_concept(question: str) -> str:
     """
     Extracts the core phrase from a cleaned question and formats it
@@ -574,9 +552,9 @@ def generate_dynamic_explanation(
     Generates a concise, 2-3 sentence academic explanation for a question's classification,
     using the formatted academic concept.
     """
-    # Format the required_concept if provided, otherwise extract and format it from the question
+    # Use pre-formatted concept if available, avoiding duplicate normalize/format passes
     if required_concept:
-        concept = format_academic_concept(required_concept)
+        concept = required_concept
     else:
         concept = normalize_academic_concept(question)
 
@@ -681,6 +659,7 @@ def generate_single_variant(
     config_mode=None,
     mode_name=None,
     failure_hint="",
+    return_timings=False,
 ):
     """Generate variant question candidates using the FLAN-T5 model (Mode E)."""
     if config_mode is None:
@@ -694,6 +673,7 @@ def generate_single_variant(
 
     topic_to_use = required_concept if required_concept else topic
 
+    t_prompt_start = time.perf_counter()
     prompt = build_prompt(
         question=question,
         source_bloom=source_bloom,
@@ -733,7 +713,9 @@ def generate_single_variant(
         guidance = mode_e_guidance.get(target_bloom, "")
         if guidance:
             prompt += guidance
+    t_prompt_ms = (time.perf_counter() - t_prompt_start) * 1000.0
 
+    t_flan_start = time.perf_counter()
     inputs = flan_tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     inputs = {k: v.to(device) for k, v in inputs.items()}
@@ -755,6 +737,10 @@ def generate_single_variant(
         outputs = flan_model.generate(**inputs, **gen_kwargs)
 
     result = [flan_tokenizer.decode(out, skip_special_tokens=True).strip() for out in outputs]
+    t_flan_ms = (time.perf_counter() - t_flan_start) * 1000.0
+
+    if return_timings:
+        return result, prompt, t_prompt_ms, t_flan_ms
     return result, prompt
 
 
@@ -1119,8 +1105,20 @@ def process_batch_background(session_id):
 
 
 @app.route("/")
+@app.route("/landing")
+def landing():
+    return render_template("landing.html")
+
+
+@app.route("/dashboard")
 def index():
     return render_template("index.html")
+
+
+@app.route("/auth")
+def auth():
+    return render_template("auth.html")
+
 
 
 @app.route("/health", methods=["GET"])
@@ -1233,16 +1231,45 @@ def health():
 
 @app.route("/classify", methods=["POST"])
 def classify():
-    data = request.json
+    t_total_start = time.perf_counter()
+    data = request.json or {}
     question = data.get("question", "")
     if not question:
         return jsonify({"error": "Question is required"}), 400
 
+    # 1. Text Cleaning
+    t_clean_start = time.perf_counter()
     cleaned_q = clean_source_question(question)
-    bloom, diff, conf = classify_text(cleaned_q)
-    required_concept = normalize_academic_concept(cleaned_q)
-    explanation = generate_dynamic_explanation(cleaned_q, required_concept, bloom, diff)
+    t_clean = (time.perf_counter() - t_clean_start) * 1000.0
 
+    # 2. DeBERTa Classification
+    bloom, diff, conf, det_timings = classify_text(cleaned_q, return_details=True)
+    t_tok = det_timings["tokenizer"]
+    t_inf = det_timings["deberta_inference"]
+    t_bloom = det_timings["bloom_mapping"]
+    t_diff = det_timings["difficulty_mapping"]
+    t_conf = det_timings["confidence_calc"]
+
+    # 3. Concept Normalization (extract_core_phrase & format_academic_concept)
+    t_nac_start = time.perf_counter()
+
+    t_ecp_start = time.perf_counter()
+    raw_concept = extract_core_phrase(cleaned_q)
+    t_ecp = (time.perf_counter() - t_ecp_start) * 1000.0
+
+    t_fac_start = time.perf_counter()
+    required_concept = format_academic_concept(raw_concept)
+    t_fac = (time.perf_counter() - t_fac_start) * 1000.0
+
+    t_nac = (time.perf_counter() - t_nac_start) * 1000.0
+
+    # 4. Explanation Generation
+    t_exp_start = time.perf_counter()
+    explanation = generate_dynamic_explanation(cleaned_q, required_concept, bloom, diff)
+    t_exp = (time.perf_counter() - t_exp_start) * 1000.0
+
+    # 5. JSON Response & History
+    t_json_start = time.perf_counter()
     new_classification = {
         "id": "manual-" + str(int(time.time() * 1000)),
         "question": cleaned_q,
@@ -1255,7 +1282,7 @@ def classify():
     }
     SESSION_STATE["manual_classifications"].append(new_classification)
 
-    return jsonify(
+    resp = jsonify(
         {
             "question": cleaned_q,
             "original_question": question,
@@ -1265,6 +1292,27 @@ def classify():
             "explanation": explanation,
         }
     )
+    t_json = (time.perf_counter() - t_json_start) * 1000.0
+    t_total = (time.perf_counter() - t_total_start) * 1000.0
+
+    print("-----------------------------------------", flush=True)
+    print("CLASSIFY PERFORMANCE", flush=True)
+    print("-----------------------------------------", flush=True)
+    print(f"Cleaning                 : {t_clean:.2f} ms", flush=True)
+    print(f"Tokenizer                : {t_tok:.2f} ms", flush=True)
+    print(f"DeBERTa                  : {t_inf:.2f} ms", flush=True)
+    print(f"Bloom Mapping            : {t_bloom:.2f} ms", flush=True)
+    print(f"Difficulty Mapping       : {t_diff:.2f} ms", flush=True)
+    print(f"Confidence               : {t_conf:.2f} ms", flush=True)
+    print(f"normalize_academic_concept : {t_nac:.2f} ms", flush=True)
+    print(f"extract_core_phrase      : {t_ecp:.2f} ms", flush=True)
+    print(f"format_academic_concept  : {t_fac:.2f} ms", flush=True)
+    print(f"Explanation Generation   : {t_exp:.2f} ms", flush=True)
+    print(f"JSON Response            : {t_json:.2f} ms", flush=True)
+    print(f"TOTAL                    : {t_total:.2f} ms", flush=True)
+    print("-----------------------------------------", flush=True)
+
+    return resp
 
 
 @app.route("/manual-classifications", methods=["GET"])
@@ -1535,171 +1583,153 @@ def delete_question(session_id, question_id):
 
 
 
-def extract_core_phrase(question: str):
+RE_CLEAN_PUNCT = re.compile(r'[^a-zA-Z0-9\s-]')
+
+_STARTERS = tuple(sorted([
+    "differentiate the performance characteristics of",
+    "discuss the trade-offs between",
+    "evaluate the suitability of",
+    "evaluate the effectiveness of",
+    "evaluate the trade-offs between",
+    "assess the effectiveness of",
+    "justify the selection of",
+    "analyze the impact of",
+    "analyze how",
+    "analyze the",
+    "explain the purpose of a",
+    "explain the purpose of an",
+    "explain the purpose of the",
+    "explain the purpose of",
+    "explain how",
+    "explain why",
+    "explain the concept of",
+    "explain the process of",
+    "explain",
+    "describe the process of",
+    "describe the",
+    "describe",
+    "what is the process of",
+    "what is the concept of",
+    "what is a",
+    "what is an",
+    "what is the",
+    "what are the",
+    "what is",
+    "what are",
+    "define",
+    "apply the concept of",
+    "apply",
+    "evaluate",
+    "design a secure",
+    "design a",
+    "design an",
+    "design",
+    "create a",
+    "create an",
+    "create",
+    "write a",
+    "implement",
+    "determine how",
+    "examine the",
+    "examine",
+    "interpret the",
+    "interpret",
+    "investigate the causes of",
+    "investigate how",
+    "investigate",
+    "recommend a",
+    "recommend an",
+    "recommend",
+    "validate whether",
+    "formulate a",
+    "critique the effectiveness of",
+    "critique the",
+    "critique",
+    "optimize the",
+    "optimize",
+    "develop a",
+    "develop",
+    "propose a",
+    "propose",
+    "construct a",
+    "construct",
+    "differentiate",
+    "assess",
+    "justify",
+    "how does a",
+    "how does",
+    "how do",
+    "how",
+    "discuss",
+], key=len, reverse=True))
+
+_PREFIXES = ("a ", "an ", "the ", "our ", "your ", "some ", "of ", "for ", "to ", "in ", "using ", "using a ", "using an ", "using the ")
+
+_REMOVE_PHRASES = [
+    "in enterprise databases", "enterprise databases", "database systems",
+    "information systems", "software systems", "network systems",
+    "distributed systems", "large-scale systems", "organizational environments",
+    "for enterprise databases", "for database systems", "for organizations",
+    "for enterprises", "in organizations", "in enterprises",
+]
+RE_REMOVE_PHRASES = re.compile('|'.join(re.escape(p) for p in sorted(_REMOVE_PHRASES, key=len, reverse=True)))
+
+_GENERIC_PREFIXES = (
+    "database solution", "software application", "network system",
+    "system solution", "solution", "system", "framework",
+    "application", "process",
+)
+
+_CONNECTORS = (
+    "capable of handling", "capable of", "handling", "designed to",
+    "designed for", "used for", "responsible for", "supports",
+    "provides", "containing", "involving", "based on", "applying",
+    "demonstrating", "consisting of", "relating to", "to", "for", "of",
+)
+
+_SPLIT_CLAUSES = [
+    " and its role", " and how", " and why", " and the", " role in",
+    " to reduce", " reducing", " in reducing", " versus", " vs",
+    " improve", " improves", " improving", " perform", " performs",
+    " performing", " use ", " uses ", " using ", " build ",
+    " builds ", " building ", " work ", " works ", " working ",
+]
+
+_TRAILING_STOP_WORDS = {
+    "and", "or", "how", "how do", "what", "what is", "the", "of", "for", "to", "a", "an", "in", "its", "role", "reducing", "redundancy"
+}
+
+
+@functools.lru_cache(maxsize=1024)
+def extract_core_phrase(question: str) -> str:
     q_lower = question.lower().strip()
 
-    # 1. Clean punctuation but keep hyphens (e.g. B-tree, petabyte-scale)
-    clean_chars = []
-    for c in q_lower:
-        if c.isalnum() or c.isspace() or c == '-':
-            clean_chars.append(c)
-        else:
-            clean_chars.append(" ")
-    q_clean = " ".join("".join(clean_chars).split())
+    # 1. Clean punctuation keeping hyphens
+    q_clean = " ".join(RE_CLEAN_PUNCT.sub(" ", q_lower).split())
 
-    # 2. Match and strip question/verb starters (ordered by length descending)
-    starters = [
-        "differentiate the performance characteristics of",
-        "discuss the trade-offs between",
-        "evaluate the suitability of",
-        "evaluate the effectiveness of",
-        "evaluate the trade-offs between",
-        "assess the effectiveness of",
-        "justify the selection of",
-        "analyze the impact of",
-        "analyze how",
-        "analyze the",
-        "explain the purpose of a",
-        "explain the purpose of an",
-        "explain the purpose of the",
-        "explain the purpose of",
-        "explain how",
-        "explain why",
-        "explain the concept of",
-        "explain the process of",
-        "explain",
-        "describe the process of",
-        "describe the",
-        "describe",
-        "what is the process of",
-        "what is the concept of",
-        "what is a",
-        "what is an",
-        "what is the",
-        "what are the",
-        "what is",
-        "what are",
-        "define",
-        "apply the concept of",
-        "apply",
-        "evaluate",
-        "design a secure",
-        "design a",
-        "design an",
-        "design",
-        "create a",
-        "create an",
-        "create",
-        "write a",
-        "implement",
-        "determine how",
-        "examine the",
-        "examine",
-        "interpret the",
-        "interpret",
-        "investigate the causes of",
-        "investigate how",
-        "investigate",
-        "recommend a",
-        "recommend an",
-        "recommend",
-        "validate whether",
-        "formulate a",
-        "critique the effectiveness of",
-        "critique the",
-        "critique",
-        "optimize the",
-        "optimize",
-        "develop a",
-        "develop",
-        "propose a",
-        "propose",
-        "construct a",
-        "construct",
-        "differentiate",
-        "assess",
-        "justify",
-        "how does a",
-        "how does",
-        "how do",
-        "how",
-        "discuss",
-    ]
-    starters = sorted(starters, key=len, reverse=True)
-
+    # 2. Match and strip question/verb starters
     concept = q_clean
-    for s in starters:
+    for s in _STARTERS:
         if concept.startswith(s + " ") or concept == s:
             concept = concept[len(s):].strip()
             break
 
     # Strip leading articles and prepositions
-    for prefix in ["a ", "an ", "the ", "our ", "your ", "some ", "of ", "for ", "to ", "in ", "using ", "using a ", "using an ", "using the "]:
+    for prefix in _PREFIXES:
         if concept.startswith(prefix):
             concept = concept[len(prefix):].strip()
             break
 
-    # Remove generic context words
-    remove_phrases = [
-        "in enterprise databases",
-        "enterprise databases",
-        "database systems",
-        "information systems",
-        "software systems",
-        "network systems",
-        "distributed systems",
-        "large-scale systems",
-        "organizational environments",
-        "for enterprise databases",
-        "for database systems",
-        "for organizations",
-        "for enterprises",
-        "in organizations",
-        "in enterprises",
-    ]
-    for phrase in remove_phrases:
-        concept = concept.replace(phrase, "")
+    # Remove generic context words in single pass
+    concept = RE_REMOVE_PHRASES.sub("", concept)
     concept = " ".join(concept.split()).strip()
 
     # 3. Detect generic prefixes followed by connectors
-    generic_prefixes = [
-        "database solution",
-        "software application",
-        "network system",
-        "system solution",
-        "solution",
-        "system",
-        "framework",
-        "application",
-        "process",
-    ]
-    connectors = [
-        "capable of handling",
-        "capable of",
-        "handling",
-        "designed to",
-        "designed for",
-        "used for",
-        "responsible for",
-        "supports",
-        "provides",
-        "containing",
-        "involving",
-        "based on",
-        "applying",
-        "demonstrating",
-        "consisting of",
-        "relating to",
-        "to",
-        "for",
-        "of",
-    ]
-
     matched_generic = False
-    for gp in generic_prefixes:
+    for gp in _GENERIC_PREFIXES:
         if concept.startswith(gp + " ") or concept == gp:
             rest = concept[len(gp):].strip()
-            for conn in connectors:
+            for conn in _CONNECTORS:
                 if rest.startswith(conn + " ") or rest == conn:
                     candidate = rest[len(conn):].strip()
                     if candidate:
@@ -1710,52 +1740,21 @@ def extract_core_phrase(question: str):
                 break
 
     # 4. Remove split clauses and trailing stop words
-    split_clauses = [
-        " and its role",
-        " and how",
-        " and why",
-        " and the",
-        " role in",
-        " to reduce",
-        " reducing",
-        " in reducing",
-        " versus",
-        " vs",
-        " improve",
-        " improves",
-        " improving",
-        " perform",
-        " performs",
-        " performing",
-        " use ",
-        " uses ",
-        " using ",
-        " build ",
-        " builds ",
-        " building ",
-        " work ",
-        " works ",
-        " working ",
-    ]
-    for clause in split_clauses:
+    for clause in _SPLIT_CLAUSES:
         idx = concept.find(clause)
         if idx != -1:
             concept = concept[:idx]
 
     concept = " ".join(concept.split()).strip()
 
-    trailing_stop_words = {
-        "and", "or", "how", "how do", "what", "what is", "the", "of", "for", "to", "a", "an", "in", "its", "role", "reducing", "redundancy"
-    }
     words = concept.split()
-    while words and words[-1] in trailing_stop_words:
+    while words and words[-1] in _TRAILING_STOP_WORDS:
         words.pop()
     concept = " ".join(words).strip()
 
     if concept == "petabyte-scale transactions":
         concept = "petabyte-scale transaction processing"
 
-    # Limit to 5 words maximum
     words = concept.split()
     if len(words) > 5:
         concept = " ".join(words[:5])
@@ -1874,7 +1873,7 @@ def _write_benchmark_logs(all_candidates_log: list):
                 "Generation Round": c.get("Generation Round", 1),
                 "Rank Score": c.get("Rank Score", 0.0),
             })
-            
+
         with open(log_file_path, "w", encoding="utf-8") as lf:
             json.dump(existing_candidates, lf, indent=4)
     except Exception as exc:
@@ -1898,6 +1897,10 @@ def generate_validated_variant(
     Applies all validation checks and returns the best candidate or the best failed attempt.
     """
     start_time = time.time()
+    t_pipeline_start = time.perf_counter()
+    st_hits_start = EMBEDDING_CACHE_HITS
+    st_misses_start = EMBEDDING_CACHE_MISSES
+
     t_tok = flan_tokenizer
     
     if config_mode is None:
@@ -1905,10 +1908,28 @@ def generate_validated_variant(
         mode_name = ACTIVE_MODE
     if mode_name is None:
         mode_name = ACTIVE_MODE
+
+    # Timing accumulators for performance profiling
+    cum_qu = 0.0
+    cum_dom = 0.0
+    cum_conc = 0.0
+    cum_prompt = 0.0
+    cum_flan = 0.0
+    cum_dedup = 0.0
+    cum_deberta = 0.0
+    cum_prof = 0.0
+    cum_st = 0.0
+    cum_val = 0.0
+    cum_rank = 0.0
+    cum_exp = 0.0
+    cum_retry = 0.0
+    st_call_count = 0
         
-    t_prof_start = time.time()
+    t_qu_start = time.perf_counter()
     orig_profile = QuestionUnderstandingEngine.build_profile(question, src_bloom)
-    prof_duration = time.time() - t_prof_start
+    t_qu_ms = (time.perf_counter() - t_qu_start) * 1000.0
+    cum_qu += t_qu_ms
+    prof_duration = t_qu_ms / 1000.0
     
     pipeline_ctx = PipelineContext(
         source_question=question,
@@ -1920,17 +1941,29 @@ def generate_validated_variant(
     pipeline_ctx.timings["profiling"] = prof_duration
     
     # Extract domain and concept from the profile
+    t_dom_start = time.perf_counter()
     domain = orig_profile.domain
+    t_dom_ms = (time.perf_counter() - t_dom_start) * 1000.0
+    cum_dom += t_dom_ms
+
+    t_conc_start = time.perf_counter()
     required_concept = orig_profile.topic
+    t_conc_ms = (time.perf_counter() - t_conc_start) * 1000.0
+    cum_conc += t_conc_ms
     
     # Pre-cache original question/concepts in SentenceTransformer embedding cache
     st_model = _get_st_model()
+    t_st_init_ms = 0.0
     if st_model is not None:
+        t_st_s = time.perf_counter()
         orig_texts = [orig_profile.normalized_question, orig_profile.raw_question]
         orig_texts.extend(orig_profile.concepts)
         orig_texts.extend(orig_profile.technical_entities)
         orig_texts.extend(orig_profile.noun_chunks)
         pre_cache_embeddings(orig_texts, st_model)
+        t_st_init_ms = (time.perf_counter() - t_st_s) * 1000.0
+        cum_st += t_st_init_ms
+        st_call_count += 1
         
     flan_calls_count = 0
     deberta_calls_count = 0
@@ -1950,9 +1983,10 @@ def generate_validated_variant(
     max_rounds = config_mode.get("max_generation_rounds", 2)
     
     for current_round in range(1, max_rounds + 1):
+        t_round_start = time.perf_counter()
         flan_calls_count += 1
         
-        candidates_list, prompt_used = generate_single_variant(
+        candidates_list, prompt_used, t_prompt_ms, t_flan_ms = generate_single_variant(
             question,
             src_bloom,
             src_diff,
@@ -1965,7 +1999,10 @@ def generate_validated_variant(
             failure_hint=failure_hint_round_2 if current_round > 1 else "",
             config_mode=config_mode,
             mode_name=mode_name,
+            return_timings=True,
         )
+        cum_prompt += t_prompt_ms
+        cum_flan += t_flan_ms
         
         if not isinstance(candidates_list, list):
             candidates_list = [candidates_list]
@@ -1973,6 +2010,7 @@ def generate_validated_variant(
         candidates_generated_count += len(candidates_list)
         
         # Deduplicate
+        t_dedup_start = time.perf_counter()
         unique_candidates = []
         for idx, cand_text in enumerate(candidates_list):
             cand_text = sanitize_generated_question(cand_text)
@@ -2025,12 +2063,39 @@ def generate_validated_variant(
                 all_candidates_log.append(candidate_info)
             else:
                 unique_candidates.append(cand_text)
+        t_dedup_ms = (time.perf_counter() - t_dedup_start) * 1000.0
+        cum_dedup += t_dedup_ms
                 
         if not unique_candidates:
+            t_round_total_ms = (time.perf_counter() - t_round_start) * 1000.0
+            if current_round > 1:
+                cum_retry += t_round_total_ms
+            if ENABLE_GENERATION_PERFORMANCE_LOGS:
+                print("==================================================", flush=True)
+                print(f"GENERATION ROUND {current_round}", flush=True)
+                print("==================================================", flush=True)
+                print(f"Question Understanding : {t_qu_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Domain Detection       : {t_dom_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Concept Extraction     : {t_conc_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Prompt Construction    : {t_prompt_ms:.2f} ms", flush=True)
+                print(f"FLAN Generation        : {t_flan_ms:.2f} ms", flush=True)
+                print(f"Deduplication          : {t_dedup_ms:.2f} ms", flush=True)
+                print("Batch DeBERTa          : 0.00 ms", flush=True)
+                print("Profile Creation       : 0.00 ms", flush=True)
+                print("Sentence Embeddings    : 0.00 ms", flush=True)
+                print("Validation             : 0.00 ms", flush=True)
+                print("Ranking                : 0.00 ms", flush=True)
+                print("Explanation            : 0.00 ms", flush=True)
+                print(f"\nRound Total            : {t_round_total_ms:.2f} ms", flush=True)
+                print("==================================================\n", flush=True)
             continue
             
         # Batch pre-computations
+        t_deb_start = time.perf_counter()
         batch_classifications = classify_texts_batch(unique_candidates)
+        t_deb_ms = (time.perf_counter() - t_deb_start) * 1000.0
+        cum_deberta += t_deb_ms
+
         classification_by_question = dict(zip(unique_candidates, batch_classifications))
         
         def cached_classify_deberta(text: str):
@@ -2038,6 +2103,7 @@ def generate_validated_variant(
                 return classification_by_question[text]
             return classify_text(text)
             
+        t_prof_start = time.perf_counter()
         cand_profiles_temp = []
         texts_to_pre_cache = []
         for gen_text in unique_candidates:
@@ -2047,11 +2113,18 @@ def generate_validated_variant(
             texts_to_pre_cache.extend(cp.concepts)
             texts_to_pre_cache.extend(cp.technical_entities)
             texts_to_pre_cache.extend(cp.noun_chunks)
+        t_prof_ms = (time.perf_counter() - t_prof_start) * 1000.0
+        cum_prof += t_prof_ms
             
+        t_st_r_start = time.perf_counter()
         if st_model is not None:
             pre_cache_embeddings(texts_to_pre_cache, st_model)
+            st_call_count += 1
+        t_st_r_ms = (time.perf_counter() - t_st_r_start) * 1000.0
+        cum_st += t_st_r_ms
             
         # Validate unique candidates
+        t_val_start = time.perf_counter()
         round_candidates = []
         is_final_retries = (current_round == max_rounds)
         
@@ -2143,7 +2216,10 @@ def generate_validated_variant(
             all_candidates_log.append(candidate_info)
             if not val_out.passed:
                 rejected_questions.append(gen_text)
-                
+        t_val_ms = (time.perf_counter() - t_val_start) * 1000.0
+        cum_val += t_val_ms
+        
+        t_rank_start = time.perf_counter()
         passing_in_round = [c for c in round_candidates if c["validation_status"] == "Pass"]
         if passing_in_round:
             passing_in_round = rank_candidates_dicts(passing_in_round)
@@ -2161,6 +2237,31 @@ def generate_validated_variant(
                 "passed": True,
                 "improved_from_previous": improved
             })
+            t_rank_ms = (time.perf_counter() - t_rank_start) * 1000.0
+            cum_rank += t_rank_ms
+
+            t_round_total_ms = (time.perf_counter() - t_round_start) * 1000.0
+            if current_round > 1:
+                cum_retry += t_round_total_ms
+
+            if ENABLE_GENERATION_PERFORMANCE_LOGS:
+                print("==================================================", flush=True)
+                print(f"GENERATION ROUND {current_round}", flush=True)
+                print("==================================================", flush=True)
+                print(f"Question Understanding : {t_qu_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Domain Detection       : {t_dom_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Concept Extraction     : {t_conc_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Prompt Construction    : {t_prompt_ms:.2f} ms", flush=True)
+                print(f"FLAN Generation        : {t_flan_ms:.2f} ms", flush=True)
+                print(f"Deduplication          : {t_dedup_ms:.2f} ms", flush=True)
+                print(f"Batch DeBERTa          : {t_deb_ms:.2f} ms", flush=True)
+                print(f"Profile Creation       : {t_prof_ms:.2f} ms", flush=True)
+                print(f"Sentence Embeddings    : {t_st_r_ms:.2f} ms", flush=True)
+                print(f"Validation             : {t_val_ms:.2f} ms", flush=True)
+                print(f"Ranking                : {t_rank_ms:.2f} ms", flush=True)
+                print("Explanation            : 0.00 ms", flush=True)
+                print(f"\nRound Total            : {t_round_total_ms:.2f} ms", flush=True)
+                print("==================================================\n", flush=True)
             break
         else:
             for c in round_candidates:
@@ -2206,7 +2307,32 @@ def generate_validated_variant(
                 "passed": False,
                 "improved_from_previous": improved
             })
-            
+            t_rank_ms = (time.perf_counter() - t_rank_start) * 1000.0
+            cum_rank += t_rank_ms
+
+            t_round_total_ms = (time.perf_counter() - t_round_start) * 1000.0
+            if current_round > 1:
+                cum_retry += t_round_total_ms
+
+            if ENABLE_GENERATION_PERFORMANCE_LOGS:
+                print("==================================================", flush=True)
+                print(f"GENERATION ROUND {current_round}", flush=True)
+                print("==================================================", flush=True)
+                print(f"Question Understanding : {t_qu_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Domain Detection       : {t_dom_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Concept Extraction     : {t_conc_ms if current_round==1 else 0.0:.2f} ms", flush=True)
+                print(f"Prompt Construction    : {t_prompt_ms:.2f} ms", flush=True)
+                print(f"FLAN Generation        : {t_flan_ms:.2f} ms", flush=True)
+                print(f"Deduplication          : {t_dedup_ms:.2f} ms", flush=True)
+                print(f"Batch DeBERTa          : {t_deb_ms:.2f} ms", flush=True)
+                print(f"Profile Creation       : {t_prof_ms:.2f} ms", flush=True)
+                print(f"Sentence Embeddings    : {t_st_r_ms:.2f} ms", flush=True)
+                print(f"Validation             : {t_val_ms:.2f} ms", flush=True)
+                print(f"Ranking                : {t_rank_ms:.2f} ms", flush=True)
+                print("Explanation            : 0.00 ms", flush=True)
+                print(f"\nRound Total            : {t_round_total_ms:.2f} ms", flush=True)
+                print("==================================================\n", flush=True)
+
         if current_round < max_rounds:
             recent_rejected = rejected_questions[-5:]
             rejected_questions_list = [f"{idx_rej+1}. {q_text}" for idx_rej, q_text in enumerate(recent_rejected)]
@@ -2275,10 +2401,13 @@ def generate_validated_variant(
             })
             
     if best_candidate is None:
+        t_rank_final_start = time.perf_counter()
         all_validated = [c for c in all_candidates_log if c.get("validation_status") in ["Pass", "Fail"]]
         if all_validated:
             all_validated = rank_candidates_dicts(all_validated)
             best_candidate = all_validated[0]
+        t_rank_final_ms = (time.perf_counter() - t_rank_final_start) * 1000.0
+        cum_rank += t_rank_final_ms
             
     if best_candidate is None:
         return ValidationResult(
@@ -2312,6 +2441,7 @@ def generate_validated_variant(
     p_bloom = best_candidate.get("bloom_prediction", "Unknown")
     p_diff = best_candidate.get("difficulty_prediction", "Unknown")
     
+    t_exp_start = time.perf_counter()
     explanation = ""
     val_status = "Fail"
     
@@ -2350,9 +2480,87 @@ def generate_validated_variant(
                 f"</div>"
             )
         explanation = "\n".join(explanation_lines)
+    
+    t_exp_ms = (time.perf_counter() - t_exp_start) * 1000.0
+    cum_exp += t_exp_ms
         
     pipeline_ctx.best_candidate = gen_q
-    pipeline_ctx.timings["total_pipeline"] = time.time() - start_time
+    t_pipeline_total_ms = (time.perf_counter() - t_pipeline_start) * 1000.0
+    pipeline_ctx.timings["total_pipeline"] = t_pipeline_total_ms / 1000.0
+    
+    if ENABLE_GENERATION_PERFORMANCE_LOGS:
+        stages_timing = {
+            "Question Understanding": cum_qu,
+            "Domain Detection": cum_dom,
+            "Concept Extraction": cum_conc,
+            "Prompt Construction": cum_prompt,
+            "FLAN Generation": cum_flan,
+            "Deduplication": cum_dedup,
+            "Batch DeBERTa": cum_deberta,
+            "Profile Creation": cum_prof,
+            "Sentence Embeddings": cum_st,
+            "Validation": cum_val,
+            "Ranking": cum_rank,
+            "Explanation": cum_exp,
+        }
+        slowest_stage = max(stages_timing, key=stages_timing.get)
+
+        total_t = t_pipeline_total_ms if t_pipeline_total_ms > 0 else 1.0
+        pct_qu = (cum_qu / total_t) * 100.0
+        pct_dom = (cum_dom / total_t) * 100.0
+        pct_conc = (cum_conc / total_t) * 100.0
+        pct_prompt = (cum_prompt / total_t) * 100.0
+        pct_flan = (cum_flan / total_t) * 100.0
+        pct_deberta = (cum_deberta / total_t) * 100.0
+        pct_val = (cum_val / total_t) * 100.0
+        pct_rank = (cum_rank / total_t) * 100.0
+        pct_exp = (cum_exp / total_t) * 100.0
+
+        st_hits = EMBEDDING_CACHE_HITS - st_hits_start
+        st_misses = EMBEDDING_CACHE_MISSES - st_misses_start
+
+        passed_count = len([c for c in all_candidates_log if c.get("validation_status") == "Pass"])
+        rejected_count = candidates_generated_count - passed_count
+        retries_count = flan_calls_count - 1 if flan_calls_count > 0 else 0
+
+        print("\n==================================================", flush=True)
+        print("GENERATION PERFORMANCE SUMMARY", flush=True)
+        print("==================================================", flush=True)
+        print(f"Question Understanding : {cum_qu:.2f} ms", flush=True)
+        print(f"Domain Detection       : {cum_dom:.2f} ms", flush=True)
+        print(f"Concept Extraction     : {cum_conc:.2f} ms", flush=True)
+        print(f"Prompt Construction    : {cum_prompt:.2f} ms", flush=True)
+        print(f"FLAN Generation        : {cum_flan:.2f} ms", flush=True)
+        print(f"Deduplication          : {cum_dedup:.2f} ms", flush=True)
+        print(f"Batch DeBERTa          : {cum_deberta:.2f} ms", flush=True)
+        print(f"Profile Creation       : {cum_prof:.2f} ms", flush=True)
+        print(f"Sentence Embeddings    : {cum_st:.2f} ms", flush=True)
+        print(f"Validation             : {cum_val:.2f} ms", flush=True)
+        print(f"Ranking                : {cum_rank:.2f} ms", flush=True)
+        print(f"Explanation            : {cum_exp:.2f} ms", flush=True)
+        print(f"\nRetry Overhead         : {cum_retry:.2f} ms", flush=True)
+        print(f"\nTOTAL PIPELINE         : {t_pipeline_total_ms:.2f} ms", flush=True)
+        print(f"\nSlowest Stage          : {slowest_stage}", flush=True)
+        print(f"\nPercentage of Total Time\n", flush=True)
+        print(f"Question Understanding : {pct_qu:.2f}%", flush=True)
+        print(f"Domain Detection       : {pct_dom:.2f}%", flush=True)
+        print(f"Concept Extraction     : {pct_conc:.2f}%", flush=True)
+        print(f"Prompt Construction    : {pct_prompt:.2f}%", flush=True)
+        print(f"FLAN Generation        : {pct_flan:.2f}%", flush=True)
+        print(f"Batch DeBERTa          : {pct_deberta:.2f}%", flush=True)
+        print(f"Validation             : {pct_val:.2f}%", flush=True)
+        print(f"Ranking                : {pct_rank:.2f}%", flush=True)
+        print(f"Explanation            : {pct_exp:.2f}%\n", flush=True)
+        print("==================================================", flush=True)
+        print(f"• Number of FLAN generations               : {flan_calls_count}", flush=True)
+        print(f"• Number of DeBERTa classifications         : {deberta_calls_count}", flush=True)
+        print(f"• Number of generated candidates           : {candidates_generated_count}", flush=True)
+        print(f"• Number of validated candidates           : {candidates_validated_count}", flush=True)
+        print(f"• Number of rejected candidates            : {rejected_count}", flush=True)
+        print(f"• Number of retries                        : {retries_count}", flush=True)
+        print(f"• Number of SentenceTransformer calls       : {st_call_count}", flush=True)
+        print(f"• Cache hits                               : {st_hits}", flush=True)
+        print(f"• Cache misses                             : {st_misses}\n", flush=True)
     
     return ValidationResult(
         generated_question=gen_q,
@@ -2578,10 +2786,7 @@ def export_data():
 
 
 if __name__ == "__main__":
-    # Prevent Flask debug reloader double-loading heavy models.
-    # Werkzeug runs a parent reloader process and a child serving process (WERKZEUG_RUN_MAIN="true").
-    # We define the debug configuration here so the check matches the run mode exactly.
-    DEBUG_MODE = True
+    DEBUG_MODE = False
     is_child = os.environ.get("WERKZEUG_RUN_MAIN") == "true"
 
     if DEBUG_MODE and not is_child:

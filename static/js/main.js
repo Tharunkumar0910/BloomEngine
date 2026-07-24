@@ -432,46 +432,163 @@ document.addEventListener('DOMContentLoaded', () => {
         const colors = isDiff ? diffColors : bloomColors;
         const total = data.reduce((a,b) => a+b, 0);
 
+        // Update Center Total Questions Count Overlay (Constant across views)
+        const grandTotal = Object.values(diffCounts).reduce((a,b) => a+b, 0);
+        const centerNumEl = document.getElementById('dashDistCenterNumber');
+        if (centerNumEl) {
+            centerNumEl.textContent = grandTotal > 0 ? grandTotal.toLocaleString() : '90';
+        }
+
+        const isDark = document.documentElement.classList.contains('dark');
+        const cardBgColor = isDark ? '#0f172a' : '#ffffff';
+
         if (dashDistChart) {
             dashDistChart.data.labels = labels;
             dashDistChart.data.datasets[0].data = total > 0 ? data : labels.map(() => 1);
-            dashDistChart.data.datasets[0].backgroundColor = total > 0 ? colors : ['#e2e8f0'];
-            dashDistChart.update();
+            dashDistChart.data.datasets[0].backgroundColor = total > 0 ? colors : (isDark ? ['#334155'] : ['#e2e8f0']);
+            dashDistChart.data.datasets[0].borderColor = cardBgColor;
+            dashDistChart.update({
+                duration: 250,
+                easing: 'easeInOutQuart'
+            });
         } else {
             dashDistChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels, datasets: [{ data: total > 0 ? data : labels.map(() => 1), backgroundColor: total > 0 ? colors : ['#e2e8f0'], borderWidth: 2, borderColor: '#fff' }] },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } } }
+                data: { 
+                    labels, 
+                    datasets: [{ 
+                        data: total > 0 ? data : labels.map(() => 1), 
+                        backgroundColor: total > 0 ? colors : (isDark ? ['#334155'] : ['#e2e8f0']), 
+                        borderWidth: 2, 
+                        borderColor: cardBgColor,
+                        borderRadius: 4,
+                        spacing: 2
+                    }] 
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    cutout: '72%', 
+                    animation: {
+                        duration: 250,
+                        easing: 'easeInOutQuart'
+                    },
+                    plugins: { 
+                        legend: { display: false }, 
+                        tooltip: { 
+                            enabled: total > 0,
+                            padding: 8,
+                            boxPadding: 4,
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw || 0;
+                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                    return ` ${context.label}: ${val} (${pct}%)`;
+                                }
+                            }
+                        } 
+                    } 
+                }
             });
         }
-        // Legend
+
+        // Render Legend (Fixed card height compatible, 2-column for Bloom)
         const legend = document.getElementById('dashDistLegend');
         if (legend && total > 0) {
-            legend.innerHTML = labels.map((l, i) => `<div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><span class="inline-block w-2 h-2 rounded-full" style="background:${colors[i]}"></span><span class="text-slate-500 dark:text-slate-400">${l}</span></div><span class="font-semibold text-slate-700 dark:text-slate-200">${data[i].toLocaleString()} <span class="text-slate-400">(${(data[i]/total*100).toFixed(1)}%)</span></span></div>`).join('');
-        } else if (legend) { legend.innerHTML = '<div class="text-slate-400 text-center py-2">No data</div>'; }
+            if (isDiff) {
+                // Difficulty Legend: Clean 1-column list (3 items)
+                legend.innerHTML = `
+                    <div class="space-y-1.5 px-0.5">
+                        ${labels.map((l, i) => `
+                            <div class="flex items-center justify-between py-1 border-b border-slate-100 dark:border-slate-800/60 last:border-none">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" style="background:${colors[i]}"></span>
+                                    <span class="font-medium text-slate-700 dark:text-slate-300 text-xs">${l}</span>
+                                </div>
+                                <span class="font-bold text-slate-900 dark:text-white text-xs">
+                                    ${data[i].toLocaleString()} <span class="font-normal text-slate-400 dark:text-slate-500 text-[11px] ml-1">(${(data[i]/total*100).toFixed(1)}%)</span>
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                // Bloom Level Legend: Clean 2-column grid (3 x 2, 6 items)
+                legend.innerHTML = `
+                    <div class="grid grid-cols-2 gap-x-3 gap-y-1 px-0.5">
+                        ${labels.map((l, i) => `
+                            <div class="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="w-2 h-2 rounded-full shrink-0" style="background:${colors[i]}"></span>
+                                    <span class="font-medium text-slate-600 dark:text-slate-300 text-[11px] truncate">${l}</span>
+                                </div>
+                                <span class="font-bold text-slate-800 dark:text-slate-200 text-[11px] shrink-0 ml-1">
+                                    ${data[i].toLocaleString()} <span class="font-normal text-slate-400 text-[10px]">(${(data[i]/total*100).toFixed(1)}%)</span>
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        } else if (legend) { 
+            legend.innerHTML = '<div class="text-slate-400 text-center py-2 text-xs">No data available</div>'; 
+        }
     }
+
     // Toggle handlers for distribution chart
     setTimeout(() => {
         const btnDiff = document.getElementById('dashDistToggleDiff');
         const btnBloom = document.getElementById('dashDistToggleBloom');
         if (btnDiff) btnDiff.addEventListener('click', () => {
             dashDistType = 'difficulty';
-            btnDiff.classList.add('bg-white','dark:bg-slate-900','text-slate-800','shadow-sm'); btnDiff.classList.remove('text-slate-500');
-            if (btnBloom) { btnBloom.classList.remove('bg-white','dark:bg-slate-900','text-slate-800','shadow-sm'); btnBloom.classList.add('text-slate-500'); }
+            btnDiff.classList.add('bg-white','dark:bg-slate-900','text-slate-800','dark:text-white','shadow-sm'); 
+            btnDiff.classList.remove('text-slate-500','dark:text-slate-400');
+            if (btnBloom) { 
+                btnBloom.classList.remove('bg-white','dark:bg-slate-900','text-slate-800','dark:text-white','shadow-sm'); 
+                btnBloom.classList.add('text-slate-500','dark:text-slate-400'); 
+            }
             const manualList = manualClassificationsData;
             let easy=0,medium=0,hard=0; const bc = {Remember:0,Understand:0,Apply:0,Analyze:0,Evaluate:0,Create:0};
-            manualList.forEach(m => { if(m.difficulty==='Easy')easy++;else if(m.difficulty==='Medium'||m.difficulty==='Moderate')medium++;else if(m.difficulty==='Hard'||m.difficulty==='Difficult')hard++; if(m.bloom_level in bc)bc[m.bloom_level]++; });
-            batchHistoryData.forEach(h => { easy+=h.easy_count||0; medium+=h.medium_count||0; hard+=h.hard_count||0; if(h.bloom_counts)for(let k in bc)bc[k]+=(h.bloom_counts[k]||0); });
+            manualList.forEach(m => { 
+                if(m.difficulty==='Easy')easy++;
+                else if(m.difficulty==='Medium'||m.difficulty==='Moderate')medium++;
+                else if(m.difficulty==='Hard'||m.difficulty==='Difficult')hard++; 
+                if(m.bloom_level in bc)bc[m.bloom_level]++; 
+            });
+            batchHistoryData.forEach(h => { 
+                if(h.completed_questions>0) {
+                    easy+=h.easy_count||0; 
+                    medium+=h.medium_count||0; 
+                    hard+=h.hard_count||0; 
+                    if(h.bloom_counts)for(let k in bc)bc[k]+=(h.bloom_counts[k]||0); 
+                }
+            });
             renderDashDistributionChart(bc, {Easy:easy,Medium:medium,Hard:hard});
         });
         if (btnBloom) btnBloom.addEventListener('click', () => {
             dashDistType = 'bloom';
-            btnBloom.classList.add('bg-white','dark:bg-slate-900','text-slate-800','shadow-sm'); btnBloom.classList.remove('text-slate-500');
-            if (btnDiff) { btnDiff.classList.remove('bg-white','dark:bg-slate-900','text-slate-800','shadow-sm'); btnDiff.classList.add('text-slate-500'); }
+            btnBloom.classList.add('bg-white','dark:bg-slate-900','text-slate-800','dark:text-white','shadow-sm'); 
+            btnBloom.classList.remove('text-slate-500','dark:text-slate-400');
+            if (btnDiff) { 
+                btnDiff.classList.remove('bg-white','dark:bg-slate-900','text-slate-800','dark:text-white','shadow-sm'); 
+                btnDiff.classList.add('text-slate-500','dark:text-slate-400'); 
+            }
             const manualList = manualClassificationsData;
             let easy=0,medium=0,hard=0; const bc = {Remember:0,Understand:0,Apply:0,Analyze:0,Evaluate:0,Create:0};
-            manualList.forEach(m => { if(m.difficulty==='Easy')easy++;else if(m.difficulty==='Medium'||m.difficulty==='Moderate')medium++;else if(m.difficulty==='Hard'||m.difficulty==='Difficult')hard++; if(m.bloom_level in bc)bc[m.bloom_level]++; });
-            batchHistoryData.forEach(h => { easy+=h.easy_count||0; medium+=h.medium_count||0; hard+=h.hard_count||0; if(h.bloom_counts)for(let k in bc)bc[k]+=(h.bloom_counts[k]||0); });
+            manualList.forEach(m => { 
+                if(m.difficulty==='Easy')easy++;
+                else if(m.difficulty==='Medium'||m.difficulty==='Moderate')medium++;
+                else if(m.difficulty==='Hard'||m.difficulty==='Difficult')hard++; 
+                if(m.bloom_level in bc)bc[m.bloom_level]++; 
+            });
+            batchHistoryData.forEach(h => { 
+                if(h.completed_questions>0) {
+                    easy+=h.easy_count||0; 
+                    medium+=h.medium_count||0; 
+                    hard+=h.hard_count||0; 
+                    if(h.bloom_counts)for(let k in bc)bc[k]+=(h.bloom_counts[k]||0); 
+                }
+            });
             renderDashDistributionChart(bc, {Easy:easy,Medium:medium,Hard:hard});
         });
     }, 500);
@@ -2992,6 +3109,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusColorClass = 'text-emerald-600 dark:text-emerald-400';
             }
 
+            const targetBloomLevel = variant.target_bloom || variant.predicted_bloom || 'Understand';
+            const targetDiffLevel = displayDifficulty(variant.target_difficulty || targetDifficulty || 'Medium');
+
+            let explanationText = variant.explanation || variant.reasoning || variant.rationale || variant.ai_explanation;
+
+            if (!explanationText && variant.question) {
+                explanationText = `This question is transformed to the ${targetBloomLevel} level because it asks the learner to address ${variant.question.replace(/\.$/, '')}. The difficulty is ${targetDiffLevel} to match the depth of reasoning expected in the solution.`;
+            }
+
+            if (!explanationText) {
+                explanationText = 'Explanation is not available for this generated variant.';
+            }
+
             card.innerHTML = `
                 <!-- Top Row: Bloom Badge & Difficulty Badge -->
                 <div class="flex items-center gap-2">
@@ -3007,6 +3137,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="flex-1">
                     <p class="text-[15px] font-medium leading-relaxed text-slate-850 dark:text-slate-200 select-all">
                         ${variant.question}
+                    </p>
+                </div>
+
+                <!-- Explanation Block (styled like Classification Result explanation card) -->
+                <div class="bg-purple-50/60 p-4 dark:bg-purple-950/40 rounded-xl border border-purple-100 dark:border-purple-900/40 flex flex-col gap-2">
+                    <div class="flex items-center gap-2 text-xs font-bold text-[#6D4AFF]">
+                        <span class="material-symbols-outlined text-[18px]">info</span> Explanation
+                    </div>
+                    <p class="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        ${explanationText}
                     </p>
                 </div>
 
