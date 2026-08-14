@@ -6,200 +6,271 @@
 
 <p align="center">
   <strong>AI-Powered Bloom's Taxonomy Question Transformation Engine</strong><br/>
-  <em>MCA Major Project — Fine-tuned NLP Pipeline for Cognitive-Level Question Generation</em>
+  <em>MCA Major Project — Fine-Tuned NLP Pipeline for Cognitive-Level Question Generation</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/Flask-3.0.x-black?logo=flask&logoColor=white" />
-  <img src="https://img.shields.io/badge/PyTorch-2.x-orange?logo=pytorch&logoColor=white" />
-  <img src="https://img.shields.io/badge/HuggingFace-Transformers-yellow?logo=huggingface&logoColor=white" />
-  <img src="https://img.shields.io/badge/spaCy-3.x-blueviolet" />
-  <img src="https://img.shields.io/badge/DeBERTa--v3-Classifier-informational" />
-  <img src="https://img.shields.io/badge/FLAN--T5-Generator-success" />
-  <img src="https://img.shields.io/badge/Tests-36%20Passed-brightgreen" />
-  <img src="https://img.shields.io/badge/Version-2.1.0-blue" />
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey" />
+  <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" alt="Python 3.12" />
+  <img src="https://img.shields.io/badge/Flask-3.0.x-black?logo=flask&logoColor=white" alt="Flask" />
+  <img src="https://img.shields.io/badge/PyTorch-2.x-orange?logo=pytorch&logoColor=white" alt="PyTorch" />
+  <img src="https://img.shields.io/badge/HuggingFace-Transformers-yellow?logo=huggingface&logoColor=white" alt="HuggingFace" />
+  <img src="https://img.shields.io/badge/spaCy-3.x-blueviolet" alt="spaCy" />
+  <img src="https://img.shields.io/badge/DeBERTa--v3-Classifier-informational" alt="DeBERTa-v3" />
+  <img src="https://img.shields.io/badge/FLAN--T5-Generator-success" alt="FLAN-T5" />
+  <img src="https://img.shields.io/badge/Tests-36%20Passed-brightgreen" alt="Tests" />
+  <img src="https://img.shields.io/badge/Version-2.1.0-blue" alt="Version" />
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey" alt="License" />
 </p>
 
 ---
 
-## What is BloomEngine?
+## Overview
 
-**BloomEngine** is a full-stack AI question transformation system built as an MCA Major Project. It takes an input question at any Bloom's Taxonomy cognitive level and rewrites it into a target cognitive level — **Remember → Understand → Apply → Analyze → Evaluate → Create** — while rigorously preserving all original concepts, technical entities, numeric values, and semantic meaning.
+**BloomEngine** is an AI question transformation and validation system developed for an MCA Major Project. It accepts academic questions in Computer Science, analyzes their cognitive level under **Bloom's Taxonomy** (*Remember, Understand, Apply, Analyze, Evaluate, Create*), and transforms them into target cognitive levels while preserving core technical concepts, entity terminology, numeric parameters, and domain-specific knowledge consistency.
 
-The system is powered by two locally fine-tuned transformer models:
-- **DeBERTa-v3** — 6-class Bloom's Taxonomy classifier (fine-tuned on 31,310 CS question records)
-- **FLAN-T5** — Instruction-tuned seq2seq generator (fine-tuned on 21,004 question transformation pairs)
-
-Every generated question passes through an **8-stage NLP validation pipeline** before being presented as output.
+The system integrates two fine-tuned transformer models with a deterministic **8-Stage NLP Validation Pipeline** to score, filter, and rank candidate outputs before presentation.
 
 ---
 
 ## System Architecture
 
-```
-[User Input Question]
-        │
-        ▼
-[DeBERTa-v3 Bloom Classifier]   ←── Classifies input cognitive level (99.99% confidence)
-        │
-        ▼
-[Question Understanding Engine] ←── Domain inference, topic mapping, concept extraction
-        │
-        ▼
-[FLAN-T5 Multi-Candidate Generator] ←── Generates 3–6 candidate variants per round
-        │
-        ▼
-[8-Stage Validation Pipeline]
-  ├── Stage 1 : Bloom Validator          (verb profiling, target-level alignment)
-  ├── Stage 2 : Concept Validator        (spaCy noun chunks, compound noun preservation)
-  ├── Stage 3 : Technical Entity Validator (NER, tech jargon, CS terminology)
-  ├── Stage 4 : Number Validator         (IPv4/IPv6, AES-128, version strings)
-  ├── Stage 5 : Knowledge Consistency    (concept graph, domain-topic scoring)
-  ├── Stage 6 : Semantic Validator       (SentenceTransformer cosine similarity ≥ 70%)
-  ├── Stage 7 : Duplicate Detector       (SequenceMatcher + semantic distance)
-  └── Stage 8 : Grammar Validator        (punctuation, length, bigram repetition)
-        │
-        ▼
-[Candidate Ranker]  ←── Scores and selects the best candidate
-        │
-        ▼
-[Final Validated Question Output]
+```mermaid
+graph TD
+    %% Layer 1: Presentation Layer
+    subgraph Layer1["1. Presentation Layer"]
+        User["User / Academic Evaluator"]
+        WebUI["Web Interface (HTML5 / CSS / JS / Chart.js)"]
+        Studio["Question Studio (Interactive Playground)"]
+        BatchUI["Batch Processing Interface (.xlsx, .csv, .pdf, .docx, .pptx)"]
+        ResultView["Result Display & Metrics Dashboard"]
+        ExportModule["Export Module (CSV / Excel / PDF)"]
+        
+        User --> WebUI
+        WebUI --> Studio
+        WebUI --> BatchUI
+        ResultView --> ExportModule
+    end
+
+    %% Layer 2: Application Layer
+    subgraph Layer2["2. Application Layer"]
+        FlaskApp["Flask Application (app.py)"]
+        APIRoutes["REST API Endpoints (/classify, /rephrase, /batch, /export)"]
+        ReqHandler["Request Preprocessing & Input Sanitization"]
+        BatchEngine["Batch Queue & Worker Handler"]
+        
+        Studio -->|HTTP POST| APIRoutes
+        BatchUI -->|File Upload| BatchEngine
+        BatchEngine --> APIRoutes
+        APIRoutes --> FlaskApp
+        FlaskApp --> ReqHandler
+    end
+
+    %% Layer 3: AI Processing Layer
+    subgraph Layer3["3. AI Processing Layer"]
+        DebertaClassifier["DeBERTa-v3 Bloom Classifier\n(models/classifier/ - 6 Classes)"]
+        QEngine["Question Understanding Engine\n(core/question_understanding.py)"]
+        Decision{"Transformation\nDecision"}
+        FlanGenerator["FLAN-T5 Transformation Engine\n(models/flan_t5/ - Multi-Candidate Generation)"]
+        CandidatePool["Candidate Questions Pool\n(3–6 Variants per Round)"]
+        
+        ReqHandler --> DebertaClassifier
+        DebertaClassifier --> QEngine
+        QEngine --> Decision
+        
+        Decision -->|Classification Only| DirectResult["Classification Output\n(Bloom Level & Confidence)"]
+        Decision -->|Transformation Requested| FlanGenerator
+        FlanGenerator --> CandidatePool
+    end
+
+    %% Layer 4: Validation Layer
+    subgraph Layer4["4. 8-Stage Validation Pipeline (validation/)"]
+        direction TB
+        V1["Stage 1: Bloom Classification Validation (bloom_validator.py)"]
+        V2["Stage 2: Concept Preservation (concept_validator.py)"]
+        V3["Stage 3: Technical Entity Preservation (entity_validator.py)"]
+        V4["Stage 4: Number Preservation (number_validator.py)"]
+        V5["Stage 5: Knowledge Consistency (knowledge_consistency_validator.py)"]
+        V6["Stage 6: Semantic Validation (semantic_validator.py)"]
+        V7["Stage 7: Duplicate Detection (duplicate_validator.py)"]
+        V8["Stage 8: Grammar & Repetition Validation (grammar_validator.py)"]
+        
+        CandidatePool --> V1
+        V1 --> V2 --> V3 --> V4 --> V5 --> V6 --> V7 --> V8
+    end
+
+    %% Layer 5: Ranking and Output Layer
+    subgraph Layer5["5. Ranking & Output Layer"]
+        Ranker["Candidate Ranker (core/candidate_ranker.py)\nComposite Weighted Score (Pass: ≥ 80/100)"]
+        BestCandidate["Best Validated Candidate Question"]
+        ResultGen["Result Payload Generation (JSON Response)"]
+        
+        V8 --> Ranker
+        Ranker --> BestCandidate
+        BestCandidate --> ResultGen
+        DirectResult --> ResultGen
+        ResultGen --> ResultView
+    end
+
+    %% Layer 6: Supporting Components
+    subgraph Layer6["6. Supporting Components & Knowledge Base"]
+        SpacyNLP["spaCy Linguistic Parser\n(en_core_web_sm - POS, NER, Noun Chunks)"]
+        SentenceTransformers["Sentence Transformers\n(Cosine Similarity Embeddings)"]
+        KnowledgeOntology["CS Knowledge Base & Ontologies\n(knowledge/ - 15+ Domains, Concepts, Aliases)"]
+        MemoryCache["Thread-Safe In-Memory Cache\n(EMBEDDING_CACHE & Session Store)"]
+        Datasets["Academic Datasets\n(datasets/ - Classification, Transformation, Evaluation)"]
+        
+        SpacyNLP -.-> QEngine
+        SpacyNLP -.-> V2
+        SpacyNLP -.-> V3
+        SentenceTransformers -.-> V6
+        KnowledgeOntology -.-> QEngine
+        KnowledgeOntology -.-> V5
+        MemoryCache -.-> FlaskApp
+        MemoryCache -.-> V7
+    end
 ```
 
 ---
 
-## Key Metrics
+### Architecture Flow
 
-| Metric | Value |
-|--------|-------|
-| Bloom Classification Accuracy | **99.99%** confidence (DeBERTa-v3) |
-| Classification Dataset | **31,310** CS question records |
-| Transformation Dataset | **21,004** question pairs |
-| Evaluation Benchmark | **300-item** benchmark dataset |
-| Validation Pass Rate | ≥ **88%** overall |
-| Python Unit Tests | **36/36 passed** |
-| Production API Checks | **6/6 passed** |
-| Pipeline Version | **v2.1.0** |
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Backend** | Python 3.12, Flask |
-| **AI — Classifier** | DeBERTa-v3 (fine-tuned, 6-class Bloom taxonomy) |
-| **AI — Generator** | FLAN-T5 (fine-tuned, seq2seq question transformation) |
-| **NLP** | spaCy `en_core_web_sm`, SentenceTransformers |
-| **String Matching** | RapidFuzz (fuzzy duplicate detection) |
-| **Frontend** | HTML5, CSS3, Vanilla JS, Chart.js |
-| **Testing** | pytest (unit), Playwright (E2E) |
-| **Inference** | PyTorch, Hugging Face Transformers |
+1. **Input Submission**: The user submits an academic question via the interactive Question Studio or uploads batch files (`.xlsx`, `.csv`, `.pdf`, `.docx`, `.pptx`).
+2. **Request Routing**: Flask application routes the payload through `/classify`, `/rephrase`, or `/batch` endpoints.
+3. **Preprocessing**: Input text undergoes normalization, whitespace sanitization, and token preparation.
+4. **Bloom Classification**: Fine-tuned DeBERTa-v3 predicts the source Bloom's Taxonomy cognitive level and difficulty.
+5. **Question Understanding**: The Question Understanding Engine analyzes syntactic structure, identifies the Computer Science domain, extracts core subject concepts, and checks canonical ontologies.
+6. **Candidate Generation**: If transformation is requested, fine-tuned FLAN-T5 generates multiple candidate variants for the selected target Bloom level.
+7. **8-Stage Validation Pipeline**: Generated candidates are evaluated sequentially across Bloom verb compliance, concept preservation, entity preservation, number integrity, knowledge consistency, semantic similarity, duplicate detection, and grammar.
+8. **Candidate Ranking**: The Candidate Ranker computes a composite score (out of 100) and selects the highest-scoring candidate meeting the pass threshold ($\ge 80$).
+9. **Display & Export**: The final validated question and stage-by-stage audit breakdown are returned to the user interface with options to export as CSV, Excel, or PDF.
 
 ---
 
-## 8-Stage Validation Pipeline
+### End-to-End Processing Flow
 
-| Stage | Validator | Purpose |
-|-------|-----------|---------|
-| 1 | **Bloom Validator** | Ensures generated verbs and sentence structure match the target Bloom level |
-| 2 | **Concept Validator** | Extracts noun chunks from source and verifies they appear in the output |
-| 3 | **Technical Entity Validator** | Protects CS-specific terms (SQL, TCP, IPv4, AES, etc.) from being dropped or mutated |
-| 4 | **Number Validator** | Matches numeric values, version strings, protocol identifiers (AES-128, IPv6, 802.11) |
-| 5 | **Knowledge Consistency Validator** | Domain-topic scoring via concept graph with position, frequency, and centrality weighting |
-| 6 | **Semantic Validator** | SentenceTransformer cosine similarity ≥ 70% between source and output |
-| 7 | **Duplicate Detector** | Blocks structurally or semantically near-identical outputs within session history |
-| 8 | **Grammar Validator** | Capitalization, punctuation, length bounds, and bigram repetition checks |
-
-**Scoring weights (config.py):**
-
-```
-Bloom        35 pts | Knowledge Domain  20 pts | Topic       15 pts
-Concept      10 pts | Entity            10 pts | Number       5 pts
-Grammar       3 pts | Duplicate          2 pts
-Pass threshold: 80 / 100
+```text
+Question Input
+      ↓
+Input Processing
+      ↓
+DeBERTa-v3 Classification
+      ↓
+Question Understanding
+      ↓
+Target Bloom Selection
+      ↓
+FLAN-T5 Candidate Generation
+      ↓
+8-Stage Validation
+      ↓
+Candidate Ranking
+      ↓
+Final Validated Question
+      ↓
+Display / Export
 ```
 
 ---
 
-## Repository Structure
+## AI Model Pipeline
 
+| Component | Model / Technology | Purpose |
+|---|---|---|
+| **Bloom Classification** | Fine-tuned DeBERTa-v3 | Classifies questions into six Bloom's Taxonomy cognitive levels |
+| **Question Transformation** | Fine-tuned FLAN-T5 | Generates candidate questions at the requested target Bloom level |
+| **Semantic Validation** | Sentence Transformers | Computes semantic cosine similarity between source and target questions |
+| **Linguistic Processing** | spaCy (`en_core_web_sm`) | Performs tokenization, POS tagging, noun chunk extraction, and NER |
+| **Duplicate Matching** | RapidFuzz / SequenceMatcher | Detects near-duplicate outputs against session history |
+
+---
+
+## Validation Pipeline
+
+| Stage | Validation | Purpose |
+|---|---|---|
+| 1 | **Bloom Classification** | Verifies that the candidate uses appropriate action verbs and structure for the target cognitive level |
+| 2 | **Concept Preservation** | Ensures all core subject matter noun chunks from the source question appear in the output |
+| 3 | **Technical Entity Preservation** | Protects domain-specific terms (e.g., SQL, TCP, IPv4, AES, Deadlock) from distortion |
+| 4 | **Number Preservation** | Confirms numeric parameters, IP addresses, bit lengths, and version standards remain intact |
+| 5 | **Knowledge Consistency** | Validates concept graph alignment and penalizes out-of-domain concept drift |
+| 6 | **Semantic Validation** | Verifies that SentenceTransformer cosine similarity between source and candidate satisfies threshold ($\ge 0.70$) |
+| 7 | **Duplicate Detection** | Blocks candidates structurally or semantically too similar to recent session history |
+| 8 | **Grammar & Repetition** | Validates capitalization, punctuation, length bounds, and flags unnatural phrase repetition |
+
+**Scoring Weights (`config.py`):**
+
+```text
+Bloom Level Match      : 35 pts    |    Knowledge Consistency : 20 pts
+Topic Preservation     : 15 pts    |    Concept Preservation  : 10 pts
+Technical Entities     : 10 pts    |    Number Integrity      :  5 pts
+Grammar & Formatting   :  3 pts    |    Duplicate Penalty     :  2 pts
+────────────────────────────────────────────────────────────────────────
+Total                  : 100 pts   |    Passing Threshold     : 80 pts
 ```
+
+---
+
+## Project Architecture
+
+```text
 BloomAI_Arena_v2_1/
-├── app.py                      # Flask server — REST API endpoints & request routing
-├── config.py                   # All hyperparameters, thresholds, Bloom profiles, validation weights
-├── requirements.txt            # Python dependencies
-├── playwright.config.js        # Playwright E2E test configuration
+├── app.py                     # Flask application entry point and REST API routes
+├── config.py                  # System hyperparameters, thresholds, and scoring weights
+├── requirements.txt           # Python dependency specifications
+├── playwright.config.js       # Playwright E2E testing configuration
 │
-├── models/                     # Fine-tuned model weights (tracked via Git LFS)
-│   ├── classifier/             # DeBERTa-v3 Bloom classifier
-│   │   ├── config.json
-│   │   ├── tokenizer.json
-│   │   ├── spm.model
-│   │   └── model.safetensors   # ~737 MB — local only / Git LFS
-│   └── flan_t5/                # FLAN-T5 question generator
-│       ├── config.json
-│       ├── generation_config.json
-│       ├── spiece.model
-│       └── model.safetensors   # ~990 MB — local only / Git LFS
+├── models/                    # Fine-tuned model directories (weights tracked via Git LFS)
+│   ├── classifier/            # DeBERTa-v3 sequence classification model and tokenizer
+│   └── flan_t5/               # FLAN-T5 seq2seq generation model and tokenizer
 │
-├── core/                       # Core question processing engine
-│   ├── question_understanding.py   # Domain inference, topic resolution
-│   ├── question_profile.py         # Structured question data model
-│   ├── candidate_ranker.py         # Multi-candidate scoring & ranking
-│   ├── spacy_utils.py              # spaCy NLP helpers & embedding cache
-│   ├── prompt_templates.py         # FLAN-T5 instruction prompt builder
-│   ├── retry_context.py            # Adaptive retry advisor
-│   ├── pipeline_context.py         # Per-request execution state
-│   └── domain_hierarchy_builder.py # Domain → subject → topic hierarchy
+├── core/                      # Core question processing modules
+│   ├── question_understanding.py   # Domain inference and concept extraction engine
+│   ├── question_profile.py         # Question representation data models
+│   ├── candidate_ranker.py         # Multi-candidate scoring and ranking logic
+│   ├── spacy_utils.py              # spaCy integration and embedding cache management
+│   ├── prompt_templates.py         # FLAN-T5 instruction prompt construction
+│   ├── retry_context.py            # Adaptive feedback and retry advisor
+│   ├── pipeline_context.py         # Execution state tracker
+│   └── domain_hierarchy_builder.py # Subject and topic hierarchy indexing
 │
-├── validation/                 # 8-stage validation pipeline
-│   ├── validation_engine.py    # Orchestrator — runs all 8 stages sequentially
-│   ├── bloom_validator.py      # Stage 1
-│   ├── concept_validator.py    # Stage 2
-│   ├── entity_validator.py     # Stage 3
-│   ├── number_validator.py     # Stage 4
-│   ├── knowledge_consistency_validator.py  # Stage 5
-│   ├── semantic_validator.py   # Stage 6
-│   ├── duplicate_validator.py  # Stage 7
-│   ├── grammar_validator.py    # Stage 8
-│   ├── topic_validator.py      # Topic preservation helper
-│   └── validation_models.py    # Output data models (ValidationResult, StageScore)
+├── validation/                # 8-Stage NLP validation pipeline
+│   ├── validation_engine.py   # Validation pipeline orchestrator
+│   ├── bloom_validator.py     # Stage 1: Bloom verb profiling
+│   ├── concept_validator.py   # Stage 2: Noun chunk preservation
+│   ├── entity_validator.py    # Stage 3: Technical entity preservation
+│   ├── number_validator.py    # Stage 4: Number and protocol preservation
+│   ├── knowledge_consistency_validator.py # Stage 5: Knowledge graph consistency
+│   ├── semantic_validator.py  # Stage 6: Cosine similarity validation
+│   ├── duplicate_validator.py # Stage 7: Duplicate detection
+│   ├── grammar_validator.py   # Stage 8: Syntax and repetition checks
+│   ├── topic_validator.py     # Topic preservation verification
+│   └── validation_models.py   # Structured validation response dataclasses
 │
-├── knowledge/                  # Static CS knowledge base & ontologies
-│   ├── concepts.py             # Concept dictionaries & synonym aliases
-│   ├── domains.py              # CS domain definitions (15+ domains)
-│   ├── terminology.py          # Technical terminology map
-│   ├── hierarchy.py            # Subject–topic hierarchy tree
-│   ├── topics.py               # Canonical topic → concept mappings
-│   └── generation_context.py   # Topic context for generation prompts
+├── knowledge/                 # Computer Science ontologies and domain dictionaries
+│   ├── concepts.py            # Academic concepts and synonym maps
+│   ├── domains.py             # Domain keyword definitions (15+ CS domains)
+│   ├── terminology.py         # Technical terminology and abbreviation mappings
+│   ├── hierarchy.py           # Subject-topic hierarchy trees
+│   ├── topics.py              # Canonical topic mappings
+│   └── generation_context.py  # Context prompts for generation
 │
-├── datasets/
-│   ├── classification/
-│   │   └── final_dataset_v2.xlsx           # 31,310 records — DeBERTa training data
-│   ├── transformation/
-│   │   └── combined_cleaned.json           # 21,004 pairs — FLAN-T5 training data
-│   └── evaluation/
-│       ├── benchmark_dataset.json          # 300-item pipeline benchmark
-│       ├── benchmark_dataset_100.json      # 100-item fast benchmark
-│       └── manual_review.csv              # Manual QA review records
+├── datasets/                  # Training, transformation, and benchmark data
+│   ├── classification/        # 31,310 record DeBERTa training dataset (final_dataset_v2.xlsx)
+│   ├── transformation/        # 21,004 pair FLAN-T5 training dataset (combined_cleaned.json)
+│   └── evaluation/            # 100-item & 300-item benchmark evaluation datasets & manual_review.csv
 │
-├── notebooks/
-│   ├── class.ipynb             # DeBERTa-v3 fine-tuning notebook (Bloom classification)
-│   └── FFlan.ipynb             # FLAN-T5 seq2seq fine-tuning notebook
+├── notebooks/                 # Model training and fine-tuning Jupyter notebooks
+│   ├── class.ipynb            # DeBERTa-v3 fine-tuning workflow
+│   └── FFlan.ipynb            # FLAN-T5 fine-tuning workflow
 │
-├── evaluation/
-│   ├── evaluate_pipeline.py    # End-to-end pipeline benchmark script
-│   ├── benchmark_understanding.py
-│   ├── benchmark_report.md     # Benchmark results & analysis
-│   ├── bloomengine_qa_report.md
-│   ├── bloomengine_qa_report.html
-│   ├── bloomengine_bug_list.csv
-│   └── bloomai_production_certificate.md  # Production verification certificate
+├── evaluation/                # Benchmarking and QA audit suite
+│   ├── evaluate_pipeline.py   # Automated pipeline benchmark runner
+│   ├── benchmark_understanding.py # Question understanding benchmark
+│   ├── benchmark_report.md    # Benchmark results and empirical findings
+│   ├── bloomengine_qa_report.md   # QA test execution report
+│   └── bloomengine_bug_list.csv   # QA issue tracking matrix
 │
-├── tests/
+├── tests/                     # Automated test suite (Python unit tests & Playwright E2E)
 │   ├── test_question_understanding.py
 │   ├── test_knowledge_consistency.py
 │   ├── test_retry_context.py
@@ -215,15 +286,30 @@ BloomAI_Arena_v2_1/
 │   ├── bloom_benchmark.spec.js
 │   └── pagination_layout.spec.js
 │
-├── report/
+├── report/                    # Major Project documentation and generated figures
 │   ├── BloomEngine_MCA_Major_Project_Report.docx
 │   ├── BloomEngine_MCA_Major_Project_Report.md
-│   └── figures/                # All academic diagrams & charts
+│   └── figures/               # Architectural diagrams, confusion matrices, loss curves
 │
-├── templates/                  # HTML UI templates (Jinja2)
-├── static/                     # CSS, JS, logo assets
-└── archive/                    # Development history & tools archive
+├── templates/                 # Frontend HTML templates (Jinja2)
+├── static/                    # Frontend stylesheets, JavaScript modules, and assets
+└── archive/                   # Project history and development utilities archive
 ```
+
+---
+
+## Key Metrics
+
+| Metric | Value |
+|---|---|
+| **Classification Dataset Size** | 31,310 questions |
+| **Transformation Dataset Size** | 21,004 question pairs |
+| **Benchmark Evaluation Dataset** | 300 curated questions |
+| **Python Unit Tests** | 36 / 36 passed |
+| **Production Verification Checks** | 6 / 6 passed |
+| **Validation Pipeline Stages** | 8 stages |
+| **Supported Bloom Levels** | Remember, Understand, Apply, Analyze, Evaluate, Create |
+| **Pipeline Version** | v2.1.0 |
 
 ---
 
@@ -231,90 +317,77 @@ BloomAI_Arena_v2_1/
 
 ### Prerequisites
 
-- Python 3.12
-- Git with Git LFS (for model weights)
+- Python 3.10+ (tested on Python 3.12)
+- Git & Git LFS
 - Node.js 18+ (for Playwright E2E tests)
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Tharunkumar0910/BloomEngine.git
 cd BloomEngine
-git lfs pull  # downloads fine-tuned model weights (~1.7 GB)
+git lfs pull
 ```
 
-### 2. Create a virtual environment
+### 2. Create Virtual Environment
 
 ```bash
-python -m venv .venv
-
 # Windows
+python -m venv .venv
 .venv\Scripts\Activate.ps1
 
-# macOS / Linux
+# Linux / macOS
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Install Python dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
-```
-
-### 4. Install spaCy language model
-
-```bash
 python -m spacy download en_core_web_sm
 ```
-
-### 5. Verify model paths
-
-Confirm these files exist after `git lfs pull`:
-
-```
-models/classifier/model.safetensors    (~737 MB)
-models/flan_t5/model.safetensors       (~990 MB)
-```
-
-If you did not use Git LFS, place your locally fine-tuned weights in these directories manually.
 
 ---
 
 ## Running the Application
 
+Start the local Flask development server:
+
 ```bash
 python app.py
 ```
 
-Open **http://127.0.0.1:5000** in your browser.
+Access the interface at **http://127.0.0.1:5000** in your browser.
 
 ### API Endpoints
 
 | Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Server health check |
-| `/classify` | POST | Bloom's Taxonomy classification |
-| `/rephrase` | POST | Question transformation with 8-stage validation |
-| `/export` | POST | Export transformed questions |
-| `/batch` | POST | Bulk question processing |
+|---|---|---|
+| `/health` | GET | Returns server health status and loaded model states |
+| `/classify` | POST | Classifies input question into Bloom's Taxonomy cognitive level |
+| `/rephrase` | POST | Transforms question to target Bloom level with 8-stage validation |
+| `/batch` | POST | Processes bulk question files (`.xlsx`, `.csv`, `.docx`, `.pdf`, `.pptx`) |
+| `/export` | POST | Exports transformation results in CSV, Excel, or PDF formats |
+| `/api/models/status` | GET | Returns inference device and model memory statistics |
 
 ---
 
-## Running Tests
+## Running Tests & Verification
 
-### Python Unit Tests (36 tests)
+### Unit Test Suite
 
 ```bash
 pytest tests/ -v
 ```
 
-### Production Verification
+### Production Verification Suite
 
 ```bash
 python tests/verify_production.py
 ```
 
-### E2E Pipeline Benchmark
+### Pipeline Benchmark
 
 ```bash
 python evaluation/evaluate_pipeline.py
@@ -330,82 +403,28 @@ npx playwright test
 
 ---
 
-## Training Details
+## Supported Computer Science Domains
 
-### DeBERTa-v3 Bloom Classifier
-
-| Parameter | Value |
-|-----------|-------|
-| Base model | `microsoft/deberta-v3-base` |
-| Task | 6-class sequence classification |
-| Classes | Remember, Understand, Apply, Analyze, Evaluate, Create |
-| Training records | 31,310 |
-| Training notebook | `notebooks/class.ipynb` |
-
-### FLAN-T5 Question Generator
-
-| Parameter | Value |
-|-----------|-------|
-| Base model | `google/flan-t5-base` |
-| Task | Seq2Seq instruction-tuned generation |
-| Training pairs | 21,004 |
-| Generation mode | Multi-candidate beam sampling (Mode E) |
-| Training notebook | `notebooks/FFlan.ipynb` |
-
----
-
-## Generation Configuration (Mode E)
-
-All generation and validation parameters are centralized in [`config.py`](config.py):
-
-```python
-# Generation
-num_beams              = 8
-num_return_sequences   = 3        # candidates per round
-max_generation_rounds  = 4
-temperature            = 0.7
-top_p                  = 0.95
-
-# Validation thresholds
-PASS_THRESHOLD                 = 80.0
-SEMANTIC_SIMILARITY_FLOOR      = 0.70
-DUPLICATE_SEMANTIC_THRESHOLD   = 0.93
-CONCEPT_SEMANTIC_THRESHOLD     = 0.75
-```
-
----
-
-## Supported CS Domains
-
-The knowledge base covers **15+ Computer Science domains** including:
-
-- Database Management Systems (ACID, SQL, Normalization, NoSQL)
-- Computer Networks (TCP/UDP, OSI, IPv4/IPv6, HTTP/HTTPS)
-- Operating Systems (Scheduling, Deadlock, Paging, Semaphores)
-- Data Structures & Algorithms
-- Machine Learning & Artificial Intelligence
-- Software Engineering, Compiler Design, Cloud Computing
-- Computer Architecture, Digital Electronics, IoT
+The ontology covers 15+ academic Computer Science domains:
+- **Database Management Systems** (SQL, Normalization, Transactions, ACID, NoSQL)
+- **Computer Networks** (TCP/UDP, OSI Model, IPv4/IPv6, HTTP/HTTPS, Routing)
+- **Operating Systems** (Processes, Threads, CPU Scheduling, Deadlocks, Virtual Memory)
+- **Data Structures & Algorithms** (Trees, Graphs, Sorting, Dynamic Programming)
+- **Machine Learning & Artificial Intelligence** (Classification, Regression, Neural Networks, Search)
+- **Software Engineering** (SDLC, Design Patterns, Testing, Agile)
+- **Cyber Security & Cryptography** (Encryption, Hashes, Authentication, Firewalls)
+- **Computer Architecture & Organization** (Pipelining, Cache, Instruction Sets)
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## Author
 
-**Tharun Kumar** — MCA Major Project  
-[GitHub Profile](https://github.com/Tharunkumar0910)
-
----
-
-## Acknowledgements
-
-- [Hugging Face](https://huggingface.co) — Transformers library, DeBERTa-v3 & FLAN-T5 base models
-- [spaCy](https://spacy.io) — Industrial-strength NLP (tokenization, NER, noun chunks)
-- [SentenceTransformers](https://www.sbert.net) — Semantic similarity embeddings
-- [RapidFuzz](https://github.com/maxbachmann/RapidFuzz) — High-performance fuzzy string matching
-- [Playwright](https://playwright.dev) — End-to-end browser testing framework
+**Tharun Kumar**  
+MCA Major Project  
+GitHub: [@Tharunkumar0910](https://github.com/Tharunkumar0910)
