@@ -1,10 +1,10 @@
 import unittest
 import torch
-from question_understanding import QuestionUnderstandingEngine
-from pipeline_context import PipelineContext
-from validation_engine import evaluate_candidate
-from candidate_ranker import rank_candidates, rank_candidates_dicts
-from validation_models import ValidationEngineOutput
+from core.question_understanding import QuestionUnderstandingEngine
+from core.pipeline_context import PipelineContext
+from validation.validation_engine import evaluate_candidate
+from core.candidate_ranker import rank_candidates, rank_candidates_dicts
+from validation.validation_models import ValidationEngineOutput
 
 class MockSTModel:
     def encode(self, text, convert_to_tensor=True):

@@ -1,6 +1,6 @@
 import pytest
-from retry_context import get_retry_topic_context, get_retry_context_string
-from prompt_templates import build_prompt
+from core.retry_context import get_retry_topic_context, get_retry_context_string
+from core.prompt_templates import build_prompt
 
 def test_get_retry_topic_context_basic():
     # Breadth First Search should return queue, graph, vertex, etc.

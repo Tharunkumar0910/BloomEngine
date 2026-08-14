@@ -41,7 +41,7 @@ def get_profile(question: str, source_bloom: Optional[str] = None):
     """
     Core entrypoint: obtains a QuestionProfile for a given input question.
     """
-    from question_understanding import QuestionUnderstandingEngine
+    from core.question_understanding import QuestionUnderstandingEngine
     return QuestionUnderstandingEngine.build_profile(question, source_bloom)
 
 def lookup(term: str) -> List[dict]:

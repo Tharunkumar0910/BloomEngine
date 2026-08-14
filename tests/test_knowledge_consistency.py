@@ -6,8 +6,8 @@ All tests are self-contained; no mocks of AI models needed.
 """
 
 import pytest
-from question_profile import QuestionProfile
-from knowledge_consistency_validator import validate_knowledge_consistency
+from core.question_profile import QuestionProfile
+from validation.knowledge_consistency_validator import validate_knowledge_consistency
 from knowledge import (
     get_topic_entry, get_concept_weight,
     find_topic_for_concept, find_domain_for_concept,

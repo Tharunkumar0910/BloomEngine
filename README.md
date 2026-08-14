@@ -175,14 +175,12 @@ The text transformations run through the following pipeline path:
 To keep the repository lightweight, model weights (`.safetensors` and `.bin` files) are excluded via `.gitignore`. You must set up the weights locally before launching:
 
 1. **DeBERTa Classification Model:**
-   * Create the directory `deberta_bloom_model/` in the root.
-   * Make sure the tokenizer configs and `config.json` (already checked into the repository) remain in that directory.
-   * Download the weights (`model.safetensors` or `pytorch_model.bin`) for your fine-tuned DeBERTa model and place them inside `deberta_bloom_model/`.
+   * Place the weights (`model.safetensors` or `pytorch_model.bin`) inside `models/classifier/`.
+   * Make sure the tokenizer configs and `config.json` remain in that directory.
 
 2. **FLAN-T5 Generation Model:**
-   * Create the directory `flan_t5_model/` in the root.
+   * Place the fine-tuned generator weights (`model.safetensors` or `pytorch_model.bin`) inside `models/flan_t5/`.
    * Keep the configuration and vocabulary files (`config.json`, `generation_config.json`, tokenizer configurations, and `spiece.model`) tracked in that directory.
-   * Download the fine-tuned generator weights (`model.safetensors` or `pytorch_model.bin`) and place them inside `flan_t5_model/`.
 
 ---
 
@@ -200,7 +198,7 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
 Evaluate the pipeline on the benchmark dataset to produce performance metrics:
 ```bash
-python evaluate_pipeline.py
+python evaluation/evaluate_pipeline.py
 ```
 
 ---
@@ -223,57 +221,86 @@ python evaluate_pipeline.py
 
 ```text
 BloomAI_Arena_v2_1/
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   └── feature_request.md
-│   └── pull_request_template.md
-├── archive/                   # Legacy scripts and reports
-├── before_results/           # Reference evaluation metrics
-├── deberta_bloom_model/       # DeBERTa configurations (weights excluded)
-├── flan_t5_model/             # FLAN-T5 configurations (weights excluded)
-├── static/
-│   ├── css/
-│   │   └── style.css          # Core styles
-│   ├── js/
-│   │   └── main.js           # Client-side SPA routing and UI interactions
-│   └── uploads/               # Local folder for file batch uploads
-├── templates/
-│   └── index.html             # Main HTML template
-├── tests/
-│   ├── bloom_benchmark.spec.js # Benchmark Playwright spec
-│   ├── bulk_processing.spec.js # E2E bulk processor spec
-│   ├── demo.csv               # Test file
-│   └── demo.txt               # Test file
-├── .flake8                    # Flake8 style config
-├── .gitignore                 # Exclusion configuration
-├── app.py                     # Flask entry point and endpoints
-├── bloom_validator.py         # Taxonomic verb constraints
-├── candidate_ranker.py        # Candidate scoring algorithm
-├── CHANGELOG.md               # Version changes log
-├── CODE_OF_CONDUCT.md         # Open-source community code of conduct
-├── concept_validator.py       # spaCy concept extraction
-├── config.py                  # Core hyperparameters & domain lists
-├── CONTRIBUTING.md            # Guidelines for developers
-├── duplicate_validator.py     # String & semantic duplicate checks
-├── entity_validator.py        # spaCy NER jargon checkers
-├── evaluate_pipeline.py       # Benchmark evaluation script
-├── final_dataset_v2.xlsx      # CS question dataset
-├── grammar_validator.py       # Syntactic checks & spacing corrections
-├── LICENSE                    # MIT License details
-├── number_validator.py        # Digits/IP/version extraction
-├── package.json               # Node.js dependencies
+├── app.py                     # Flask web entry point and API endpoints
+├── config.py                  # Central configuration and hyperparameters
+├── requirements.txt           # Python dependencies
+├── README.md                  # Project documentation
+├── package.json               # Node.js configuration
 ├── package-lock.json
-├── playwright.config.js       # Playwright runner options
-├── prompt_templates.py        # Prompt styling configurations
-├── requirements.txt           # Python library requirements
-├── SECURITY.md                # Reporting policy details
-├── semantic_validator.py      # Embedding cosine matching
-├── spacy_utils.py             # Lazy spacy wrapper
-├── validation_engine.py       # 7-stage validator engine
-├── validation_models.py       # Dataclass definitions
-├── verify_production.py       # Sequential load health checker
-└── VERSION.txt                # Version manifest (2.1.0)
+├── playwright.config.js       # Playwright E2E configuration
+├── .flake8                    # Linter configuration
+├── .gitignore                 # File exclusion configuration
+│
+├── models/                    # Machine Learning Models
+│   ├── classifier/            # Fine-tuned DeBERTa-v3 6-class classifier
+│   └── flan_t5/               # Fine-tuned FLAN-T5 seq2seq generator
+│
+├── core/                      # Core Question Processing Modules
+│   ├── question_understanding.py  # Question understanding & domain/topic engine
+│   ├── question_profile.py        # Question profile data representation
+│   ├── candidate_ranker.py        # Multi-candidate ranking algorithm
+│   ├── spacy_utils.py             # spaCy NLP processing & embedding caching
+│   ├── pipeline_context.py        # Execution state context
+│   ├── prompt_templates.py        # Inference prompt builder
+│   ├── retry_context.py           # Adaptive retry context advisor
+│   └── domain_hierarchy_builder.py# Domain-subject-topic hierarchy index builder
+│
+├── validation/                # 8-Stage Validation Pipeline
+│   ├── validation_engine.py   # 8-stage NLP validation orchestrator
+│   ├── bloom_validator.py     # Stage 1: Bloom classification validation
+│   ├── concept_validator.py   # Stage 2: Concept preservation validation
+│   ├── entity_validator.py    # Stage 3: Technical entity preservation
+│   ├── number_validator.py    # Stage 4: Number & standard preservation
+│   ├── knowledge_consistency_validator.py # Stage 5: Knowledge consistency
+│   ├── semantic_validator.py  # Stage 6: Semantic similarity validation
+│   ├── duplicate_validator.py # Stage 7: Duplicate detection
+│   ├── grammar_validator.py   # Stage 8: Grammar & formatting validation
+│   ├── topic_validator.py     # Topic preservation check
+│   └── validation_models.py   # Validation output data models
+│
+├── knowledge/                 # Knowledge Base & Ontologies
+│   ├── concepts.py            # Academic concept dictionaries & aliases
+│   ├── domains.py             # Computer Science domain definitions
+│   ├── generation_context.py  # Topic context definitions
+│   ├── hierarchy.py           # Subject & topic hierarchy
+│   ├── terminology.py         # Technical terminology map
+│   └── topics.py              # Canonical topic mappings
+│
+├── datasets/                  # Datasets
+│   ├── classification/        # 31,310 record DeBERTa classifier dataset (final_dataset_v2.xlsx)
+│   ├── transformation/        # 21,004 record FLAN-T5 transformation dataset (combined_cleaned.json)
+│   └── evaluation/            # 100-item & 300-item benchmark evaluation datasets & manual_review.csv
+│
+├── notebooks/                 # Model Training & EDA Notebooks
+│   ├── class.ipynb            # DeBERTa-v3 sequence classification notebook
+│   └── FFlan.ipynb            # FLAN-T5 seq2seq fine-tuning notebook
+│
+├── evaluation/                # Evaluation & Benchmarking Suite
+│   ├── evaluate_pipeline.py   # Automated pipeline benchmarking script
+│   ├── benchmark_understanding.py # Question understanding benchmark
+│   ├── benchmark_report.md    # Quality & performance report
+│   ├── bloomengine_qa_report.md # QA bug report & system audit
+│   └── bloomengine_bug_list.csv # QA issue tracking matrix
+│
+├── tests/                     # Automated Test Suite
+│   ├── test_question_understanding.py
+│   ├── test_knowledge_consistency.py
+│   ├── test_retry_context.py
+│   ├── test_canonical_concepts.py
+│   ├── test_fallback_ui.py
+│   ├── test_supplements_merged.py
+│   ├── test_technical_terminology.py
+│   ├── test_debug.py
+│   ├── verify_production.py
+│   ├── bulk_processing.spec.js
+│   ├── exploratory_audit.spec.js
+│   ├── batch_processing_regression.spec.js
+│   ├── bloom_benchmark.spec.js
+│   └── pagination_layout.spec.js
+│
+├── templates/                 # HTML UI Templates
+├── static/                    # Frontend CSS, JS & Uploads
+└── archive/                   # Project History & Documentation Archive
 ```
 
 ---

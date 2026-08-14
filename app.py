@@ -34,11 +34,11 @@ from config import (
     DOMAIN_MAP,
     NUM_CANDIDATES_BY_BLOOM,
 )
-from prompt_templates import build_prompt
-from validation_engine import evaluate_candidate
-from candidate_ranker import calculate_nlp_rank_score, rank_candidates, rank_candidates_dicts
-from bloom_validator import validate_bloom_verbs
-from spacy_utils import normalize_embedding_key
+from core.prompt_templates import build_prompt
+from validation.validation_engine import evaluate_candidate
+from core.candidate_ranker import calculate_nlp_rank_score, rank_candidates, rank_candidates_dicts
+from validation.bloom_validator import validate_bloom_verbs
+from core.spacy_utils import normalize_embedding_key
 
 
 
@@ -63,8 +63,8 @@ SESSION_STATE = {
 STARTUP_TIMESTAMP = time.time()
 
 # Performance Logging Flags
-ENABLE_PERFORMANCE_LOGS = True
-ENABLE_GENERATION_PERFORMANCE_LOGS = True
+ENABLE_PERFORMANCE_LOGS = False
+ENABLE_GENERATION_PERFORMANCE_LOGS = False
 
 # Thread locks
 MODEL_LOCK = threading.Lock()
@@ -136,8 +136,8 @@ def _get_st_model():
     return _st_model
 
 
-DEBERTA_PATH = "./deberta_bloom_model"
-FLAN_PATH = "./flan_t5_model"
+DEBERTA_PATH = "./models/classifier"
+FLAN_PATH = "./models/flan_t5"
 
 # Mappings — use Easy / Medium / Hard to match FLAN-T5 fine-tuning labels.
 # The model was trained with these exact strings; using Moderate/Difficult
@@ -851,20 +851,21 @@ def process_batch_background(session_id):
     questions = store["questions"]
     total_q = len(questions)
 
-    import spacy_utils
+    import core.spacy_utils as spacy_utils
 
     # --- Log One-Time Costs at Batch Start ---
-    print(f"\n==================================================")
-    print(f"Batch Started : Session {session_id} ({total_q} questions)")
-    print(f"==================================================")
-    print(f"Tokenizer Status          : Loaded ({DEBERTA_PATH})")
-    print(f"SentenceTransformer Status : {'Loaded' if _st_model is not None else 'Unloaded / Lazy'}")
-    print(f"spaCy Model Status        : {'Loaded' if spacy_utils._nlp is not None else 'Not Loaded (Will Lazy Load)'}")
-    print(f"Cache Initialization      : Embedding Cache ({len(EMBEDDING_CACHE)} keys, Hits: {EMBEDDING_CACHE_HITS}, Misses: {EMBEDDING_CACHE_MISSES})")
-    print(f"spaCy Doc Cache           : {len(spacy_utils._doc_cache)} documents")
-    print(f"Thread Info               : ID {threading.get_ident()} ({threading.current_thread().name})")
-    print(f"Memory Usage              : {get_current_process_memory():.2f} MB")
-    print(f"==================================================\n")
+    if ENABLE_PERFORMANCE_LOGS:
+        print(f"\n==================================================")
+        print(f"Batch Started : Session {session_id} ({total_q} questions)")
+        print(f"==================================================")
+        print(f"Tokenizer Status          : Loaded ({DEBERTA_PATH})")
+        print(f"SentenceTransformer Status : {'Loaded' if _st_model is not None else 'Unloaded / Lazy'}")
+        print(f"spaCy Model Status        : {'Loaded' if spacy_utils._nlp is not None else 'Not Loaded (Will Lazy Load)'}")
+        print(f"Cache Initialization      : Embedding Cache ({len(EMBEDDING_CACHE)} keys, Hits: {EMBEDDING_CACHE_HITS}, Misses: {EMBEDDING_CACHE_MISSES})")
+        print(f"spaCy Doc Cache           : {len(spacy_utils._doc_cache)} documents")
+        print(f"Thread Info               : ID {threading.get_ident()} ({threading.current_thread().name})")
+        print(f"Memory Usage              : {get_current_process_memory():.2f} MB")
+        print(f"==================================================\n")
 
     batch_timings = []
 
@@ -1295,22 +1296,23 @@ def classify():
     t_json = (time.perf_counter() - t_json_start) * 1000.0
     t_total = (time.perf_counter() - t_total_start) * 1000.0
 
-    print("-----------------------------------------", flush=True)
-    print("CLASSIFY PERFORMANCE", flush=True)
-    print("-----------------------------------------", flush=True)
-    print(f"Cleaning                 : {t_clean:.2f} ms", flush=True)
-    print(f"Tokenizer                : {t_tok:.2f} ms", flush=True)
-    print(f"DeBERTa                  : {t_inf:.2f} ms", flush=True)
-    print(f"Bloom Mapping            : {t_bloom:.2f} ms", flush=True)
-    print(f"Difficulty Mapping       : {t_diff:.2f} ms", flush=True)
-    print(f"Confidence               : {t_conf:.2f} ms", flush=True)
-    print(f"normalize_academic_concept : {t_nac:.2f} ms", flush=True)
-    print(f"extract_core_phrase      : {t_ecp:.2f} ms", flush=True)
-    print(f"format_academic_concept  : {t_fac:.2f} ms", flush=True)
-    print(f"Explanation Generation   : {t_exp:.2f} ms", flush=True)
-    print(f"JSON Response            : {t_json:.2f} ms", flush=True)
-    print(f"TOTAL                    : {t_total:.2f} ms", flush=True)
-    print("-----------------------------------------", flush=True)
+    if ENABLE_PERFORMANCE_LOGS:
+        print("-----------------------------------------", flush=True)
+        print("CLASSIFY PERFORMANCE", flush=True)
+        print("-----------------------------------------", flush=True)
+        print(f"Cleaning                 : {t_clean:.2f} ms", flush=True)
+        print(f"Tokenizer                : {t_tok:.2f} ms", flush=True)
+        print(f"DeBERTa                  : {t_inf:.2f} ms", flush=True)
+        print(f"Bloom Mapping            : {t_bloom:.2f} ms", flush=True)
+        print(f"Difficulty Mapping       : {t_diff:.2f} ms", flush=True)
+        print(f"Confidence               : {t_conf:.2f} ms", flush=True)
+        print(f"normalize_academic_concept : {t_nac:.2f} ms", flush=True)
+        print(f"extract_core_phrase      : {t_ecp:.2f} ms", flush=True)
+        print(f"format_academic_concept  : {t_fac:.2f} ms", flush=True)
+        print(f"Explanation Generation   : {t_exp:.2f} ms", flush=True)
+        print(f"JSON Response            : {t_json:.2f} ms", flush=True)
+        print(f"TOTAL                    : {t_total:.2f} ms", flush=True)
+        print("-----------------------------------------", flush=True)
 
     return resp
 
@@ -1781,9 +1783,9 @@ def infer_domain(question: str, concept: str) -> str:
     return "General Computer Science"
 
 
-from question_understanding import QuestionUnderstandingEngine
-from question_profile import QuestionProfile
-from pipeline_context import PipelineContext
+from core.question_understanding import QuestionUnderstandingEngine
+from core.question_profile import QuestionProfile
+from core.pipeline_context import PipelineContext
 
 def pre_cache_embeddings(texts: list, st_model):
     if not texts or st_model is None:
@@ -2456,30 +2458,10 @@ def generate_validated_variant(
             session_seen.pop(0)
     else:
         val_status = "Best Candidate"
-        explanation_lines = [
-            "<div class='text-amber-600 dark:text-amber-400 font-bold mb-2'>[VALIDATION FAILED - RETURNING BEST CANDIDATE]</div>",
-            f"Generation failed after {flan_calls_count} rounds. Below is the diagnostic report:<br>"
-        ]
-        for att in attempts_list:
-            explanation_lines.append(
-                "<div class='mt-2.5 p-2 bg-slate-50 dark:bg-slate-800/50 "
-                "border border-slate-100 dark:border-slate-800 rounded text-xs'>"
-                f"<strong>Attempt {att['attempt_number']}</strong> &bull; "
-                f"<span class='text-rose-500 font-semibold'>{att['rejection_reason']}</span><br>"
-                f"<span class='text-slate-500'>Question:</span> \"{att['question']}\"<br>"
-                f"<span class='text-slate-500'>Extracted Concept:</span> "
-                f"\"{att.get('extracted_concept', required_concept)}\" &bull; "
-                f"<span class='text-slate-500'>Concept Match:</span> "
-                f"{att.get('concept_match_method', 'N/A')} "
-                f"(similarity: {att.get('concept_similarity_score', 0.0)})<br>"
-                f"<span class='text-slate-500'>Prediction:</span> "
-                f"{att.get('predicted_bloom', 'Unknown')} "
-                f"({att.get('predicted_difficulty', 'Unknown')}) &bull; "
-                f"<span class='text-slate-500'>Confidence:</span> {att.get('confidence', 0.0)}% &bull; "
-                f"<span class='text-slate-500'>Latency:</span> {att.get('generation_time', 0.0)}s"
-                f"</div>"
-            )
-        explanation = "\n".join(explanation_lines)
+        explanation = (
+            "The generated question did not satisfy all validation criteria after multiple attempts. "
+            "The highest-quality candidate was selected based on the ranking algorithm."
+        )
     
     t_exp_ms = (time.perf_counter() - t_exp_start) * 1000.0
     cum_exp += t_exp_ms

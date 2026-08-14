@@ -95,7 +95,7 @@ def normalize_concept(text: str) -> str:
     if text_cleaned in _REVERSE_LOOKUP:
         return _REVERSE_LOOKUP[text_cleaned]
     try:
-        from spacy_utils import expand_abbreviations
+        from core.spacy_utils import expand_abbreviations
         expanded = expand_abbreviations(text_cleaned)
         if expanded in _REVERSE_LOOKUP:
             return _REVERSE_LOOKUP[expanded]

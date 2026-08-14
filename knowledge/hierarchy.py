@@ -6,7 +6,7 @@ import config
 from knowledge.domains import get_normalized_domains
 from knowledge.topics import TOPIC_MAP
 from knowledge.concepts import _SUPPLEMENTS
-from domain_hierarchy_builder import TOPIC_TO_SUBJECT, capitalize_words, build_domain_hierarchy
+from core.domain_hierarchy_builder import TOPIC_TO_SUBJECT, capitalize_words, build_domain_hierarchy
 
 def normalize_term(text: str) -> str:
     if not text:

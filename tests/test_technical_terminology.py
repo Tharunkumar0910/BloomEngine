@@ -5,7 +5,7 @@ from knowledge.terminology import (
     get_topic_terminology,
     is_term_present_in_profile,
 )
-from question_profile import QuestionProfile
+from core.question_profile import QuestionProfile
 
 class DummyValidationOutput:
     def __init__(self, detailed_metrics=None, rejection_reason=""):

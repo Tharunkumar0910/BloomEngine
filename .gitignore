@@ -52,13 +52,10 @@ static/uploads/*
 
 # AI Models - Exclude large binary weight files & checkpoints
 *model.safetensors
-*training_args.bin
 *optimizer.pt
 *rng_state.pth
 *scheduler.pt
 checkpoint-*/
-deberta_bloom_model/model.safetensors
-flan_t5_model/model.safetensors
 
 # Automatically Generated Benchmark Output Logs & Statistics
 attempt_logs.json

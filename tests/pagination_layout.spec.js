@@ -4,7 +4,7 @@ const path = require('path');
 
 // Helper to parse CSV and return raw questions
 function parseRawQuestions() {
-  const csvPath = path.join(__dirname, '../manual_review.csv');
+  const csvPath = path.join(__dirname, '../datasets/evaluation/manual_review.csv');
   const content = fs.readFileSync(csvPath, 'utf8');
   const lines = content.split('\n');
   const questions = [];
