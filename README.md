@@ -1,7 +1,7 @@
 # BloomEngine
 
 <p align="center">
-  <img src="static/images/logo/bloomengine-logo.png" alt="BloomEngine Logo" width="260" />
+  <img src="static/images/logo/bloomengine-logo.png" alt="BloomEngine Logo" width="320" />
 </p>
 
 <p align="center">
