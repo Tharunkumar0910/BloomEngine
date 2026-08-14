@@ -50,8 +50,7 @@ Desktop.ini
 static/uploads/*
 !static/uploads/.gitkeep
 
-# AI Models - Exclude large binary weight files & checkpoints
-*model.safetensors
+# AI Models - Checkpoints & training artifacts
 *optimizer.pt
 *rng_state.pth
 *scheduler.pt
